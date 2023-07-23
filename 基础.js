@@ -1,0 +1,6 @@
+let a = BigInt(123)
+let b = Object.prototype.toString.call(a)
+console.log(b)
+// console.log(typeof null == 'object')
+// console.log(null instanceof Object)
+console.log(typeof null !== 'object')
