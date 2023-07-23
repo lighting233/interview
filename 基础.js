@@ -4,3 +4,4 @@ console.log(b)
 // console.log(typeof null == 'object')
 // console.log(null instanceof Object)
 console.log(typeof null !== 'object')
+//Number String Boolean Null Undefined Symbol BigInt

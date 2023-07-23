@@ -65,7 +65,7 @@ console.log(a)
 // 1.require方法 -> Module.protoype.require方法
 // 2.Module._load 加载模块
 // 3.Module._resolveFilename 方法就是把路径变成了绝对路径 添加后缀名 (.js .json) .node
-// 4. new Module 拿到绝对路径创造一个模块  this.id  exports = {}·
+// 4. new Module 拿到绝对路径创造一个模块  this.id  exports = {}
 // 5.module.load 对模块进行加载·
 // 6.根据文件后缀 Module._extensions['.js'] 去做策略加载
 // 7.用的是同步读取文件
