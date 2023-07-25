@@ -94,14 +94,17 @@ module.exports = Application
 // }
 
 class App {
-    this.middlewares = [];
+    constructor() {
+        this.middlewares = [];
+    }
+    
 
     use(middleware) {
         this.middlewares.push(middleware)
     }
 
     createContext(req,res) {
-        //return ctx
+        // return 
     }
 
     compose(ctx) {
