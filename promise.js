@@ -79,7 +79,7 @@ class Promise {
                         try {
                             const x = this.onFulfilled(this.value);
                             resolvePromise(promise2, x, resolve, reject)
-                        }this.catch(e) {
+                        }catch(e) {
                             reject(e)
                         }
                     }, 0)
@@ -90,7 +90,7 @@ class Promise {
                         try {
                             const x = this.onRejected(this.value);
                             resolvePromise(promise2, x, resolve, reject)
-                        }this.catch(e) {
+                        }catch(e) {
                             reject(e)
                         }
                     }, 0)

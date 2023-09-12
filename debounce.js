@@ -16,7 +16,7 @@ function throttle(func,delay) {
     return function(...args) {
         if(!timer) {
             const _this = this;
-            func.applay(func,args);
+            func.applay(_this,args);
             timer = null;
         }
     }

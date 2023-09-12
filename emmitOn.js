@@ -28,7 +28,7 @@ class EventEmmiter {
     off(type,callback) {
         if(!this.events[type]) return;
         this.events[type] = this.events[type].fillter((event) => {
-            return this.events !== callback
+            return event !== callback
         })
     }
 }
