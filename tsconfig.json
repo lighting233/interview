@@ -1,0 +1,28 @@
+{
+    "compilerOptions": {
+      "jsx": "react",
+      "target": "ESNext", 
+      "module": "commonjs",
+      "strictNullChecks": true,
+      "lib":["dom","ESNext","ES2015.Iterable"],
+      "noImplicitAny": true,
+      "experimentalDecorators":true,
+      "emitDeclarationOnly":true,
+      "allowImportingTsExtensions": true,
+      "downlevelIteration":true,
+      "strictFunctionTypes": true,
+      "esModuleInterop":false,
+      "declaration": true,
+      "baseUrl": "./",
+      "paths": {
+        "*":["types/*"]
+      },
+    },
+    "include":[
+    //   "newsrc/**/*",
+    //   "typings/**/*",
+      "axios/**/*",
+      "typings"
+    ]
+  }
+  
