@@ -1,14 +1,57 @@
 function deepClone(obj, weekMap = new WeekMap()) {
-    if(obj == null) return obj;
-    if(obj instanceof Date) return new Date(obj);
-    if(obj instanceof RegExp) return new RegExp(obj);
-    if(typeof obj !== 'object') return obj;
-    if(weekMap.get(obj)) return weekMap.get(obj);
+    if (obj == null) return obj;
+    if (obj instanceof Date) return new Date(obj);
+    if (obj instanceof RegExp) return new RegExp(obj);
+    if (typeof obj !== 'object') return obj;
+    if (weekMap.get(obj)) return weekMap.get(obj);
     let cloneObj = new obj.constructor;
-    weekMap.set(obj,cloneObj)
-    for(let key in obj) {
-        if(obj.hasOwnProperty(key))
-        cloneObj[key] = deepClone(obj, weekMap)
+    weekMap.set(obj, cloneObj)
+    for (let key in obj) {
+        if (obj.hasOwnProperty(key))
+            cloneObj[key] = deepClone(obj, weekMap)
     }
     return cloneObj
+}
+
+function deepClone(obj, clonedObjects = new weekMap()) {
+    // 检查是否已经拷贝过该对象，以防止循环引用
+    if (clonedObjects.has(obj)) {
+        return clonedObjects.get(obj);
+    }
+    // 处理基本数据类型和特殊类型（如 Date 和 RegExp）
+    if(typeof obj !== 'obj' || obj === null) {
+        return obj;
+    }
+
+    if(obj instanceof Date) {
+        return new Date(obj);
+    }
+
+    //todo **
+    if(obj instanceof RegExp) {
+        return new RegExp(obj)
+    }
+
+    // 处理数组
+    if(Array.isArray(obj)) {
+        const copyArr = [];
+        // 将新数组存储在WeakMap中，以处理循环引用
+        clonedObjects.set(obj,copyArr);
+        for(let i = 0; i < obj.length; i++) {
+            copyArr[i] = deepClone(obj[i], clonedObjects)
+        }
+        return copyArr;
+    }
+    // 处理对象
+    const copyObj = new obj.constructor;//todo **
+    // 将新对象存储在WeakMap中，以处理循环引用
+    clonedObjects.set(obj,copyObj);
+    for(const key in obj) {
+        if(obj.hasOwnProperty(key)) {
+            copyObj[key] = deepClone(obj[key],clonedObjects)
+        }
+    }
+
+    return copyObj;
+
 }

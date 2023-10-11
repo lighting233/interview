@@ -22,3 +22,15 @@ Function.prototype.bind = function(content,...outArgs) {
         return self.apply(content,[...outArgs,...innerArgs])
     }
 }
+
+Function.prototype.myBind = function(context,...args) {
+    const uniqueID = Symbol();
+    context = context || window;
+    context[uniqueID] = this;
+
+    return (...innerArgs) => {
+        const res =  context[uniqueID](...[...args,...innerArgs])
+        delete context[uniqueID]
+        return res;
+    }
+}
