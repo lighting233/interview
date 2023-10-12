@@ -10,6 +10,9 @@ class Promise {
     this.onResolvedCallbacks = [];
     this.onRejectedCallbacks = [];
     const resolve = (value) => {
+      if(value instanceof Promise) {
+        return value.then(resolve,reject)
+      }
       if (this.state === PENDING) {
         this.value = value;
         this.state = FULFILLED;
@@ -95,7 +98,7 @@ class Promise {
       (v) => {
         return Promise.resolve(cb()).then(() => v);
       },
-      (r) => {
+      (err) => {
         return Promise.resolve(cb()).then(() => {
           throw err;
         });
