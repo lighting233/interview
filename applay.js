@@ -24,12 +24,13 @@ Function.prototype.bind = function(content,...outArgs) {
 }
 
 Function.prototype.myBind = function(context,...args) {
-    const uniqueID = Symbol();
     context = context || window;
+    const uniqueID = Symbol();
     context[uniqueID] = this;
 
     return (...innerArgs) => {
-        const res =  context[uniqueID](...[...args,...innerArgs])
+        //todo 返回值
+        const res = context[uniqueID](...args,...innerArgs);
         delete context[uniqueID]
         return res;
     }

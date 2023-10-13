@@ -19,25 +19,26 @@ function deepClone(obj, clonedObjects = new weekMap()) {
         return clonedObjects.get(obj);
     }
     // 处理基本数据类型和特殊类型（如 Date 和 RegExp）
-    if(typeof obj !== 'obj' || obj === null) {
+    //todo 不考虑function
+    if (typeof obj !== 'obj' || obj === null) {
         return obj;
     }
 
-    if(obj instanceof Date) {
+    if (obj instanceof Date) {
         return new Date(obj);
     }
 
     //todo **
-    if(obj instanceof RegExp) {
+    if (obj instanceof RegExp) {
         return new RegExp(obj)
     }
 
     // 处理数组
-    if(Array.isArray(obj)) {
+    if (Array.isArray(obj)) {
         const copyArr = [];
         // 将新数组存储在WeakMap中，以处理循环引用
-        clonedObjects.set(obj,copyArr);
-        for(let i = 0; i < obj.length; i++) {
+        clonedObjects.set(obj, copyArr);
+        for (let i = 0; i < obj.length; i++) {
             copyArr[i] = deepClone(obj[i], clonedObjects)
         }
         return copyArr;
@@ -45,13 +46,86 @@ function deepClone(obj, clonedObjects = new weekMap()) {
     // 处理对象
     const copyObj = new obj.constructor;//todo **
     // 将新对象存储在WeakMap中，以处理循环引用
-    clonedObjects.set(obj,copyObj);
-    for(const key in obj) {
-        if(obj.hasOwnProperty(key)) {
-            copyObj[key] = deepClone(obj[key],clonedObjects)
+    clonedObjects.set(obj, copyObj);
+    for (const key in obj) {
+        //todo hasOwnProerty
+        if (obj.hasOwnProperty(key)) {
+            copyObj[key] = deepClone(obj[key], clonedObjects)
         }
     }
 
     return copyObj;
 
+}
+
+function getType(obj) {
+    return Object.prototype.toString.call(obj)
+}
+
+function cloneOtherType(obj, objType) {
+    switch (objType) {
+        case '[Object Number]':
+        case '[Object String]':
+        case '[Object Boolean]':
+        case '[Object Error]':
+        case '[Object Date]':
+            return new obj.constructor(obj.valueof())
+        case '[Object Symbol]':
+            return Object(obj.valueof())
+        case '[Object Regexp]':
+            return cloneRegexp(obj)
+    }
+}
+
+function cloneRegexp(obj) {
+    const { resource, flags, lastIndex } = obj;
+    const copyObj = new RegExp(resource, flags);
+    copyObj.lastIndex = lastIndex;
+    return copyObj;
+}
+
+const traversrTypes = [
+    '[Object Array]', '[Object Object]', '[Object Set]', '[Object Map]', '[Object Arguments]'
+]
+
+
+function deepClone(obj, clonedObjects = new WeekMap()) {
+    if (clonedObjects.has(obj)) {
+        return clonedObjects.get(obj)
+    }
+    if (obj === null || obj !== 'object') {
+        return obj;
+    }
+    const objType = getType(obj);
+
+    let copyObj;
+    if (traversrTypes.includes(objType)) {
+        copyObj = new obj.constructor();
+    } else {
+        return cloneOtherType(obj, objType)
+    }
+
+    clonedObjects.set(obj, copyObj);
+
+    if (objType === '[Object Set]') {
+        obj.forEach((val) => {
+            copyObj.add(deepClone(val, clonedObjects))
+        })
+        return copyObj;
+    }
+
+    if (objType === '[Object Map]') {
+        obj.forEach((val, key) => {
+            copyObj.set(key, deepClone(val, clonedObjects))
+        })
+        return copyObj;
+    }
+
+    for (let key in obj) {
+        if (obj.hasOwnProperty(key)) {
+            copyObj[key] = deepClone(obj[key], clonedObjects)
+        }
+    }
+
+    return copyObj;
 }

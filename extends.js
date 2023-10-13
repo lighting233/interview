@@ -36,3 +36,29 @@ var Child = /** @class */ (function (_super) {
 //function __.prototype === Father.prototype
 //function Child.prototype.__proto__ === Father.prototype
 //function Child.prototype.constructor === Child
+
+// ES5继承（构造函数 + 原型链）
+function AnimalES5(name: string) {
+    this.name = name;
+  }
+  
+  AnimalES5.prototype.sayName = function () {
+    console.log("My name is " + this.name);
+  };
+  
+  function DogES5(name: string, breed: string) {
+    AnimalES5.call(this, name); // 调用父类构造函数
+    this.breed = breed;
+  }
+  
+  DogES5.prototype = Object.create(AnimalES5.prototype); // 设置原型链
+  DogES5.prototype.constructor = DogES5; // 修复构造函数
+  
+  DogES5.prototype.sayBreed = function () {
+    console.log("My breed is " + this.breed);
+  };
+  
+  // 示例用法
+  const dogES5 = new DogES5("Max", "Golden Retriever");
+  dogES5.sayName(); // 输出 "My name is Max"
+  dogES5.sayBreed(); // 输出 "My breed is Golden Retriever"
