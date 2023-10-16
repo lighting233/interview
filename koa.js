@@ -114,7 +114,7 @@ class App {
                 return Promise.reject()
             }
             index = i
-            if(this.middlewares.length === index) {
+            if(this.middlewares.length === i) {
                 return Promise.resolve()
             }
             return Promise.resolve(this.middlewares[i](ctx, () => dispatch(i+1)))
@@ -159,8 +159,6 @@ function fn1(x) {
     }
 
     return fn.reduce((pre,cur) => {
-        console.log("%c Line:159 🥒 cur", "color:#b03734", cur);
-        console.log("%c Line:159 🥟 pre", "color:#3f7cff", pre);
       return (...args) => {
         return pre(cur(...args))
       }

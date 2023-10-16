@@ -223,7 +223,7 @@ function resolvePromise(promise2, x, resolve, reject) {
     return reject(new TypeError("faile"));
   }
   // 我可能写的promise 要和别人的promise兼容，考虑不是自己写的promise情况
-  if ((typeof x === "object" && x !== null) || typeof x === "object") {
+  if ((typeof x === 'object' && x !== null) || typeof x === 'function') {
     try {
       let then = x.then;
       if (typeof then === "function") {

@@ -12,6 +12,7 @@ function customNew(constructor,...args) {
     const newObj = Object.create(constructor.prototype);
     // 调用构造函数，并将this绑定到新对象上
     const result = constructor.apply(newObj,args);
+    //todo instanceof
     // 如果构造函数显式返回了一个对象，则返回该对象；否则返回新对象
     return result instanceof Object ? result : newObj;
 }
