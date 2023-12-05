@@ -1,8 +1,14 @@
-Argument of type 'OnFulifilled<AxiosRequestConfig> | OnFulifilled<AxiosResponse<T>> | undefined' is not assignable to parameter of type '((value: AxiosRequestConfig | AxiosResponse<T>) => AxiosRequestConfig | PromiseLike<AxiosRequestConfig>) | null | undefined'.
-  Type 'OnFulifilled<AxiosRequestConfig>' is not assignable to type '(value: AxiosRequestConfig | AxiosResponse<T>) => AxiosRequestConfig | PromiseLike<AxiosRequestConfig>'.
-    Types of parameters 'value' and 'value' are incompatible.
-      Type 'AxiosRequestConfig | AxiosResponse<T>' is not assignable to type 'AxiosRequestConfig'.
-        Type 'AxiosResponse<T>' is not assignable to type 'AxiosRequestConfig'.
-          Types of property 'data' are incompatible.
-            Type 'T' is not assignable to type 'Record<string, any> | undefined'.ts(2345)
-Axios.tsx(6, 28): This type parameter might need an `extends Record<string, any> | undefined` constraint.
+var findLengthOfLCIS = function(nums) {
+    const dp = new Array(nums.length).fill(1);
+
+    for(let i = 1; i < nums.length; i++) {
+        if(nums[i] > nums[i - 1]) {
+            dp[i] = dp[i - 1] + 1;
+        }
+    }
+    console.log(dp)
+    console.log(Math.max(...dp))
+    return Math.max(...dp)
+};
+
+findLengthOfLCIS([1,3,5,4,7])
