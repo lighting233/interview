@@ -31,8 +31,8 @@ class Promise {
   }
 
   then(onFulfilled, onRejected) {
-    onFulfilled  = typeof onFulfilled !== 'function' ? onFulfilled : (v) => v;
-    onRejected  = typeof onRejected !== 'function' ? onRejected : (r) => {throw r};
+    onFulfilled  = typeof onFulfilled === 'function' ? onFulfilled : (v) => v;
+    onRejected  = typeof onRejected === 'function' ? onRejected : (r) => {throw r};
     const promise2 = new Promise((resolve, reject) => {
       if (this.state === PENDING) {
         this.onResolvedCallbacks.push(() => {
@@ -82,11 +82,13 @@ class Promise {
 }
 
 function resolvePromise(promise2, x, resolve, reject) {
+
+  //这部分代码 if(promise2 === x) {...} 的目的是防止 promise 链中出现自己等待自己（self-resolution）的情况，从而防止潜在的无限递归和内存泄漏。
     if(promise2 === x) {
         return reject(new TypeError('faile'))
     }
     // 我可能写的promise 要和别人的promise兼容，考虑不是自己写的promise情况
-    if((typeof x === 'object' && x !== null) || typeof x === 'object') {
+    if((typeof x === 'object' && x !== null) || typeof x === 'function') {
         try {
             let then = x.then;
             if(typeof then === 'function') {
@@ -105,6 +107,21 @@ function resolvePromise(promise2, x, resolve, reject) {
         resolve(x);
     }
 }
+
+//这里是一个简单的示例，演示了如何编写一个自身循环引用的 Promise 链：
+const myPromise = new Promise((resolve, reject) => {
+  resolve(myPromise); // 在 resolve 中返回自身
+});
+
+myPromise.then(
+  (value) => {
+    console.log(value);
+  },
+  (reason) => {
+    console.error(reason);
+  }
+);
+
 
 let promise = new Promise((resolve, reject) => {
   setTimeout(() => {

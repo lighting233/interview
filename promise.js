@@ -24,6 +24,10 @@ class Promise {
         this.onRejectedCallbacks = []
 
         const resolve = (value) => {
+            //Promise.resolve的等待效果
+            if (value instanceof Promise) {
+                return value.then(resolve, reject)
+            }
             if (this.state === PENDING) {
                 this.state = FULFILLED;
                 this.value = value;
@@ -79,7 +83,7 @@ class Promise {
                         try {
                             const x = this.onFulfilled(this.value);
                             resolvePromise(promise2, x, resolve, reject)
-                        }catch(e) {
+                        } catch (e) {
                             reject(e)
                         }
                     }, 0)
@@ -90,7 +94,7 @@ class Promise {
                         try {
                             const x = this.onRejected(this.value);
                             resolvePromise(promise2, x, resolve, reject)
-                        }catch(e) {
+                        } catch (e) {
                             reject(e)
                         }
                     }, 0)
@@ -109,8 +113,8 @@ class Promise {
     finally(cb) {
         return this.then((value) => {
             return Promise.resolve(cb()).then(() => value)
-        },(reason) => {
-            return Promise.resolve(cb()).then(() => {throw reason})
+        }, (reason) => {
+            return Promise.resolve(cb()).then(() => { throw reason })
         })
     }
 
@@ -126,6 +130,8 @@ class Promise {
         })
     }
 
+    //当所有的输入promise实例的状态都改变为fulfilled状态，新的promise实例才是fulfilled状态，返回所有输入promise实例的resolve value数组；
+    //如果有一个promise实例的状态是rejected，则新的promise实例的状态就是rejected，返回第一个promise reject的reason
     static all(promises) {
         return new Promise((resolve, reject) => {
             const len = promises.length;
@@ -152,6 +158,7 @@ class Promise {
         })
     }
 
+    //返回最先执行结束的promise的value或者reason，不论状态是rejected还是fulfilled
     static race(promises) {
         return new Promise((resolve, reject) => {
             for (let i = 0; i < len; i++) {
@@ -165,6 +172,7 @@ class Promise {
         })
     }
 
+    //返回promise数组中最先变成fulfilled实例的value，如果，所有输入的promise实例的状态都是rejected， 返回all promise were rejected
     static any(promises = []) {
         return new Promise((resolve, reject) => {
             const len = promises.length;
@@ -193,6 +201,8 @@ class Promise {
             }
         })
     }
+
+    //返回所有promise实例执行的数组，格式如下
     static allSettled(promises) {
         return new Promise((resolve, reject) => {
             const result = [];
@@ -235,7 +245,7 @@ function resolvePromise(promise2, x, resolve, reject) {
             let then = x.then;
             if (typeof then === 'function') {
                 then.call(x, (v) => {
-                    resolvePromise(promise2, x, resolve, reject)
+                    resolvePromise(promise2, v, resolve, reject)
                 }, (r) => {
                     reject(r)
                 })

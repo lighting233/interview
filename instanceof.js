@@ -19,11 +19,13 @@
 function customInstanceof(obj, constructorFunc) {
     // 判断 constructorFunc 是否为函数
     if (typeof constructorFunc !== 'function') {
+      //todo 不需要retuen
       throw new Error('Right-hand operand must be a function');
     }
   
     // 检查 obj 是否有原型链
-    if (obj === null || typeof obj !== 'object') {
+    //todo typeof obj !== 'function'
+    if (obj === null || typeof obj !== 'object' || typeof obj !== 'function') {
       return false;
     }
   
@@ -31,6 +33,7 @@ function customInstanceof(obj, constructorFunc) {
     const prototypeOfConstructor = constructorFunc.prototype;
   
     // 沿着原型链查找
+    //todo Object的getPrototypeOf方法
     let currentPrototype = Object.getPrototypeOf(obj);
     while (currentPrototype !== null) {
       // 如果找到了 constructorFunc 的原型对象，则 obj 是 constructorFunc 的实例

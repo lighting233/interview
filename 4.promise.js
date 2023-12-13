@@ -10,6 +10,9 @@ class Promise {
     this.onResolvedCallbacks = [];
     this.onRejectedCallbacks = [];
     const resolve = (value) => {
+      if(value instanceof Promise) {
+        return value.then(resolve,reject)
+      }
       if (this.state === PENDING) {
         this.value = value;
         this.state = FULFILLED;
@@ -95,7 +98,7 @@ class Promise {
       (v) => {
         return Promise.resolve(cb()).then(() => v);
       },
-      (r) => {
+      (err) => {
         return Promise.resolve(cb()).then(() => {
           throw err;
         });
@@ -220,7 +223,7 @@ function resolvePromise(promise2, x, resolve, reject) {
     return reject(new TypeError("faile"));
   }
   // 我可能写的promise 要和别人的promise兼容，考虑不是自己写的promise情况
-  if ((typeof x === "object" && x !== null) || typeof x === "object") {
+  if ((typeof x === 'object' && x !== null) || typeof x === 'function') {
     try {
       let then = x.then;
       if (typeof then === "function") {
