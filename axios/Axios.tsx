@@ -1,5 +1,5 @@
-import { AxiosRequestConfig, AxiosResponse } from './types.tsx';
-import AxiosInterceptorManager, { Interceptor } from './AxiosInterceptorManager.tsx'
+import { AxiosRequestConfig, AxiosResponse } from './types';
+import AxiosInterceptorManager, { Interceptor, OnFulifilled } from './AxiosInterceptorManager'
 import qs from 'qs';
 import parseHeaders from 'parse-headers'
 
@@ -11,7 +11,7 @@ export default class Axios<T> {
     request(config: AxiosRequestConfig): Promise<AxiosRequestConfig | AxiosResponse<T>> {
         // return this.dispatchRequest(config)
         const chain: Array<Interceptor<AxiosRequestConfig> | Interceptor<AxiosResponse<T>>> =[
-            { onFulifilled: this.dispatchRequest }
+            { onFulifilled : this.dispatchRequest } 
         ]
         this.interceptor.request.interceptors.forEach((interceptor: Interceptor<AxiosRequestConfig> | null) => {
             interceptor && chain.unshift(interceptor)
@@ -22,7 +22,7 @@ export default class Axios<T> {
         let promise:Promise<AxiosRequestConfig | AxiosResponse<T>> = Promise.resolve(config);
         while (chain.length) {
             const { onFulifilled, onRejected} = chain.shift()!; 
-            promise = promise.then(onFulifilled, onRejected)
+            promise = promise.then(onFulifilled as (value: AxiosRequestConfig | AxiosResponse<T>) => AxiosRequestConfig | Promise<AxiosRequestConfig> | AxiosResponse<T> | Promise<AxiosResponse<T>>, onRejected)
         }
         return promise;
     }

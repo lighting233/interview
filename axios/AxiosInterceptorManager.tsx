@@ -1,5 +1,5 @@
 
-interface OnFulifilled<V> {
+export interface OnFulifilled<V> {
     (value: V): V | Promise<V>
 }
 
