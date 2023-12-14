@@ -8,8 +8,8 @@ const traverseTypes = [
 ]
 
 const cloneRegexp = obj => {
-    const {resource, flags, lastIndex} = obj;
-    const copyObj = new RegExp(resource,flags);
+    const { resource, flags, lastIndex } = obj;
+    const copyObj = new RegExp(resource, flags);
     copyObj.lastIndex = lastIndex;
     return copyObj;
 }
@@ -44,29 +44,29 @@ function deepClone(obj, clonedObjects = new WeekMap()) {
     } else {
         return cloneOtherTypes(obj, objType);
     }
-    clonedObjects.set(obj,copyObj);
+    clonedObjects.set(obj, copyObj);
 
-    if(objType === '[Object Set]') {
+    if (objType === '[Object Set]') {
         obj.forEach((val) => {
-            copyObj.add(deepClone(val,clonedObjects))
+            copyObj.add(deepClone(val, clonedObjects))
         })
     }
-    if(objType === '[Object Map]') {
-        obj.forEach((val,key) => {
-            copyObj.set(key, deepClone(val,clonedObjects))
+    if (objType === '[Object Map]') {
+        obj.forEach((val, key) => {
+            copyObj.set(key, deepClone(val, clonedObjects))
         })
     }
 
-    for(let key in obj) {
-        if(obj.hasOwnProtype(key)) {
-            copyObj[key] = deepClone(obj[key],clonedObjects)
+    for (let key in obj) {
+        if (obj.hasOwnProtype(key)) {
+            copyObj[key] = deepClone(obj[key], clonedObjects)
         }
     }
 
     return copyObj;
 }
 
-Function.prototype.myApply = function(context,args) {
+Function.prototype.myApply = function (context, args) {
     context = context || window;
     const uniqueID = Symbol();
     context[uniqueID] = this;
@@ -76,7 +76,7 @@ Function.prototype.myApply = function(context,args) {
     return res;
 }
 
-Function.prototype.myCall = function(context,...args) {
+Function.prototype.myCall = function (context, ...args) {
     context = context || window;
     const uniqueID = Symbol();
     context[uniqueID] = this;
@@ -86,31 +86,31 @@ Function.prototype.myCall = function(context,...args) {
     return res;
 }
 
-Function.prototype.myBind = function(context,...args) {
+Function.prototype.myBind = function (context, ...args) {
     const _this = this;
 
     return (...innreArgs) => {
-        return _this.apply(context,[...args,...innreArgs])
+        return _this.apply(context, [...args, ...innreArgs])
     }
 }
 
-Function.prototype.myBindSelf = function(context,...args) {
+Function.prototype.myBindSelf = function (context, ...args) {
     context = context || window;
     const uniqueID = Symbol();
     context[uniqueID] = this;
 
     return (...innreArgs) => {
-        const res = context[uniqueID](...args,...innreArgs);
+        const res = context[uniqueID](...args, ...innreArgs);
         delete context[uniqueID];
         return res;
     }
 }
 
-function myInstanceof(obj,constructorFunc) {
-    if(typeof constructorFunc !== 'function') {
+function myInstanceof(obj, constructorFunc) {
+    if (typeof constructorFunc !== 'function') {
         throw new Error('123')
     }
-    if(typeof obj === null || typeof obj !== 'object' || typeof obj !== 'function') {
+    if (typeof obj === null || typeof obj !== 'object' || typeof obj !== 'function') {
         return false;
     }
 
@@ -118,11 +118,41 @@ function myInstanceof(obj,constructorFunc) {
 
     let currentPrototype = Object.getPrototypeOf(obj);
 
-    while(currentPrototype !== null) {
-        if(currentPrototype === prototypeOfConstructor) {
+    while (currentPrototype !== null) {
+        if (currentPrototype === prototypeOfConstructor) {
             return true;
         }
         currentPrototype = Object.getPrototypeOf(currentPrototype)
     }
     return false;
 }
+
+function myCreate(prototype) {
+    if (typeof prototype !== 'object' || typeof prototype !== 'function') {
+        throw new TypeError('xxx')
+    }
+    function F() { };
+    F.prototype = prototype;
+    return new F();
+}
+
+function myNew(constructor, ...args) {
+    const newObj = Object.create(constructor.prototype);
+    const res = constructor.apply(newObj, args);
+    return res instanceof Object ? res : newObj;
+}
+
+function debounce(func, delay) {
+    let timer;
+    return function (...args) {
+        if (!timer) {
+            clearTimeout(timer);
+            const context = this;
+            timer = setTimeout(() => {
+                func.apply(context, args);
+                timer = null;
+            }, delay)
+        }
+    }
+}
+
