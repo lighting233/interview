@@ -249,3 +249,95 @@ class Promise {
     }
 
 }
+
+function curry(func) {
+    return function curried(...args) {
+        if(args.length >= func.length) {
+            return func(...args);
+        }else {
+            return function (...moreArgs) {
+                return curried(...[...args,...moreArgs])
+            }
+        }
+    }
+}
+
+class EventBus {
+    constructor() {
+        this.events = [];
+    }
+
+    subscribe(eventName,callback,once = false) {
+        if(!this.events[eventName]) {
+            this.events[eventName] = [];
+        }
+        const subscription = {callback,onec};
+        this.events[eventName].push(subscription);
+
+        return () => {
+            this.unSubscription(eventName,subscription);
+        }
+    }
+
+    unSubscription(eventName,subscription) {
+        if(this.events[eventName]) {
+            const index = this.events[eventName].indexOf(subscription);
+            if(index !== -1) {
+                this.events[eventName].splice(index,1);
+            }
+        }
+    }
+
+    publish(eventName,...args) {
+        if(this.events[eventName]) {
+            const subscribers = this.events[eventName].slice();
+
+            for(let subscription of subscribers) {
+                subscription.callback(...args);
+
+                if(subscription.once) {
+                    this.unSubscription(eventName,subscription);
+                }
+            }
+        }
+    }
+}
+
+
+function compose(...fn) {
+    if(fn.length === 0) {
+        return (args) => args;
+    }
+
+    if(fn.length === 1) {
+        return fn[0];
+    }
+
+    return fn.reduce((pre,cur) => {
+        return (...args) => {
+            return pre(cur(...args))
+        }
+    })
+}
+
+class App {
+    constructor() {
+        this.midddlewares = [];
+    }
+
+    compose(ctx) {
+        let index = -1;
+        const dispatch = (i) => {
+            if(i <= index) {
+                Promise.reject();
+            }
+            index = i;
+            if(i === this.midddlewares.length) {
+                Promise.resolve();
+            }
+            return Promise.resolve(this.midddlewares[i](ctx,() => dispatch(i+1)))
+        };
+
+        dispatch(0);
+    }
+}
