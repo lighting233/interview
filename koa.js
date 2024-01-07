@@ -109,7 +109,7 @@ class App {
 
     compose(ctx) {
         let index = -1;
-        const dispatch = (i) = {
+        const dispatch = (i) => {
             if(i <= index) {
                 return Promise.reject()
             }
@@ -130,7 +130,7 @@ class App {
         })
     }
 
-    listen(..args) {
+    listen(...args) {
         const server = http.createServer(this.handleRequest);
         server.listen(...args)
     }

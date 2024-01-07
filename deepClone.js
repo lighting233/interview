@@ -69,9 +69,9 @@ function cloneOtherType(obj, objType) {
         case '[Object Boolean]':
         case '[Object Error]':
         case '[Object Date]':
-            return new obj.constructor(obj.valueof())
+            return new obj.constructor(obj.valueOf())
         case '[Object Symbol]':
-            return Object(obj.valueof())
+            return Object(obj.valueOf())
         case '[Object Regexp]':
             return cloneRegexp(obj)
     }
@@ -93,7 +93,7 @@ function deepClone(obj, clonedObjects = new WeekMap()) {
     if (clonedObjects.has(obj)) {
         return clonedObjects.get(obj)
     }
-    if (obj === null || obj !== 'object') {
+    if (obj === null || typeof obj !== 'object') {
         return obj;
     }
     const objType = getType(obj);

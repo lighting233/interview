@@ -17,6 +17,24 @@ function customNew(constructor,...args) {
     return result instanceof Object ? result : newObj;
 }
 
+function myNew(constructor, ...args) {
+    // 创建一个空对象，作为新对象实例
+    const newObj = {};
+  
+    // 将新对象的原型指向构造函数的原型
+    Object.setPrototypeOf(newObj, constructor.prototype);
+  
+    // 将构造函数的 this 指向新对象，并执行构造函数
+    const result = constructor.apply(newObj, args);
+  
+    // 如果构造函数返回一个对象，则返回该对象；否则，返回新创建的对象
+    if (typeof result === 'object' && result !== null) {
+      return result;
+    }
+  
+    return newObj;
+  }
+
 function customCreate(prototype) {
     function F() {} // 创建一个空的构造函数
     F.prototype = prototype; // 将构造函数的原型设置为传入的原型对象

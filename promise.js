@@ -137,6 +137,7 @@ class Promise {
         return this.then(null, errorFn)
     }
 
+    //无论如何都会执行，但可以向下继续执行
     finally(cb) {
         return this.then((value) => {
             return Promise.resolve(cb()).then(() => value)
@@ -188,12 +189,13 @@ class Promise {
     //返回最先执行结束的promise的value或者reason，不论状态是rejected还是fulfilled
     static race(promises) {
         return new Promise((resolve, reject) => {
+            const len = promises.length;
             for (let i = 0; i < len; i++) {
                 const p = promises[i];
                 if (p && typeof p.then === 'function') {
                     p.then(resolve, reject)
                 } else {
-                    resolve(i, p)
+                    resolve(p)
                 }
             }
         })
@@ -223,7 +225,7 @@ class Promise {
                         processError(i, reason)
                     })
                 } else {
-                    resolve(value)
+                    resolve(p)
                 }
             }
         })
