@@ -5,15 +5,42 @@ const REJECTED = 'REJECTED';
 const promise = new Promise((resolev, reject) => {
     resolve('123')
 })
-
-const promise2 = promise.then((data) => {
-
+//promise2 === x的情况
+const promise2 = new Promise((resolve,reject) => {
+    resolve(123)
+}).then((data) => {
+    return promise2
 }, (reason) => {
 
 })
 promise2.then((data) => {
 
 })
+
+function resolvePromise(promise2, x, resolve, reject) {
+    if (promise2 === x) {
+        return reject(new TypeError('123'))
+    }
+
+    if ((typeof x === 'object' && x !== null) || typeof x === 'function') {
+        try {
+            let then = x.then;
+            if (typeof then === 'function') {
+                then.call(x, (v) => {
+                    resolvePromise(promise2, v, resolve, reject)
+                }, (r) => {
+                    reject(r)
+                })
+            } else {
+                resolve(x)
+            }
+        } catch (e) {
+            reject(e)
+        }
+    } else {
+        resolve(x)
+    }
+}
 
 class Promise {
     constructor(executor) {
@@ -235,27 +262,3 @@ class Promise {
 
 }
 
-function resolvePromise(promise2, x, resolve, reject) {
-    if (promise2 === x) {
-        return reject(new TypeError('123'))
-    }
-
-    if ((typeof x === 'object' && x !== null) || typeof x === 'function') {
-        try {
-            let then = x.then;
-            if (typeof then === 'function') {
-                then.call(x, (v) => {
-                    resolvePromise(promise2, v, resolve, reject)
-                }, (r) => {
-                    reject(r)
-                })
-            } else {
-                resolve(x)
-            }
-        } catch (e) {
-            reject(e)
-        }
-    } else {
-        resolve(x)
-    }
-}
