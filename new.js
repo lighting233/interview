@@ -50,3 +50,14 @@ function createObject(proto) {
 
     return new F();
 }
+
+function Parent() {
+}
+Parent.prototype.say = function() {
+}
+const a = Object.create(Parent.prototype);
+console.log(a);
+console.log(a.constructor)
+const b = customCreate(Parent.prototype);
+console.log(b);
+console.log(b.constructor)
