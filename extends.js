@@ -63,31 +63,31 @@ const dogES5 = new DogES5("Max", "Golden Retriever");
 dogES5.sayName(); // 输出 "My name is Max"
 dogES5.sayBreed(); // 输出 "My breed is Golden Retriever"
 
-class Person{
-    name:string;
-    age:number;
-    constructor(name: string, age: number){
+class Person {
+    name: string;
+    age: number;
+    constructor(name: string, age: number) {
         this.name = name;
         this.age = age;
     }
-    getName():string{
+    getName(): string {
         return this.name;
     }
-    setName(name:string):void{
+    setName(name: string): void {
         this.name = name;
     }
 }
-class Student extends Person{
-    stuNo:number;
-    constructor(name: string, age: number, stuNo: number){
-        super(name,age);
+class Student extends Person {
+    stuNo: number;
+    constructor(name: string, age: number, stuNo: number) {
+        super(name, age);
         this.stuNo = stuNo;
     }
-    getStuNo(){
+    getStuNo() {
         return this.stuNo;
     }
 }
-let s1= new Student('zhufeng',11,1);
+let s1 = new Student('zhufeng', 11, 1);
 
 var Person = (function () {
     function Person(name, age) {
@@ -132,12 +132,54 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 
-//简化extends
-var extends = function(child,parnet) {
-    Object.setPrototypeOf(child, parnet); //child.__proto__ = Person; child可以继承Person上的静态属性
+//简化__extends
+var extends = function(child,super) {
+    Object.setPrototypeOf(child, super); //child.__proto__ = super; child可以继承Person上的静态属性
     function F() {
         this.constructor = child;
     }
-    F.prototype = Person.prototype;
+    F.prototype = super.prototype;
     child.prototype = new F(); //child.prototype.__proto__ = F.prototype;
+}
+
+var Child = (function (super) {
+    extends (Child, super);
+    function Child(name) {
+        var _this = super.call(this, name) || this;
+        _this.name = name;
+        return this;
+    }
+    Child.prototype.sayName = function () {
+        console.log(this.name)
+    }
+    return Child;
+} (Parent))
+
+
+function SuperType(name) {
+    this.name = name;
+    this.colors = ["red", "blue", "green"];
+}
+
+SuperType.prototype.sayName = function () {
+    alert(this.name);
+};
+
+function SubType(name, age) {
+    SuperType.call(this, name);
+    this.age = age;
+}
+
+function extends(subType, superType) {
+    Object.setPrototypeOf(subType, superType);  //child.__proto__ = super; child可以继承Person上的静态属性
+    var prototype = Object.create(superType.prototype);     //创建对象     
+    prototype.constructor = subType;              //增强对象     
+    subType.prototype = prototype;               //指定对象 
+} 
+ 
+
+extends (SubType, SuperType);
+
+SubType.prototype.sayAge = function () {
+    alert(this.age);
 }
