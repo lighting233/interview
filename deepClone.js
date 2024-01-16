@@ -73,7 +73,7 @@ function cloneOtherType(obj, objType) {
         case '[Object Symbol]':
             return Object(obj.valueOf())
         case '[Object Regexp]':
-            return cloneRegexp(obj)
+            return cloneRegExp(obj)
     }
 }
 
@@ -101,11 +101,11 @@ function deepClone(obj, clonedObjects = new WeekMap()) {
     let copyObj;
     if (traversrTypes.includes(objType)) {
         copyObj = new obj.constructor();
+        clonedObjects.set(obj, copyObj);
     } else {
         return cloneOtherType(obj, objType)
     }
 
-    clonedObjects.set(obj, copyObj);
 
     if (objType === '[Object Set]') {
         obj.forEach((val) => {
