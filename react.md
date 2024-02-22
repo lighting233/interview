@@ -64,3 +64,7 @@ Diff算法的本质是对比1和4，生成2。
 
 为了快速的找到key对应的oldFiber，我们将所有还未处理的oldFiber存入以key为key，oldFiber为value的Map中。
 接下来遍历剩余的newChildren，通过newChildren[i].key就能在existingChildren中找到key相同的oldFiber。
+
+## 2.setstate是同步还是异步?
+[setstate是同步还是异步](https://zhuanlan.zhihu.com/p/460668459)
+[setstate是同步还是异步](https://blog.csdn.net/GMLGDJ/article/details/129404713)

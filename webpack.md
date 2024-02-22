@@ -109,3 +109,8 @@ https://blog.csdn.net/weixin_42614080/article/details/110507675
 1. 解析 Parse : 将代码解析生成抽象语法树（即AST），即词法分析与语法分析的过程
 2. 转换 Transform: 对于 AST 进行变换一系列的操作，Babel 接受得到 AST 并通过 `babel-traverse` 对其进行遍历，在此过程中进行添加、更新及移除等操作
 3. 生成 Generate: 将变换后的 AST 再转换为 JS 代码, 使用到的模块是 `babel-generato`
+
+# 4.[tree shaking](https://juejin.cn/post/6993275177647751182)
+
+# 5.[webpack-dev-server原理](https://www.cnblogs.com/longlongdan/p/12391740.html)
+[webpack-dev-server原理](https://blog.csdn.net/weixin_42614080/article/details/110507675)
