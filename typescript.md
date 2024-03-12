@@ -53,7 +53,7 @@ throw new Error("Method not implemented.")
 }
 (`)
 
-// ## 4. interface 可以修饰类的构造函数
+## 4. interface 可以修饰类的构造函数
 
 //构造函数类型
 

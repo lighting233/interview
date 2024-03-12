@@ -28,11 +28,7 @@ function myNew(constructor, ...args) {
     const result = constructor.apply(newObj, args);
   
     // 如果构造函数返回一个对象，则返回该对象；否则，返回新创建的对象
-    if (typeof result === 'object' && result !== null) {
-      return result;
-    }
-  
-    return newObj;
+    return result instanceof Object ? result : newObj;
   }
 
 function customCreate(prototype) {

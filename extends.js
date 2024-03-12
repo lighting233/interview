@@ -147,7 +147,7 @@ var Child = (function (super) {
     function Child(name) {
         var _this = super.call(this, name) || this;
         _this.name = name;
-        return this;
+        return _this;
     }
     Child.prototype.sayName = function () {
         console.log(this.name)
@@ -171,7 +171,7 @@ function SubType(name, age) {
 }
 
 function extends(subType, superType) {
-    Object.setPrototypeOf(subType, superType);  //child.__proto__ = super; child可以继承Person上的静态属性
+    Object.setPrototypeOf(subType, superType);  //subType.__proto__ = superType; child可以继承Person上的静态属性
     var prototype = Object.create(superType.prototype);     //创建对象     
     prototype.constructor = subType;              //增强对象     
     subType.prototype = prototype;               //指定对象 

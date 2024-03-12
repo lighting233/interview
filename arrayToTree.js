@@ -42,13 +42,15 @@ console.log(tree);
 
 
 //扁平化数组
-
+let nestedArray = [1, 2, [3, 4], [5, [6, 7]]];
 const flat = (arr) => {
     return arr.reduce((prev,cur) => {
+        console.log("%c Line:48 🍷 prev", "color:#fca650", prev);
+        console.log("%c Line:48 🍤 cur", "color:#3f7cff", cur);
         return prev.concat(Array.isArray(cur) ? flat(cur) : cur)
     },[])
 }
-
+flat(nestedArray)
 const flat2 = (arr) => {
     const res = [];
 
@@ -65,3 +67,39 @@ const flat2 = (arr) => {
 
     return res;
 }
+
+//实现一个sleep函数
+class LazyLog {
+    constructor() {
+        this.queue = [];
+    }
+
+    log(value) {
+        this.queue.push(() => {
+            console.log(value);
+        });
+        return this;
+    }
+
+    sleep(ms) {
+        this.queue.push(new Promise(resolve => {
+            setTimeout(resolve, ms);
+        }));
+        return this;
+    }
+
+    async execute() {
+        for (const task of this.queue) {
+            if (typeof task === 'function') {
+                task();
+            } else if (task instanceof Promise) {
+                await task;
+            }
+        }
+    }
+}
+
+// 使用示例
+(async () => {
+    await (new LazyLog()).log(1).sleep(1000).log(2).log(3).execute();
+})();

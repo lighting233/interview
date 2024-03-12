@@ -5,7 +5,7 @@ const response = require('./response');
 const Stream = require('stream')
 const EventEmitter = require('events');
 
-class Application extends EventEmitter{
+class Application extends EventEmitter {
     constructor() {
         super(); // EventEmiiter.call(this);
         this.context = Object.create(context); //  实现每次创建一个应用都有自己的全新上下文
@@ -73,8 +73,8 @@ class Application extends EventEmitter{
             } else {
                 res.end(`Not Found`)
             }
-        }).catch((err)=>{
-            this.emit('error',err);
+        }).catch((err) => {
+            this.emit('error', err);
         })
     }
     listen(...args) {
@@ -97,33 +97,33 @@ class App {
     constructor() {
         this.middlewares = [];
     }
-    
+
 
     use(middleware) {
         this.middlewares.push(middleware)
     }
 
-    createContext(req,res) {
+    createContext(req, res) {
         // return 
     }
 
     compose(ctx) {
         let index = -1;
         const dispatch = (i) => {
-            if(i <= index) {
+            if (i <= index) {
                 return Promise.reject()
             }
             index = i
-            if(this.middlewares.length === i) {
+            if (this.middlewares.length === i) {
                 return Promise.resolve()
             }
-            return Promise.resolve(this.middlewares[i](ctx, () => dispatch(i+1)))
+            return Promise.resolve(this.middlewares[i](ctx, () => dispatch(i + 1)))
         }
         return dispatch(0)
     }
 
-    handleRequest(req,res) {
-        const ctx = this.createContext(req,res)
+    handleRequest(req, res) {
+        const ctx = this.createContext(req, res)
 
         this.compose(ctx).then(() => {
 
@@ -138,35 +138,36 @@ class App {
 
 function fn1(x) {
     return x + 1;
-  }
-  function fn2(x) {
+}
+function fn2(x) {
     return x + 2;
-  }
-  function fn3(x) {
+}
+function fn3(x) {
     return x + 3;
-  }
-  function fn4(x) {
+}
+function fn4(x) {
     return x + 4;
-  }
+}
 
-  //redux中间件
-  function compose(...fn) {
-    if(!fn.length) {
+//redux中间件
+function compose(...fn) {
+    if (!fn.length) {
         return (arg) => arg
     }
-    if(fn.length === 1) {
+    if (fn.length === 1) {
         return fn[0]
     }
 
-    return fn.reduce((pre,cur) => {
-      return (...args) => {
-        return pre(cur(...args))
-      }
+    const res =  fn.reduce((pre, cur) => {
+        return (...args) => {
+            return pre(cur(...args))
+        }
     })
-  }
+    return res;
+}
 
-  //fn4(fn3(fn2(fn1(1))))
-  const a = compose(fn4, fn3, fn2, fn1);
-  console.log("%c Line:24 🍞 a", "color:#ea7e5c", a);
+//fn4(fn3(fn2(fn1(1))))
+const a = compose(fn4, fn3, fn2, fn1);
+console.log("%c Line:24 🍞 a", "color:#ea7e5c", a);
 
-  console.log(a(1));
+console.log(a(1));

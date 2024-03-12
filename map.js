@@ -37,7 +37,7 @@ Array.prototype.filter = fucntion(callback,context) {
     const result = []
     for(let i = 0; i < this.length; i++) {
         const item = callback.call(context,this[i],i,this);
-        item && result.push(item);
+        item && result.push(this[i]);
     };
 
     return result;
