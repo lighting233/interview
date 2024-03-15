@@ -171,3 +171,4 @@ const a = compose(fn4, fn3, fn2, fn1);
 console.log("%c Line:24 🍞 a", "color:#ea7e5c", a);
 
 console.log(a(1));
+

@@ -2,7 +2,8 @@
 - https://fe.ecool.fun/topic/6e2ce014-4783-4e8d-ba0a-e655a8b687cd?orderBy=updateTime&order=desc&tagId=28
 
 # 2.loader和plugin
-
+Loader直译为"加载器"。Webpack将一切文件视为模块，但是webpack原生是只能解析js文件，如果想将其他文件也打包的话，就会用到loader。 所以Loader的作用是让webpack拥有了加载和解析非JavaScript文件的能力。
+Plugin直译为"插件"。Plugin可以扩展webpack的功能，让webpack具有更多的灵活性。 在 Webpack 运行的生命周期中会广播出许多事件，Plugin 可以监听这些事件，在合适的时机通过 Webpack 提供的 API 改变输出结果
 ## loader
 - less-loader sass-loader
 - css-loader 处理background:(url)和@import语法，让webpack能够正确的对其路径进行模块化处理
@@ -55,7 +56,7 @@
 - ModuleNotFoundPlugin 模块找不到时提供一些必要上下文信息
 - DefinePulgin
 - mini-css-extract-plugin 将css提取为独立文件的插件，对每个包含css的js文件都会创建一个css文件，支持按需加载
-- optimize-css-assets-webpack-plugin 优化或压缩scc
+- optimize-css-assets-webpack-plugin 优化或压缩css
 - manifestplugin 生成一个manifest资源清单文件
 - SpeedMeasureWebpackPlugin 分析打包速度
 - bundle-analyzer-plugin

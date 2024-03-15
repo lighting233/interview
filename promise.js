@@ -84,7 +84,7 @@ class Promise {
             if (this.state === FULFILLED) {
                 setTimeout(() => {
                     try {
-                        const x = this.onFulfilled(this.value);
+                        const x = onFulfilled(this.value);
                         resolvePromise(promise2, x, resolve, reject)
                     } catch (e) {
                         reject(e)
@@ -95,7 +95,7 @@ class Promise {
             if (this.state === REJECTED) {
                 setTimeout(() => {
                     try {
-                        const x = this.onRejected(this.value);
+                        const x = onRejected(this.value);
                         resolvePromise(promise2, x, resolve, reject)
                     } catch (e) {
                         reject(e)
@@ -108,7 +108,7 @@ class Promise {
                 this.onResolvedCallbacks.push(() => {
                     setTimeout(() => {
                         try {
-                            const x = this.onFulfilled(this.value);
+                            const x = onFulfilled(this.value);
                             resolvePromise(promise2, x, resolve, reject)
                         } catch (e) {
                             reject(e)
@@ -119,7 +119,7 @@ class Promise {
                 this.onRejectedCallbacks.push(() => {
                     setTimeout(() => {
                         try {
-                            const x = this.onRejected(this.value);
+                            const x = onRejected(this.value);
                             resolvePromise(promise2, x, resolve, reject)
                         } catch (e) {
                             reject(e)
