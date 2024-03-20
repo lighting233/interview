@@ -68,3 +68,4 @@ Diff算法的本质是对比1和4，生成2。
 ## 2.setstate是同步还是异步?
 [setstate是同步还是异步](https://zhuanlan.zhihu.com/p/460668459)
 [setstate是同步还是异步](https://blog.csdn.net/GMLGDJ/article/details/129404713)
+

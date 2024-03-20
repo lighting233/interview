@@ -71,6 +71,7 @@ function cloneOtherType(obj, objType) {
         case '[Object Date]':
             return new obj.constructor(obj.valueOf())
         case '[Object Symbol]':
+        case '[Object BigInt]'
             return Object(obj.valueOf())
         case '[Object Regexp]':
             return cloneRegExp(obj)

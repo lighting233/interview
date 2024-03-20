@@ -264,3 +264,40 @@ class Promise {
 
 }
 
+//下面是一个加强版的 promiseAll 函数，它可以限制并发数量，并按顺序发送和返回结果：
+
+function promiseAllWithLimit(promises, limit) {
+    return new Promise((resolve, reject) => {
+        const results = [];
+        let index = 0;
+        let running = 0;
+
+        function run() {
+            if (index >= promises.length && running === 0) {
+                resolve(results);
+                return;
+            }
+
+            while (running < limit && index < promises.length) {
+                const currentIndex = index;
+                index++;
+                running++;
+
+                promises[currentIndex]()
+                    .then((result) => {
+                        results[currentIndex] = result;
+                    })
+                    .catch((error) => {
+                        reject(error);
+                    })
+                    .finally(() => {
+                        running--;
+                        run();
+                    });
+            }
+        }
+
+        run();
+    });
+}
+
