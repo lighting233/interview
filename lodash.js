@@ -13,9 +13,9 @@ function customGet(source, path, defaultValue) {
     }
     path = Array.isArray(path) ? path : path.split('.');
 
-    const res = path.reduce((prev,cur) => {
+    const res = path.reduce((prev, cur) => {
         return (prev || {})[cur]
-    },source)
+    }, source)
     return res !== undefined ? res : defaultValue
 }
 
@@ -33,3 +33,17 @@ console.log(cityName); // 输出：New York
 
 const nonExistentProp = customGet(obj, 'user.age', 'N/A');
 console.log(nonExistentProp); // 输出：N/A
+
+fn([1, 2, 3, 4, 5], 2); //结果为[[1,2],[3,4],[5]]
+
+function fn(arr, size) {
+    if (!Array.isArray(arr)) {
+        throw new TypeError('')
+    }
+    const res = [];
+    for(let i = 0; i < arr.length; i+=size ) {
+        res.push(arr.slice(i,i+size))
+    } 
+    return res;
+}
+console.log(fn([1, 2, 3, 4, 5], 2))
