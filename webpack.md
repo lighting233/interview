@@ -8,7 +8,8 @@ Plugin直译为"插件"。Plugin可以扩展webpack的功能，让webpack具有�
 - less-loader sass-loader
 - css-loader 处理background:(url)和@import语法，让webpack能够正确的对其路径进行模块化处理
 - style-loader 把css代码注入到js中，通过dom操作加载css
-- postcss-loader
+- postcss-loader 它可以与 PostCSS 插件一起使用，对 CSS 进行转换、优化和添加浏览器兼容性前缀等操作。
+通过配置 postcss-loader，你可以在构建过程中自动应用一系列 PostCSS 插件，例如 autoprefixer（用于自动添加 CSS3 前缀以实现跨浏览器兼容性）、cssnano（用于压缩 CSS 文件）、postcss-preset-env（用于使用最新的 CSS 特性而不必等待浏览器支持）等。
 - babel-loader
 - thread-loader
 - cache-loader
@@ -50,6 +51,7 @@ Plugin直译为"插件"。Plugin可以扩展webpack的功能，让webpack具有�
 总之，`DllPlugin` 可以通过提前编译打包稳定的代码库，减少构建时间和资源消耗，提高缓存效果，从而优化 Webpack 构建性能。
 #添加的
 
+- MiniCssExtractPlugin 是一个 Webpack 插件，用于将 CSS 文件从 JavaScript bundle 中提取出来，单独生成一个 CSS 文件。
 - html-webpack-plugin
 - htmlWebpackExtenralsPlugin 自动插入cdn脚本，按需加载，页面中没用到引用的lodash不会插入到脚本中
 - InlineChunkHtemlPlugin 可以把runtime（webpack运行时代码）文件插到html里边去，节约请求数
