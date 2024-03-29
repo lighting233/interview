@@ -90,6 +90,7 @@ class LazyLog {
 
     async execute() {
         for (const task of this.queue) {
+            console.log(typeof task)
             if (typeof task === 'function') {
                 task();
             } else if (task instanceof Promise) {
@@ -99,7 +100,9 @@ class LazyLog {
     }
 }
 
+new LazyLog().log(1).sleep(1000).log(2).log(3).execute();
+
 // 使用示例
-(async () => {
-    await (new LazyLog()).log(1).sleep(1000).log(2).log(3).execute();
-})();
+// (async () => {
+//     await (new LazyLog()).log(1).sleep(1000).log(2).log(3).execute();
+// })();
