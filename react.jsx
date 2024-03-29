@@ -90,9 +90,9 @@ function enqueueSetState(inst, payload, callback) {
     if (newCallbackPriority === SyncLane) {
       // 略，同步更新，不通过 scheduler，直接调用 performSyncWorkOnRoot 执行同步的 render 了
       // 任务已经过期，需要同步执行render阶段
-    newCallbackNode = scheduleSyncCallback(
-    performSyncWorkOnRoot.bind(null, root)
-  );
+      newCallbackNode = scheduleSyncCallback(
+      performSyncWorkOnRoot.bind(null, root)
+    );
     } else {
       let schedulerPriorityLevel;
       // Lanes 模型到 Scheduler 优先级的映射，展开看下
