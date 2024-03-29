@@ -72,3 +72,51 @@ console.log(a)
 // 8.增加一个函数的壳子 并且让函数执行 让 module.exports 作为了this
 // 9.用户会默认拿到module.exports的返回结果
 // 最终返回的是 exports对象
+
+
+
+UMD，即Universal Module Definition，是一种JavaScript模块定义的模式，它允许JavaScript模块在各种执行环境中被使用，包括但不限于浏览器环境和Node.js。
+UMD模式通过检查JavaScript运行环境来决定使用哪种模块的导出方式，能够兼容以下几种主要的模块定义标准：
+AMD（Asynchronous Module Definition）：用于浏览器环境，允许异步加载模块。
+CommonJS：主要用于Node.js服务器环境下的模块加载。
+Global/Window：没有模块系统可用时，模块会添加到全局变量或者浏览器的window对象上。
+当你使用Webpack等构建工具并指定libraryTarget为umd时，Webpack会生成一个UMD包装器，这个包装器会尝试兼容上述所有环境。以下是一个简化的UMD模块的结构示例：
+javascript
+(function (root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    // AMD. Register as an anonymous module.
+    define([], factory);
+  } else if (typeof exports === 'object' && typeof module !== 'undefined') {
+    // CommonJS
+    module.exports = factory();
+  } else {
+    // Browser globals (root is window)
+    root.returnExports = factory();
+  }
+}(this, function () {
+  // Your module code here. In this example, it's a simple value.
+  var myModule = {
+    doSomething: function () {
+      console.log('Doing something...');
+    }
+  };
+
+  return myModule;
+}));
+使用UMD打包的文件在其他项目中的引用方法取决于目标项目的模块系统：
+AMD环境下，可使用Require.js之类的加载器加载UMD模块：
+javascript
+   require(['path/to/your/umd/module'], function(myModule) {
+     myModule.doSomething();
+   });
+CommonJS环境下，如Node.js，可以使用require直接引入模块：
+javascript
+   var myModule = require('path/to/your/umd/module');
+   myModule.doSomething();
+在没有模块加载器的环境下（如传统的浏览器全局环境），UMD模块会将导出直接挂载到全局对象（通常是window）上：
+html
+   <script src="path/to/your/umd/module.js"></script>
+   <script>
+     window.myModule.doSomething();
+   </script>
+这意味着，无论在AMD, CommonJS，还是在全局变量模式下，UMD模块都可以被其他项目便捷地引用并使用。
