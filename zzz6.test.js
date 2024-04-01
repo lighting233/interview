@@ -294,7 +294,7 @@ function deepClone(obj, clonedObj = new WeekMap()) {
     let copyObj;
     const objType = getType(obj);
     if (traversType.includes(objType)) {
-        clonedObj = new obj.constructor();
+        copyObj = new obj.constructor();
         clonedObj.set(obj, clonedObj);
     } else {
         return cloneOthers(obj, objType);
@@ -311,7 +311,7 @@ function deepClone(obj, clonedObj = new WeekMap()) {
     }
     for (let key in obj) {
         if (obj.hasOwnproperty(key)) {
-            obj[key] = deepClone(obj[key], clonedObj)
+            copyObj[key] = deepClone(obj[key], clonedObj)
         }
     }
 
@@ -338,7 +338,7 @@ function cloneOthers(obj, objType) {
 }
 function copyRegexp(obj) {
     const { source, flags, lastIndex } = obj;
-    const copyReg = new RegEXP(source, flags);
+    const copyReg = new RegExp(source, flags);
     copyReg.lastIndex = lastIndex;
     return copyReg;
 }

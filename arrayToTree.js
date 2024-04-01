@@ -90,6 +90,7 @@ class LazyLog {
 
     async execute() {
         for (const task of this.queue) {
+            console.log(typeof task)
             if (typeof task === 'function') {
                 task();
             } else if (task instanceof Promise) {
@@ -98,6 +99,8 @@ class LazyLog {
         }
     }
 }
+
+new LazyLog().log(1).sleep(1000).log(2).log(3).execute();
 
 // 使用示例
 (async () => {
@@ -126,3 +129,6 @@ console.log(sum(1, 2).sumOf()); // 返回 3
 console.log(sum(1, 2)(3).sumOf()); // 返回 6
 console.log(sum(1)(2, 3, 4).sumOf()); // 返回 10
 console.log(sum(1, 2)(3, 4)(5).sumOf()); // 返回 15
+// (async () => {
+//     await (new LazyLog()).log(1).sleep(1000).log(2).log(3).execute();
+// })();
