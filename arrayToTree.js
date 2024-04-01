@@ -44,11 +44,11 @@ console.log(tree);
 //扁平化数组
 let nestedArray = [1, 2, [3, 4], [5, [6, 7]]];
 const flat = (arr) => {
-    return arr.reduce((prev,cur) => {
+    return arr.reduce((prev, cur) => {
         console.log("%c Line:48 🍷 prev", "color:#fca650", prev);
         console.log("%c Line:48 🍤 cur", "color:#3f7cff", cur);
         return prev.concat(Array.isArray(cur) ? flat(cur) : cur)
-    },[])
+    }, [])
 }
 flat(nestedArray)
 const flat2 = (arr) => {
@@ -56,11 +56,11 @@ const flat2 = (arr) => {
 
     const stack = [...arr];
 
-    while(stack.length) {
+    while (stack.length) {
         const item = stack.pop();
-        if(Array.isArray(item)) {
+        if (Array.isArray(item)) {
             stack.push(...item);
-        }else {
+        } else {
             res.unshift(item)
         }
     }
@@ -103,3 +103,26 @@ class LazyLog {
 (async () => {
     await (new LazyLog()).log(1).sleep(1000).log(2).log(3).execute();
 })();
+
+// 设计一个sum函数，使其满足以下要求
+
+sum(1, 2).sumOf() // 返回 3
+
+sum(1, 2)(3).sumOf() // 返回 6
+
+sum(1)(2, 3, 4).sumOf() // 返回 10
+
+sum(1, 2)(3, 4)(5).sumOf() // 返回 15
+
+function sum(...args) {
+    // 一个内部函数，用于计算参数的和
+    const f = (...newArgs) => sum(...args.concat(newArgs));
+    // sumOf方法，调用时计算参数总和
+    f.sumOf = () => args.reduce((acc, current) => acc + current, 0);
+    return f;
+}
+
+console.log(sum(1, 2).sumOf()); // 返回 3
+console.log(sum(1, 2)(3).sumOf()); // 返回 6
+console.log(sum(1)(2, 3, 4).sumOf()); // 返回 10
+console.log(sum(1, 2)(3, 4)(5).sumOf()); // 返回 15
