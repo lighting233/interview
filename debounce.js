@@ -1,3 +1,68 @@
+
+function debounce(fn, delay, immediate) {
+    let timer;
+    return function (...args) {
+        const context = this;
+        if (immediate && !timer) {
+            fn.apply(context, args)
+        }
+        clearTimeout(timer);
+        setTimeout(() => {
+            fn.apply(context, args)
+        }, delay);
+    }
+}
+
+function throttle(fn, delay, options) {
+    const { leading = false, trailing = true } = options;
+    let prevTime = 0;
+    let timer;
+
+    return function (...args) {
+        const context = this;
+        const currentTime = Date.now();
+
+        if (leading && currentTime - prevTime > delay) {
+            currentTime = prevTime;
+            fn.apply(context, args);
+        } else if (!timer) {
+            if (trailing) {
+                setTimeout(() => {
+                    prevTime = currentTime;
+                    fn.apply(context, args);
+                    clearTimeout(timer);
+                })
+            }
+        }
+    }
+}
+
+function debounce(func, wait, immediate) {
+    let timer;
+    return function (...args) {
+        // 保存上下文和参数，以便后面使用
+        const context = this;
+        // 如果满足立即调用的条件，则调用函数
+        if (immediate && !timer) func.apply(context, args);
+        // 清除之前的延时调用
+        clearTimeout(timer);
+        // 重新设置延时调用
+        timer = setTimeout(() => {
+            func.apply(context, args);
+        }, wait);
+    };
+}
+
+
+// 使用示例
+const myEfficientFn = debounce(function () {
+    // 需要防抖的操作
+    console.log('Function debounced');
+}, 250);
+
+window.addEventListener('resize', myEfficientFn);
+
+
 function debounce(func, delay) {
     let timer;
     return function (...args) {

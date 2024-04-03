@@ -182,3 +182,68 @@ function useState(initialState) {
     return [baseState, dispatchAction.bind(null, hook.queue)]
 }
 
+function useState(initialState) {
+    if(!hookState[hookIndex]) {
+      hookState[hookIndex] = initialState;
+    };
+    let currentIndex = hookIndex;
+    function dispatch(action) {
+      hookState[currentIndex] = typeof action === 'function' ? action(hookState[currentIndex]) : action;
+      scheduleUpdateOnFiber();
+    }
+    return [hookState[hookIndex++],dispatch]
+}
+
+function useReducer(reducer,initialState) {
+  if(!hookState[hookIndex]) {
+    hookState[hookIndex]=initialState;
+}
+  
+  let currentIndex = hookIndex;
+  function dispatch(action){
+    hookState[currentIndex]=reducer(hookState[currentIndex],action);
+    scheduleUpdateOnFiber();
+  }
+  return [hookState[hookIndex++],dispatch];
+}
+
+function useMemo(factory,deps) {
+  if(hookState[hookIndex]) {
+    const [oldMomo, oldDeps] = hookState[hookIndex];
+    const everySame = deps.every((item,index) => item === oldDeps[index]);
+    if(everySame) {
+      hookState[hookIndex++];
+      return oldMomo;
+    }else {
+      const newMemo = factory();
+      hookState[hookIndex++] = [newMemo,deps]
+      return newMemo;
+    }
+  
+  }else {
+    const newMemo = factory();
+    hookState[hookIndex++] = [newMemo,deps]
+    return newMemo;
+  }
+}
+
+function useLayoutEffect(callback,deps) {
+  if(hookState[hookIndex]) {
+    const [destory,oldDeps] = hookState[hookIndex];
+    const everySame = deps.every((item,index) => item === oldDeps[index]);
+    if(everySame) {
+      hookIndex++;
+    }else {
+      destory && destory();
+      queueMicrotask(() => {
+        const destory = callback();
+        hookState[hookIndex++] = [destory,deps]
+      })
+    }
+  }else {
+    queueMicrotask(() => {
+      const destory = callback();
+      hookState[hookIndex++] = [destory,deps]
+    })
+  }
+}

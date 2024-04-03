@@ -120,3 +120,29 @@ html
      window.myModule.doSomething();
    </script>
 这意味着，无论在AMD, CommonJS，还是在全局变量模式下，UMD模块都可以被其他项目便捷地引用并使用。
+
+
+
+//commonjs 导入es6
+var modules = {
+  //总结一下，如果原来是es module 如何变成commonjs
+  //export default会变成exports.default
+  //export xx exports.xx
+  './src/title.js':(module,exports,require)=>{
+    //不管是commonjs还是es module最后都编译成common.js,如果原来是es module的话，
+    //就把exports传给r方法处理一下，exports.__esModule=true ，以后就可以通过这个属性来判断原来是不是一个es module
+    require.r(exports);
+    const DEFAULT_EXPORT = 'title_name';
+    const age = 'title_age';
+    require.d(exports,{
+      default:()=>DEFAULT_EXPORT,
+      age:()=>age
+    });   
+  }
+}
+require.d = (exports,definition)=>{
+  for(let key in definition){
+    //exports[key]=definition[key]();
+    Object.defineProperty(exports,key,{enumerable:true,get:definition[key]});
+  }
+}
