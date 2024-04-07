@@ -34,7 +34,7 @@ Function.prototype.myBind = function(context,...args) {
 
     return (...innerArgs) => {
         //todo 返回值
-        const res = context[uniqueID](...args,...innerArgs);
+        const res = context[uniqueID](...[...args,...moreArgs]);
         delete context[uniqueID]
         return res;
     }

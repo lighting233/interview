@@ -73,7 +73,7 @@ interface WithNameClass {
     say(): string
 }
 
-let wc: WithNameClass = Animal //修饰构造函数， typeof Animal 获取的是类的构造函数
+let wc: WithNameClass = Animal //描述类， typeof Animal 获取的是类的构造函数
 function createClass(clazz: typeof Animal, name: string) {
     return new clazz(name);
 }

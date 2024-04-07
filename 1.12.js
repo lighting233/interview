@@ -1,4 +1,2 @@
-var obj = {
-    a: '123',
-    b: '233'
-};
+let obj = {}
+console.log(obj['abc'] = 1)

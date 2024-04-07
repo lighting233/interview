@@ -1,3 +1,4 @@
+export {}
 interface Person {
     age: number;
     name: string;
@@ -19,10 +20,17 @@ interface Person {
     name: string;
     company: Company
 }
-//递归
 type DeepPartial<T> = {
-    [U in keyof T]?: T[U] extends object ? DeepPartial<T[U]> : T[U]
-}
+    [P in keyof T]?: T[P] extends Array<infer U>
+      ? Array<DeepPartial<U>> // 对数组进行特殊处理
+      : T[P] extends object
+      ? DeepPartial<T[P]> // 递归处理对象
+      : T[P];
+  };
+//递归
+// type DeepPartial<T> = {
+//     [U in keyof T]?: T[U] extends object ? DeepPartial<T[U]> : T[U]
+// }
 type PartialPerson = DeepPartial<Person>;
 let p: PartialPerson = {
     id: 1,
@@ -90,7 +98,7 @@ type InterSection<T, U> = {
 }
 type Test = ('a' | 'b') & ('a' | 'c')
 type Props = { name: string, age: number, visible: boolean };
-type DefaultProps = { age: number };
+type DefaultProps = { age: string };
 type DuplicateProps = InterSection<Props, DefaultProps>;
 
 type Overwrite<T extends object, U extends object, I = Diff<T, U> & InterSection<U, T>> = Pick<I, keyof I>
@@ -149,7 +157,7 @@ class Person8 {
     }
     getName() { console.log(this.name); }
 }
-type ConstructorParameters<T extends new (...args: any) => any> = T extends new (...args: infer P) => any ? P : never;
+type ConstructorParameters<T extends new (...args: any[]) => any> = T extends new (...args: infer P) => any ? P : never;
 type Params = ConstructorParameters<typeof Person8>;
 type ConstructorType = typeof Person8
 const conFun: ConstructorType = Person8;

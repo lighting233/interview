@@ -79,8 +79,8 @@ function cloneOtherType(obj, objType) {
 }
 
 function cloneRegexp(obj) {
-    const { resource, flags, lastIndex } = obj;
-    const copyObj = new RegExp(resource, flags);
+    const { source, flags, lastIndex } = obj;
+    const copyObj = new RegExp(source, flags);
     copyObj.lastIndex = lastIndex;
     return copyObj;
 }
