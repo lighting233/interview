@@ -1,43 +1,49 @@
-function arrayToTree(arr) {
-    const tree = [];
-    const map = {};
-
-    // 将数组中的每个元素转换为节点对象，并建立节点对象的映射关系
-    arr.forEach(item => {
-        map[item.id] = { ...item, children: [] };
-    });
-
-    // 遍历节点对象，构建树形结构
-    for (const id in map) {
-        if (map.hasOwnProperty(id)) {
-            const node = map[id];
-            const parentId = node.parentId;
-
-            if (parentId) {
-                if (map[parentId]) {
-                    map[parentId].children.push(node);
-                } else {
-                    console.error('Invalid parent id:', parentId);
-                }
-            } else {
-                tree.push(node);
+function arrayToTree(arr, parentId) {
+    const res = [];
+    arr.forEach((item) => {
+        if (item.parentId === parentId) {
+            const children = arrayToTree(arr,item.id)
+            if(children.length) {
+                item.children = children;
             }
+            res.push(item);
         }
-    }
+    })
+    return res;
+}
 
-    return tree;
+function arrayToTree2(arr) {
+    const res = [];
+    const map = {};
+    arr.forEach((item) => {
+        map[item.id] = item;
+    });
+    arr.forEach((item) => {
+        if(item.parentId) {
+            const parent = map[item.parentId];
+            if(!parent.children) {
+                parent.children = [];
+            }
+            parent.children.push(map[item.id])
+        }else {
+            res.push(map[item.id])
+        }
+    })
+    return res;
 }
 
 // 示例用法
 const flatArray = [
-    { id: 1, name: 'Node 1', parentId: null },
-    { id: 2, name: 'Node 1.1', parentId: 1 },
-    { id: 3, name: 'Node 1.2', parentId: 1 },
-    { id: 4, name: 'Node 2', parentId: null },
-    { id: 5, name: 'Node 2.1', parentId: 4 },
+    { id: 1, name: 'A', parentId: null },
+    { id: 2, name: 'B', parentId: 1 },
+    { id: 3, name: 'C', parentId: 1 },
+    { id: 4, name: 'D', parentId: 2 },
+    { id: 5, name: 'E', parentId: 2 },
+    { id: 6, name: 'F', parentId: 3 },
+    { id: 7, name: 'G', parentId: null }
 ];
 
-const tree = arrayToTree(flatArray);
+const tree = arrayToTree(flatArray, null);
 console.log(tree);
 
 
@@ -132,3 +138,82 @@ console.log(sum(1, 2)(3, 4)(5).sumOf()); // 返回 15
 // (async () => {
 //     await (new LazyLog()).log(1).sleep(1000).log(2).log(3).execute();
 // })();
+
+
+function getStorageSize(type = 'local') {
+    const storage = type === 'local' ? localStorage : sessionStorage
+    storage.clear()
+    const oneBytes = '1' // 1字节
+    const oneKB = oneBytes.repeat(1024)// 1KB
+    let key = 0
+    let flag = true
+    while (flag) {
+        try {
+            storage.setItem(key + '', oneKB)
+            key += 1
+        } catch (error) {
+            flag = false
+            console.log('size:', key / 1024 + 'MB')
+            storage.clear()
+        }
+    }
+}
+
+
+function getUsedStorage(type = 'local') {
+    const storage = type === 'local' ? localStorage : sessionStorage;
+    let totalBytes = 0;
+
+    Object.entries(storage).forEach(([key, value]) => {
+        const size = new Blob([key, value]).size;
+        totalBytes += size;
+    });
+
+    return totalBytes / 1024 / 1024; // 转换为MB
+}
+
+
+//去重
+
+let arr = [1, 1, '2', 3, 1, 2,
+    { name: '张三', id: { n: 1 }, a: undefined },
+    { name: '张三', id: { n: 1 }, a: undefined },
+    { name: '张三', id: { n: 2 } },
+]
+
+function uniqueArr(arr) {
+    const seen = new Set();
+    const result = [];
+    // 自定义序列化函数，考虑键的顺序
+    const serialize = (obj) => {
+        return Object.entries(obj)
+            .map(([key, value]) => {
+                // 如果值是对象，递归序列化
+                if (value && typeof value === 'object') {
+                    return `${key}:{${serialize(value)}}`;
+                } else {
+                    // 其他类型直接转换为字符串
+                    return `${key}:${value}`;
+                }
+            })
+            .join(',');
+    };
+    // 遍历数组
+    for (const item of arr) {
+        if (item && typeof item === 'object') {
+            const key = serialize(item);
+            if (!seen.has(key)) {
+                seen.add(key);
+                result.push(item);
+            }
+        } else {
+            // 基本类型直接加入集合
+            if (!seen.has(item)) {
+                seen.add(item);
+                result.push(item);
+            }
+        }
+    }
+    return result;
+}
+console.log(uniqueArr(arr));

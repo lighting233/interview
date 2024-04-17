@@ -382,3 +382,42 @@ function scheduler(max) {
     }
 }
 
+
+const request = (i) => {
+    return new Promise((resolve) => {
+      setTimeout(() => resolve(i), Math.random() * 1000)
+    })
+  }
+  
+  // 改动以下代码，使最终打印的数字顺序 与 遍历的顺序一致。即 0，1，2，..., 9
+  for(let i = 0; i < 10; i++) {
+    request(i).then(res => console.log(res))
+  }
+
+
+//1
+const request = (i) => {
+    return new Promise((resolve) => {
+      setTimeout(() => resolve(i), Math.random() * 1000);
+    });
+  };
+  
+  let sequence = Promise.resolve();
+  
+  for(let i = 0; i < 10; i++) {
+    sequence = sequence.then(() => {
+      return request(i).then(res => console.log(res));
+    });
+  }
+
+//2
+const reqs = []
+for(let i = 0; i < 10; i++) {
+  reqs.push(request(i))
+}
+
+Promise.all(reqs).then(results => {
+  while(results.length) {
+    console.log(results.shift())
+  }
+})
