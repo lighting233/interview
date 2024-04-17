@@ -39,7 +39,7 @@ class Promise {
 
         const resolve = (value) => {
             if (value instanceof Promise) {
-                //忘了 resolve reject
+                //todo 忘了 resolve reject
                 return value.then(resolve, reject);
             }
             if (this.state === PENDING) {
@@ -71,7 +71,7 @@ class Promise {
             if (this.state === FULFILLED) {
                 setTimeout(() => {
                     try {
-                        x = onFulfilled(this.value);
+                        const x = onFulfilled(this.value);
                         resolvePromise(promise2, x, resolve, reject);
                     } catch (error) {
                         reject(error);
@@ -83,7 +83,7 @@ class Promise {
             if (this.state === REJECTED) {
                 setTimeout(() => {
                     try {
-                        x = onRejected(this.reason);
+                       const x = onRejected(this.reason);
                         resolvePromise(promise2, x, resolve, reject);
                     } catch (error) {
                         reject(error);
@@ -95,7 +95,7 @@ class Promise {
                 this.onFulfilledCallbacks.push(() => {
                     setTimeout(() => {
                         try {
-                            x = onFulfilled(this.value);
+                            const x = onFulfilled(this.value);
                             resolvePromise(promise2, x, resolve, reject);
                         } catch (error) {
                             reject(error);
@@ -106,7 +106,7 @@ class Promise {
                 this.onRejectedCallbacks(() => {
                     setTimeout(() => {
                         try {
-                            x = onRejected(this.reason);
+                            const x = onRejected(this.reason);
                             resolvePromise(promise2, x, resolve, reject);
                         } catch (error) {
                             reject(error);
@@ -125,10 +125,11 @@ class Promise {
 
     finally(cb) {
         return this.then((value) => {
-            return new Promise(cb()).then(() => value)
+            //todo Promise.resolve
+            return Promise.resolve(cb()).then(() => value)
         }, (reason) => {
             //todo 忘了 throw
-            return new Promise((cb()).then(() => { throw reason })
+            return Promise.resolve((cb()).then(() => { throw reason })
         })
     }
 
@@ -432,7 +433,7 @@ Function.prototype.bind = function (context, ...args) {
     context[symbolKey] = this;
 
     return function (...moreArgs) {
-        const res = context[symbolKey]();
+        const res = context[symbolKey](...[...args,...moreArgs]);
         delete context[symbolKey];
         return res;
     }
