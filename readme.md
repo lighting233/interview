@@ -6,15 +6,12 @@
 ### 三级标题
 
 # 字体相关
-**强调语句** 使用cmd+ B，或者直接** 或 __也可以强调__ ,不强调样式
-
 *斜体语句* 使用cmd+ I，或者直接** 或 _也可以斜体_ 
-
-***斜体加强调语句*** 使用cmd+ I，或者直接*** 或 ___也可以强调___
+**强调语句** 使用cmd+ B，或者直接** 或 __也可以强调__ ,不强调样式
+***斜体加强调语句*** 使用cmd+ I 然后再 cmd+ B ，或者直接*** 或 ___也可以强调___
+==高亮==
 
 ~~删除语句~~, 是半角~~
-
-==高亮==
 
 - 特殊数学符号等 30^th^, 2^8^, H~2~O
 
@@ -26,9 +23,6 @@ is maintained by the W3C.
 
 ---
 
-
-
-
 # 列表相关
 
 - 无序列表可以使用- or + 加空格
@@ -39,12 +33,17 @@ is maintained by the W3C.
 1. 有序列表
 2. 有序列表
    1. 按 tab 也是缩进列表
+
+### todolist
+- [ ] 第一条
+- [ ] this is an incomplete item
+- [x] this is an incomplete item
    
 ---
 
 # 链接相关
 
-> 可以使用注释[^1]
+> 可以使用页脚注释[^1]
 
 [^1]: 这里便是注释的内容
 
@@ -88,10 +87,7 @@ Function.prototype.myCall = function(context,...args) {
 }
 ```
 
-### todolist
-- [ ] 第一条
-- [ ] this is an incomplete item
-- [x] this is an incomplete item
+
 
 ### 内联 html 代码
 
@@ -99,6 +95,61 @@ Function.prototype.myCall = function(context,...args) {
 <div style="color: red">
     html代码
 </div>
+
+---
+
+# 第一次自测
+#### 字体相关 {#拥有 id 用来区分文内跳转标题}
+*斜体*
+**加粗**
+***斜体加粗***
+==高亮==
+~~删除这句话~~
+H~2~O
+> ==前后都加^才行 2^8^==
+> *[悬浮]: 悬浮内容 
+> ==悬浮== 注释也忘记了,想有悬浮效果需要":",并且文本需要后边有空格 
+
+---
+
+#### 2列表相关
+
+- 无序列表
+  - 子列表
+1. 有序列表
+
+- [x] todolist
+
+
+#### 2链接相关
+
+[百度链接](https://baidu.com)
+[文本内跳转](#字体相关-拥有-id-用来区分文内跳转标题)
+![图片](old/下载.png)
+
+==页脚注释忘记了,"^" 还有加":"==
+页脚注释[^2]
+[^2]: 这是第二个页脚注释的注释内容
+
+---
+
+#### 2代码块相关
+
+`hello world`
+
+> ==number忘记加 s 了== ==行号忘记加"="==
+```javascript {.line-numbers highlight=[1-1 4-4]}
+function abc () {
+    console.log('123);
+
+};
+```
+
+---
+
+#### 2内联 html 代码
+<h5>html</h5>
+<div style="color: blue">内联代码</div>
 
 
 
