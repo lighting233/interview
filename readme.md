@@ -15,11 +15,7 @@
 
 - 特殊数学符号等 30^th^, 2^8^, H~2~O
 
-### 悬浮注释
-*[HTML]: Hyper Text Markup Language 这是注释
-*[W3C]: World Wide Web Consortium
-The HTML specification
-is maintained by the W3C.
+
 
 ---
 
@@ -53,6 +49,13 @@ https://github.com - 自动生成
 [跳转文本内的内容](#二级标题-符号使用半角符号-空格更符合规范)
 
 ![event loop](/old/eventloop.png)
+
+### 悬浮注释
+*[HTML]: Hyper Text Markup Language 这是注释
+*[W3C]: World Wide Web Consortium
+
+The HTML specification 被悬浮的内容需要自身前后有空格
+is maintained by the W3C.
 
 ---
 
@@ -153,4 +156,9 @@ function abc () {
 
 
 
+
+
+#### ==3悬浮的方法又忘了==
+- 悬浮的内容是"*[ ]"
+- 本身被悬浮的文字不需要特殊处理 只需要自身前后有空格
 
