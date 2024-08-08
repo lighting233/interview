@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div id="abc"></div>
+    <script>
+        const node = document.getElementById("abc")
+        console.log('%c 🥩 node: ', 'font-size:20px;background-color: #6EC1C2;color:#fff;', node);
+        let times = 1000
+        function run() {
+            node.innerText = times;
+            setTimeout(() => {
+                console.log(times)
+                times--;
+                
+                if(times) {
+                    run()
+                }
+            },0)
+            Promise.resolve().then(() => {
+                thenable();
+            })
+        }
+        run();
+        function thenable() {
+            console.log('1111')
+        }
+    </script>
+</body>
+</html>
+

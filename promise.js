@@ -25,7 +25,7 @@ function resolvePromise(promise2, x, resolve, reject) {
     if ((typeof x === 'object' && x !== null) || typeof x === 'function') {
         try {
             let then = x.then;
-            if (typeof then === 'function') {
+            if (then && typeof then === 'function') {
                 then.call(x, (v) => {
                     resolvePromise(promise2, v, resolve, reject)
                 }, (r) => {
@@ -95,7 +95,7 @@ class Promise {
             if (this.state === REJECTED) {
                 setTimeout(() => {
                     try {
-                        const x = onRejected(this.value);
+                        const x = onRejected(this.reason);
                         resolvePromise(promise2, x, resolve, reject)
                     } catch (e) {
                         reject(e)
@@ -119,7 +119,7 @@ class Promise {
                 this.onRejectedCallbacks.push(() => {
                     setTimeout(() => {
                         try {
-                            const x = onRejected(this.value);
+                            const x = onRejected(this.reason);
                             resolvePromise(promise2, x, resolve, reject)
                         } catch (e) {
                             reject(e)
@@ -268,37 +268,39 @@ class Promise {
 
 function promiseAllWithLimit(promises, limit) {
     return new Promise((resolve, reject) => {
-        const results = [];
         let index = 0;
         let running = 0;
+        const res = []
 
         function run() {
             if (index >= promises.length && running === 0) {
-                resolve(results);
+                resolve(res);
                 return;
-            }
+            };
 
             while (running < limit && index < promises.length) {
-                const currentIndex = index;
+                const p = promises[index];
+                let curIdx = index;
                 index++;
                 running++;
-
-                promises[currentIndex]()
-                    .then((result) => {
-                        results[currentIndex] = result;
-                    })
-                    .catch((error) => {
-                        reject(error);
-                    })
-                    .finally(() => {
+                if (p && typeof p.then === 'function') {
+                    p.then((v) => {
+                        res[curIdx] = v;
+                    }).catch((e) => {
+                        reject(e);
+                    }).finall(() => {
                         running--;
                         run();
-                    });
+                    })
+                } else {
+                    res[curIdx] = p;
+                    running--;
+                }
             }
-        }
+        };
 
         run();
-    });
+    })
 }
 
 // -----------------mock一些请求
@@ -421,3 +423,55 @@ Promise.all(reqs).then(results => {
         console.log(results.shift())
     }
 })
+
+
+function fetchWithTimeout(url, timeout = 300000) { // Default timeout is 5 minutes (300000ms)
+    let timer; // Declare the timer variable
+    return Promise.race([
+        fetch(url), // The fetch request
+        new Promise((_, reject) =>
+            timer = setTimeout(() => reject(new Error('Request timed out')), timeout)
+        )
+    ]).then(response => {
+        clearTimeout(timer); // Clear the timeout if the request completes in time
+        return response;
+    }).catch(err => {
+        clearTimeout(timer); // Clear the timer in case of an error
+        throw err;
+    });
+}
+// Example usage
+fetchWithTimeout('https://your.api/endpoint')
+    .then(response => console.log('Response:', response))
+    .catch(error => console.error('Error:', error));
+
+
+
+function lastPromise(promiseFn) {
+    let lastCallId = 0;
+    return function () {
+        const callId = ++lastCallId;
+        console.log('%c 🍑 callId: ', 'font-size:20px;background-color: #F5CE50;color:#fff;', callId);
+        return promiseFn().then(result => {
+            console.log('%c 🍝 lastCallId: ', 'font-size:20px;background-color: #93C0A4;color:#fff;', lastCallId);
+
+            if (callId === lastCallId) {
+                return result;
+            }
+            return new Promise(() => { }); // 创建一个永不resolve的Promise，阻止非最后一次调用产生输出
+        });
+    };
+}
+// 示例 promiseFn，返回一个随机延迟后resolve的Promise
+function promiseFn() {
+    return new Promise(resolve => {
+        const delay = Math.floor(Math.random() * 1000);
+        setTimeout(() => resolve(`Resolved after ${delay}ms`), delay);
+    });
+}
+// 使用 lastPromise 包装上述函数
+let lastFn = lastPromise(promiseFn);
+// 连续调用 lastFn
+lastFn().then(console.log); // 大概率无输出
+lastFn().then(console.log); // 大概率无输出
+lastFn().then(console.log); // 只会输出这次调用的结果

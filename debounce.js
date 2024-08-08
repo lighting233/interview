@@ -16,7 +16,7 @@ function debounce(fn, delay, immediate) {
     }
 }
 
-function throttle(fn, delay, options) {
+function throttle(fn, delay, options = {}) {
     const { leading = false, trailing = true } = options;
     let prevTime = 0;
     let timer;
@@ -25,15 +25,15 @@ function throttle(fn, delay, options) {
         const context = this;
         const currentTime = Date.now();
 
-        if (leading && currentTime - prevTime >= delay) {
+        if (leading && currentTime - prevTime >= delay && !timer) {
             prevTime = currentTime;
             fn.apply(context, args);
         } else if (!timer && trailing) {
-            setTimeout(() => {
+            timer = setTimeout(() => {
                 prevTime = currentTime;
                 fn.apply(context, args);
                 timer = null;
-            })
+            },delay)
         }
     }
 }

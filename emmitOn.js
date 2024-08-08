@@ -90,3 +90,43 @@ const unsubscription1 = eventBus.subscribe("event 1", handleEvenet1)
 const unsubscription2 = eventBus.subscribe("event 1", handleEvenet2, true)
 
 eventBus.publish('event 1', 'data 1')
+
+class Subject {
+    constructor() {
+        this.observers = [];
+    }
+    // 添加观察者
+    subscribe(observer) {
+        this.observers.push(observer);
+    }
+    // 移除观察者
+    unsubscribe(observer) {
+        this.observers = this.observers.filter(subscriber => subscriber !== observer);
+    }
+    // 通知所有观察者
+    notify(data) {
+        this.observers.forEach(observer => observer.update(data));
+    }
+}
+class Observer {
+    constructor(name) {
+        this.name = name;
+    }
+    // 观察者更新数据的方法
+    update(data) {
+        console.log(`${this.name} received data: ${data}`);
+    }
+}
+// 使用
+const subject = new Subject();
+const observer1 = new Observer('Observer 1');
+const observer2 = new Observer('Observer 2');
+// 订阅
+subject.subscribe(observer1);
+subject.subscribe(observer2);
+// 通知所有观察者
+subject.notify('Hello World!'); // Observer 1 和 Observer 2 都会收到数据
+// 取消订阅
+subject.unsubscribe(observer1);
+// 再次通知，这次只有 Observer 2 会收到更新
+subject.notify('New Data');

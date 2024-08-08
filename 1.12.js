@@ -1,27 +1,6 @@
-/**
- * @param {number[]} height
- * @return {number}
- */
- var trap = function(height) {
-    let area = 0;
-    const len = height.length;
-    const stack = [0];
-    for(let i = 1; i < len; i++) {
-        while(stack.length > 1 && height[stack.at(-1)] < height[i]) {
-            const midIdx = stack.pop();
-            console.log('%c 🦑 midIdx: ', 'font-size:20px;background-color: #33A5FF;color:#fff;', midIdx);
-            const leftIdx = stack.at(-1);
-            const absHigh = Math.min(height[i], height[leftIdx]) - height[midIdx];
-            console.log('%c 🧀 absHigh: ', 'font-size:20px;background-color: #2EAFB0;color:#fff;', absHigh);
-            const width = i - leftIdx - 1;
-            console.log('%c 🍸 width: ', 'font-size:20px;background-color: #2EAFB0;color:#fff;', width);
-            area += absHigh * width;
-            console.log('%c 🍩 area: ', 'font-size:20px;background-color: #EA7E5C;color:#fff;', area);
-        };
-        stack.push(i);
-    }
-    return area;
-};
+[3, 5, 6, 14, 17, 19, 21, 24, 25, 39, 40, 42, 46, 47, 49, 53, 54, 58, 61, 63, 70, 72, 74, 76, 77, 78, 82, 84, 90, 92, 93, 96,
+    105, 111, 115, 120, 121, 122, 125, 128, 131, 139, 142, 146, 160, 167, 198, 203, 206, 209,
+    216, 222, 226, 230, 234, 239, 257, 279, 300, 309, 322, 337, 343, 377, 392, 409, 416, 474, 491, 494, 496, 498, 503,
+    509, 516, 518, 583, 647, 718, 739, 746, 1049, 1143]
 
-trap([0,1,0,2,1,0,1,3,2,1,2,1]
-    )
+

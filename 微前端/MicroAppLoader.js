@@ -50,3 +50,45 @@ export default class MicroAppLoader extends Component {
         )
     }
 }
+
+
+class ProxySandbox {
+    constructor() {
+        this.running = false;
+        const fakeWindow = Object.create(null);
+        this.proxy = new Proxy(fakeWindow, {
+            get: (target, key) => {
+                return key in target ? target[key] : window[key]
+            },
+            set: (target, key, value) => {
+                if (this.running) {
+                    target[key] = value;
+                }
+
+                return true;
+            }
+        })
+    }
+    active() {
+        if (!this.running) this.running = true;
+    }
+
+    inactive() {
+        this.running = false;
+    }
+}
+
+const sandbox1 = new ProxySandbox();
+const sandbox2 = new ProxySandbox();
+sandbox1.active();
+sandbox2.active();
+sandbox1.proxy.a = 100;
+sandbox2.proxy.a = 100;
+sandbox1.inactive();
+sandbox2.inactive();
+
+(function(global) {
+    // 在这个IIFE（立即调用的函数表达式）内部，
+    // 'global' 变量可以作为 'window' 的代理
+    global.a = 'value';
+  })(sandbox1.proxy);

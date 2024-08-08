@@ -43,3 +43,20 @@ BFC 是 CSS 布局中一个重要的概念，它可以帮助我们更好地控�
 控制内部元素的布局方式：在 BFC 内部，可以使用浮动、定位和其他布局属性来控制内部元素的布局方式。BFC 可以提供一种独立的渲染环境，使得内部元素不会受到外部元素的影响。
 
 通过合理地应用 BFC 的规则，可以更好地控制页面布局，解决一些常见的布局问题，提升用户体验和页面性能。
+
+<style>
+ .abs-box{
+    background-color: red;
+    position: absolute;
+    z-index: 0
+  }
+  .div-box {
+    background-color: rgb(16, 4, 181);
+    opacity: 0.9
+  }
+</style>
+
+<body>
+  <div class="box abs-box">absolute box</div>
+  <div class="box div-box">div box</div>
+</body>
