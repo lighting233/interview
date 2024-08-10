@@ -1,10 +1,10 @@
 ### 1. eslint.config.mjs 和 .eslintrc.json 的用途和区别
-
+==一个使用 ES 模块语法的配置文件==
 
 ### 2. .eslintrc.json 文件中配置介绍
 
 1. **"extends"：** 
-2. **"parser"：** 
+2. **"parser"：** ==eslint 本身不能解析 ts，使用这个社区实现的 parser 来把 ts 转为 ast==
 3. **"parserOptions"：** 
 4. **"plugins"：**
 5. **"rules"：** 
@@ -38,6 +38,6 @@
 ```
 
 ### 3.eslint和 husky 和 commitlint 和 prettier
-- 
+- ==husky是代码提交的预检测==
 - 
 - 
