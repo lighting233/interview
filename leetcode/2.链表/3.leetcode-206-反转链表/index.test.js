@@ -8,22 +8,19 @@
  * }
  */
 /**
- * 原链表操作
  * @param {ListNode} head
- * @param {number} val
  * @return {ListNode}
  */
- var removeElements = function(head, val) {
+ var reverseList = function(head) {
 
  };
 
- /**
-  * 虚拟头节点
+  /**
+  * 递归的写法
  * @param {ListNode} head
- * @param {number} val
  * @return {ListNode}
  */
-  var removeElements = function(head, val) {
-
-  };
-
+   var reverseList = function(head) {
+    
+    
+ };

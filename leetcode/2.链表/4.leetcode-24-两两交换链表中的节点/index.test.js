@@ -8,22 +8,10 @@
  * }
  */
 /**
- * 原链表操作
  * @param {ListNode} head
- * @param {number} val
  * @return {ListNode}
  */
- var removeElements = function(head, val) {
+ var swapPairs = function(head) {
 
  };
-
- /**
-  * 虚拟头节点
- * @param {ListNode} head
- * @param {number} val
- * @return {ListNode}
- */
-  var removeElements = function(head, val) {
-
-  };
 

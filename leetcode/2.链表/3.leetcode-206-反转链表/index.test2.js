@@ -1,4 +1,4 @@
- //24-8-12 第二次测试
+ //24-8-9 第一次测试
 
 /**
  * Definition for singly-linked list.
@@ -8,22 +8,19 @@
  * }
  */
 /**
- * 原链表操作
  * @param {ListNode} head
- * @param {number} val
  * @return {ListNode}
  */
- var removeElements = function(head, val) {
+ var reverseList = function(head) {
 
  };
 
- /**
-  * 虚拟头节点
+  /**
+  * 递归的写法
  * @param {ListNode} head
- * @param {number} val
  * @return {ListNode}
  */
-  var removeElements = function(head, val) {
-
-  };
-
+   var reverseList = function(head) {
+    
+    
+   };
