@@ -2,5 +2,11 @@
 
 ### ReactElement数据结构
 
+```ts
+export interface ReactElement {
+    //todo
+    type: ElementType;
+}
+```
 ### ==react 和 react-dom 关系==
 

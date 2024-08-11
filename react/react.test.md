@@ -1,15 +1,28 @@
 ### ==react 的设计理念==
 
 ### react这种前端框架和 jQuery 这种库的区别？
+- jQuery过程驱动
+- react 数据驱动 ==通过描述 ui，核心模块调用宿主环境 api，来显示真实 ui==
 
 ### react与vue的区别？
 
+1. vue 使用模版语法，可以有编译优化，核心库 renderer
+2. react 使用 jsx，核心库 reconciler
+
 ### react核心模块操作的数据结构是？为什么不使用React Element作为核心模块？
 
+- React Element没有与其他节点进行关联
+- 只记录数据没有状态
 ### 如何生成fiberNode？
+
+- ~~当前 fiber 由它的父 fiber 和其对应的React Element对比生成~~
 
 ### react中我们涉及的节点类型
 
+1. jsx
+2. React Element
+3. fiber node
+4. dom element
 ### fiberNode
 
 ```ts
@@ -39,12 +52,17 @@ export class FiberNode {
 
 	constructor(tag: WorkTag, pendingProps: Props, key: Key) {
 
+		//FunctionComponent HostComponent
 		this.tag = tag;
 		this.key = key;
+		//HostComponent 记录 dom 节点
 		this.stateNode = null;
+		//HostComponent 就是节点信息 div FunctionComponent 就是函数本身
 		this.type = null;
 
 		// 树结构
+		//每个 fiber 即是数据单元，也是执行单元，当前工作单元执行完，返回其父节点
+		//todo 当前工作单元完成工作，就应该是他的父 fiber node 来执行工作
 		this.return = null;
 		this.sibling = null;
 		this.child = null;
@@ -59,6 +77,8 @@ export class FiberNode {
 		this.memoizedState = null;
 
 		// 副作用
+		//placement deletionchild update
+		//todo Placement,Update,ChildDeletion
 		this.flags = NoFlags;
 		this.subtreeFlags = NoFlags;
 		this.deletions = null;
@@ -71,3 +91,23 @@ export class FiberNode {
 	}
 }
 ```
+
+### react触发更新的方法,
+
+### ReactDOM.createRoot().render的流程
+
+### 初始渲染如何链接到更新模式的
+
+### 整个更新流程的目的
+
+### 初始渲染到bigenWork的流程
+
+### 递归，递的过程
+
+### 递归，归的过程
+
+### update的数据结构
+
+### updateQueue的数据结构
+
+### 为什么 react 中断更新后能在下一次继续使用未更新的 update 作为更新依据？
