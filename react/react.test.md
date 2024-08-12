@@ -95,7 +95,12 @@ export class FiberNode {
 ### react触发更新的方法,
 
 ### ReactDOM.createRoot().render的流程
-
+- FiberRootNode
+- HostRootFiber
+- HostRootFiber的 updateQueue
+- 执行render 方法执行updateContainer
+- 给 App 创建 update，插入hostRootFiber.updateQueue
+- 执行scheduleUpdateOnFiber
 ### 初始渲染如何链接到更新模式的
 
 ### 整个更新流程的目的
@@ -104,10 +109,22 @@ export class FiberNode {
 
 ### 递归，递的过程
 
+#### 标记Placement的依据
+#### #### `beginWork`性能优化策略
+
 ### 递归，归的过程
 
+#### 创建 dom 的依据
+
+#### completeWork性能优化策略，flags分布在不同fiberNode中，如何快速找到他们?
 ### update的数据结构
 
 ### updateQueue的数据结构
 
 ### 为什么 react 中断更新后能在下一次继续使用未更新的 update 作为更新依据？
+
+
+### 七、commit 阶段
+
+#### 为什么首屏能一次性插入整体的 dom，而不是一个一个 placement？
+

@@ -129,6 +129,12 @@ export class FiberNode {
 ### 五、递归，递的过程
 
 - `beginWork`中比较当前 fiberNode的子 current Fiber 和 对应的 子React Element 生成子  wip Fiber Node
+- mount/reconcile只负责 Placement(插入)/Placement(移动)/ChildDeletion(删除)
+- 标记Placement的依据，fiber.alternate === null
+- ？？更新（文本节点内容更新、属性更新）在completeWork中，对应Update flag
+
+#### `beginWork`性能优化策略
+- 一个节点下可能有很多个子节点，都标记了placement，那就要插入 dom 多次，我们可以建立好一个离屏dom 树，对 div 进行一次整体的placement操作。
 
 ```ts {.line-numbers}
 function performUnitOfWork(fiber: FiberNode) {
@@ -197,6 +203,13 @@ function renderRoot(
 ### 六、递归，归的过程
 
 - `completeWork`
+- 对于 Host 类型的 fiberNode，构建离屏 dom 树
+- ？？标记 update flag
+- 创建 dom 节点，并递归查找子节点，把子节点插入当前的 dom
+- 创建 dom 的依据 workInProgress.alternate === null 或者 workInProgress.stateNode === null
+#### completeWork性能优化策略，flags分布在不同fiberNode中，如何快速找到他们?
+答案:利用completeWork向上遍历(归)的流程，将子fiberNode的flags冒泡到父fiberNode
+每个节点的subtreeFlags记录了子树上是否有 flags
 
 ```ts {.line-numbers}
 function completeUnitOfWork(fiber: FiberNode) {
@@ -262,3 +275,41 @@ export type UpdateQueue<State> = {|
 
 #### 为什么 react 中断更新后能在下一次继续使用未更新的 update 作为更新依据？
 因为每次在创建 wip 时执行`createWorkInProgress`，会进行`wip.updateQueue = current.updateQueue;`,因为Update存在`UpdateQueue.shared.pending`上，所以wip 和 current fiber 中共用 update。
+
+### 七、commit 阶段
+
+#### 为什么首屏能一次性插入整体的 dom，而不是一个一个 placement？
+在Mutation阶段,当节点有subtreeFlags时，则继续向下遍历，直到节点只有自身的 flags，然后向上遍历，此时虽然执行commitMutationEffectsOnFiber方法里会插入 dom 节点，但首屏时这些节点还没有挂在到页面上，直到遍历到根，一次性挂载
+
+```ts {.line-numbers highlight=[15-15]}
+export const commitMutationEffects = (
+	finishedWork: FiberNode,
+	root: FiberRootNode
+) => {
+	nextEffect = finishedWork;
+
+	while (nextEffect !== null) {
+		// 向下遍历
+		const child: FiberNode | null = nextEffect.child;
+
+		if (
+			(nextEffect.subtreeFlags & (MutationMask | PassiveMask)) !== NoFlags &&
+			child !== null
+		) {
+			nextEffect = child;
+		} else {
+			// 向上遍历
+			up: while (nextEffect !== null) {
+				commitMutationEffectsOnFiber(nextEffect, root);
+				const sibling: FiberNode | null = nextEffect.sibling;
+
+				if (sibling !== null) {
+					nextEffect = sibling;
+					break up;
+				}
+				nextEffect = nextEffect.return;
+			}
+		}
+	}
+};
+```
