@@ -12,6 +12,21 @@
  * @return {ListNode}
  */
  var swapPairs = function(head) {
+    const dummy = new ListNode(0,head);
+    let cur = dummy;
 
+    while(cur.next !== null && cur.next.next !== null) {
+        const first = cur.next;
+        const second = first.next;
+        const third = second.next;
+
+        cur.next = second;
+        second.next = first;
+        first.next = third;
+
+        cur = cur.next.next;
+    };
+
+    return dummy.next;
  };
 

@@ -14,5 +14,33 @@
  * @return {ListNode}
  */
  var getIntersectionNode = function(headA, headB) {
-    
+    let p = headA,q = headB
+
+    //todo 节点相等，而不是值相等，有可能每个节点的值都相等
+    // while(p.val !== q.val) {
+    while(p !== q){
+        //todo 各自走完才换下一个，不然走的数量不对
+        // p = p.next === null ? headB : p.next;
+        // q = q.next === null ? headA : q.next;
+        p = p === null ? headB : p.next;
+        q = q === null ? headA : q.next;
+    };
+
+    return p;
+ };
+
+ /**
+ * @param {ListNode} headA
+ * @param {ListNode} headB
+ * @return {ListNode}
+ */
+  var getIntersectionNode = function(headA, headB) {
+    let p = headA, q = headB;
+
+    while(p !== q) {
+        p = p === null ? headB : p.next;
+        q = q === null ? headA : q.next;
+    };
+
+    return p;
  };
