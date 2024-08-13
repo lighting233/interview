@@ -4,14 +4,29 @@
  * @param {number} n
  * @return {boolean}
  */
- var isHappy = function(n) {
+var isHappy = function (n) {
+    const set = new Set();
 
- };
+    while(n !== 1) {
+        if(set.has(n)) return false;
+        set.add(n);
+        n = ('' + n).split('').reduce((prev,cur) => prev + cur * cur,0);
+    }
 
- /**
- * @param {number} n
- * @return {boolean}
- */
-var isHappy = function(n) {
+    return true;
+};
 
+/**
+* @param {number} n
+* @return {boolean}
+*/
+var isHappy = function (n) {
+    const set = new Set();
+    while(n !== 1) {
+        if(set.has(n)) return false;
+        set.add(n);
+        n = ('' + n).split('').reduce((prev,cur) => prev + cur*cur,0)
+    }
+
+    return true;
 };

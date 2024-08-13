@@ -14,6 +14,13 @@
  * @return {ListNode}
  */
  var getIntersectionNode = function(headA, headB) {
-    
+    let p = headA, q = headB;
+
+    while(p !== q) {
+        p = p === null ? headB : p.next;
+        q = q === null ? headA : q.next;
+    };
+
+    return p;
  };
 
