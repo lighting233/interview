@@ -110,7 +110,7 @@ export class FiberNode {
 ### 递归，递的过程
 
 #### 标记Placement的依据
-#### #### `beginWork`性能优化策略
+#### `beginWork`性能优化策略
 
 ### 递归，归的过程
 
@@ -127,4 +127,12 @@ export class FiberNode {
 ### 七、commit 阶段
 
 #### 为什么首屏能一次性插入整体的 dom，而不是一个一个 placement？
+
+### 九、FunctionComponent
+
+#### hook存储位置，数据结构
+- 
+#### 为什么 hook 不能放在条件语句，要按顺序执行
+
+#### useState
 

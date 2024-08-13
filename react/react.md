@@ -132,9 +132,12 @@ export class FiberNode {
 - mount/reconcile只负责 Placement(插入)/Placement(移动)/ChildDeletion(删除)
 - 标记Placement的依据，fiber.alternate === null
 - ？？更新（文本节点内容更新、属性更新）在completeWork中，对应Update flag
+- mount 阶段只有hostfoot.fiber.child被标记了 placement
+- update 阶段其他需要新增的节点也会标记placement
 
 #### `beginWork`性能优化策略
 - 一个节点下可能有很多个子节点，都标记了placement，那就要插入 dom 多次，我们可以建立好一个离屏dom 树，对 div 进行一次整体的placement操作。
+- 这是针对 mount 流程的，update 流程只更新局部节点
 
 ```ts {.line-numbers}
 function performUnitOfWork(fiber: FiberNode) {
@@ -206,7 +209,9 @@ function renderRoot(
 - 对于 Host 类型的 fiberNode，构建离屏 dom 树
 - ？？标记 update flag
 - 创建 dom 节点，并递归查找子节点，把子节点插入当前的 dom
-- 创建 dom 的依据 workInProgress.alternate === null 或者 workInProgress.stateNode === null
+- 创建 dom 并插入的依据 workInProgress.alternate === null && workInProgress.stateNode === null
+- mount 阶段会进入上边的条件中，创建并插入 dom 到 parent 中
+- update 阶段只会根据 placement 创建 dom，但不插入。
 #### completeWork性能优化策略，flags分布在不同fiberNode中，如何快速找到他们?
 答案:利用completeWork向上遍历(归)的流程，将子fiberNode的flags冒泡到父fiberNode
 每个节点的subtreeFlags记录了子树上是否有 flags
@@ -239,44 +244,52 @@ function completeUnitOfWork(fiber: FiberNode) {
 ### 七、Update数据结构
 
 ```ts {.line-numbers}
+//hooks
+export type Update<S, A> = {|
+  lane: Lane,
+  action: A,
+  hasEagerState: boolean,
+  eagerState: S | null,
+  next: Update<S, A>,
+|};
+
+export type UpdateQueue<S, A> = {|
+  pending: Update<S, A> | null,
+  lanes: Lanes,
+  dispatch: (A => mixed) | null,
+  lastRenderedReducer: ((S, A) => S) | null,
+  lastRenderedState: S | null,
+|};
+//class
 export type Update<State> = {|
   // TODO: Temporary field. Will remove this by storing a map of
   // transition -> event time on the root.
   eventTime: number,
   lane: Lane,
-  //更新的类型，包括UpdateState | ReplaceState | ForceUpdate | CaptureUpdate
   tag: 0 | 1 | 2 | 3,
-  //更新挂载的数据，不同类型组件挂载的数据不同。对于ClassComponent，payload为this.setState的第一个传参。对于HostRoot，payload为ReactDOM.render的第一个传参
   payload: any,
-  //更新的回调函数。
   callback: (() => mixed) | null,
-
   next: Update<State> | null,
 |};
 
 export type SharedQueue<State> = {|
-  //触发更新时，产生的Update会保存在shared.pending中形成单向环状链表。当由Update计算state时这个环会被剪开并连接在lastBaseUpdate后面。
   pending: Update<State> | null,
-  interleaved: Update<State> | null,
   lanes: Lanes,
 |};
 
 export type UpdateQueue<State> = {|
-
-  //本次更新前该Fiber节点的state，Update基于该state计算更新后的state
   baseState: State,
   firstBaseUpdate: Update<State> | null,
   lastBaseUpdate: Update<State> | null,
-  //为了在 wip 和 current fiber 中共用 update
   shared: SharedQueue<State>,
-  effects: Array<Update<State>> | null,
+  effects: Array<Update<State>> | null,//数组。保存update.callback !== null的Update
 |};
 ```
 
 #### 为什么 react 中断更新后能在下一次继续使用未更新的 update 作为更新依据？
 因为每次在创建 wip 时执行`createWorkInProgress`，会进行`wip.updateQueue = current.updateQueue;`,因为Update存在`UpdateQueue.shared.pending`上，所以wip 和 current fiber 中共用 update。
 
-### 七、commit 阶段
+### 八、commit 阶段
 
 #### 为什么首屏能一次性插入整体的 dom，而不是一个一个 placement？
 在Mutation阶段,当节点有subtreeFlags时，则继续向下遍历，直到节点只有自身的 flags，然后向上遍历，此时虽然执行commitMutationEffectsOnFiber方法里会插入 dom 节点，但首屏时这些节点还没有挂在到页面上，直到遍历到根，一次性挂载
@@ -313,3 +326,27 @@ export const commitMutationEffects = (
 	}
 };
 ```
+
+### 九、FunctionComponent
+
+#### hook存储位置，数据结构
+- 存在当前functionfiber 的fiber 的memoizedState上
+
+```ts
+interface Hook {
+	memoizedState: any;
+	// 对于state，保存update相关数据
+	updateQueue: unknown; //useState会触发更新，所以也需要 update 对象
+	// 对于state，保存开始更新前就存在的updateList（上次更新遗留）
+	baseQueue: Update<any> | null;
+	// 对于state，基于baseState开始计算更新，与memoizedState的区别在于上次更新是否存在跳过
+	baseState: any;
+	next: Hook | null;
+}
+```
+#### 为什么 hook 不能放在条件语句，要按顺序执行
+- renderWithHooks时`currentlyRenderingFiber = workInProgress;`执行 hook 时如果currentlyRenderingFiber为空说明在 react 外部调用了 hook
+- 当`workInProgressHook === null`时，说明是当前函数的第一个 hook，在 mount 阶段会创建 hook
+- hook 以链表的形式在`Fiber.memoizedState`上进行存储，每执行完一个，指针移动到 next，所以是按顺序执行
+
+#### useState
