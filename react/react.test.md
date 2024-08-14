@@ -136,3 +136,32 @@ export class FiberNode {
 
 #### useState
 
+```ts
+function mountState(initialState) {
+	//1.创建当前要操作的 hook
+	const hook = mountWorkInProgressHook();
+	//2.处理 hook 的memorizeState
+	let memosizeState;
+	if(initialState instanceof Function) {
+		memosizeState = initialState();
+	}else {
+		memosizeState = initialState;
+	};
+	//3.创建 hook 的 updatequeue
+	const queue = createUpdateQueue();
+	hook.updateQueue = queue;
+	//4.处理 dispatch 方法
+	//todo currentlyRenderingFiber, queue
+	const dispatch = hook.dispatch = (dispatchSetState.bind(null,currentlyRenderingFiber,queue));
+
+	return [memosizeState, dispatch]
+}
+
+function dispatchSetState(fiber,updateQueue, action) {
+	//todo action
+	const update = createUpdate(action);
+	enqueueUpdate(updateQueue, update);
+	scheduleUpdateOnFiber(fiber)
+}
+```
+

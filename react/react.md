@@ -256,7 +256,7 @@ export type Update<S, A> = {|
 export type UpdateQueue<S, A> = {|
   pending: Update<S, A> | null,
   lanes: Lanes,
-  dispatch: (A => mixed) | null,
+   : (A => mixed) | null,
   lastRenderedReducer: ((S, A) => S) | null,
   lastRenderedState: S | null,
 |};
@@ -350,3 +350,46 @@ interface Hook {
 - hook 以链表的形式在`Fiber.memoizedState`上进行存储，每执行完一个，指针移动到 next，所以是按顺序执行
 
 #### useState
+
+```ts
+function dispatch(
+	fiber,
+	updateQueue,
+	action
+) {
+	const update = createUpdate(action);
+	enqueueUpdate(updateQueue, update);
+	scheduleUpdateOnFiber(fiber);
+}
+
+function mountState(initialState) {
+	const hook = mountWorkInProgressHook();
+	let memoizedState;
+	if (initialState instanceof Function) {
+		memoizedState = initialState();
+	} else {
+		memoizedState = initialState;
+	}
+	hook.memoizedState = memoizedState;
+	const queue = createUpdateQueue();
+	hook.updateQueue = queue;
+
+	// @ts-ignore
+	const dispatch = dispatchSetState.bind(
+		null,
+		currentlyRenderingFiber,
+		queue
+	));
+
+	return [memoizedState, dispatch];
+}
+```
+
+### 单节点更新流程
+
+1. key 是否相同
+2. type 是否相同
+3. 都相同复用
+4. 删除节点时，除了第一个需要标记 deletion，剩下的都加入parentfiber.deletions数组中   
+   - 删除节点时需要递归子树，如果子树是 functioncomponent需要执行 effect 的回调，对于 hostcomponent 需要解绑 ref，对于子组件需要找他子节点对应的 dom
+   - 删除也是深度优先遍历和 beginwork and completework顺序一样
