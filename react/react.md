@@ -1,3 +1,4 @@
+[TOC]
 ### 一、react 的设计理念
 #### 我们认为，React 是用 JavaScript 构建==快速响应==的==大型== Web 应用程序的首选方式。它在 Facebook 和 Instagram 上表现优秀。
 - **构建快速响应**，其中的关键是解决 CPU 的瓶颈与 IO 的瓶颈
@@ -203,6 +204,21 @@ function renderRoot(
 }
 ```
 
+
+#### 删除过程
+
+```ts {.line-numbers}
+		const deletions = returnFiber.deletions;
+		if (deletions === null) {
+			returnFiber.deletions = [childToDelete];
+			returnFiber.flags |= ChildDeletion;
+		} else {
+			deletions.push(childToDelete);
+		}
+```
+删除节点时，除了第一个需要标记 deletion，剩下的都加入parentfiber.deletions数组中   
+   - 删除节点时需要递归子树，如果子树是 functioncomponent需要执行 effect 的回调，对于 hostcomponent 需要解绑 ref，对于子组件需要找他子节点对应的 dom
+   - 删除也是深度优先遍历和 beginwork and completework顺序一样
 ### 六、递归，归的过程
 
 - `completeWork`
@@ -383,13 +399,84 @@ function mountState(initialState) {
 
 	return [memoizedState, dispatch];
 }
+
+function updateState<State>(): [State, Disptach<State>] {
+	const hook = updateWorkInProgressHook();
+	const queue = hook.updateQueue as UpdateQueue<State>;
+	const baseState = hook.memoizedState;
+
+	// 缺少render阶段更新的处理逻辑
+
+	hook.memoizedState = processUpdateQueue(
+		baseState,
+		queue,
+		currentlyRenderingFiber as FiberNode
+	);
+	return [hook.memoizedState, queue.dispatch as Disptach<State>];
+}
 ```
 
-### 单节点更新流程
+#### 单节点更新流程
 
 1. key 是否相同
 2. type 是否相同
 3. 都相同复用
-4. 删除节点时，除了第一个需要标记 deletion，剩下的都加入parentfiber.deletions数组中   
+4. 删除节点时，除了第一个returnFiber需要标记 deletion，剩下childFiber的都加入parentfiber.deletions数组中   
    - 删除节点时需要递归子树，如果子树是 functioncomponent需要执行 effect 的回调，对于 hostcomponent 需要解绑 ref，对于子组件需要找他子节点对应的 dom
    - 删除也是深度优先遍历和 beginwork and completework顺序一样
+
+### 十、事件模型
+
+#### 实现ReactDOM与Reconciler对接将事件回调保存在DOM中，通过以下两个时机对接：
+- 创建DOM时 hostConfig中`createInstance`时执行`updateFiberProps`
+- 更新属性时
+  - 在`completeWork`中针对`HostComponent`保存在对应`FiberNode.updateQueue`中，并标记`update flag`,以数组的形式保存`[key1,value1,key2,value2]`
+  - 在 commit 阶段根据 flag 执行`commitMutationEffects -> commitMutationEffectsOnFiber -> commitUpdate(finishedWork)`
+
+- 在createRoot的 render 方法中进行`initEvent(container, validEventTypeList);`,为container添加addEventListener，执行dispatchEvent
+  1. 收集沿途的事件 收集从目标元素到HostRoot之间所有目标回调函数
+```ts
+const collectPaths = (
+	targetElement: PackagedElement,
+	container: Container,
+	eventType: string
+): Paths => {
+	const paths: Paths = {
+		capture: [],
+		bubble: []
+	};
+	// 收集事件回调是冒泡的顺序
+	while (targetElement && targetElement !== container) {
+		const eventProps = targetElement[elementEventPropsKey];
+		if (eventProps) {
+			const callbackNameList = getEventCallbackNameFromtEventType(eventType);
+			if (callbackNameList) {
+				callbackNameList.forEach((callbackName, i) => {
+					const eventCallback = eventProps[callbackName];
+					if (eventCallback) {
+						if (i === 0) {
+							// 反向插入捕获阶段的事件回调
+							paths.capture.unshift(eventCallback);
+						} else {
+							// 正向插入冒泡阶段的事件回调
+							paths.bubble.push(eventCallback);
+						}
+					}
+				});
+			}
+		}
+		targetElement = targetElement.parentNode as PackagedElement;
+	}
+	return paths;
+};
+```
+  2. 构造合成事件
+  3. 遍历captue
+  4. 遍历bubble
+
+#### React 使用合成事件系统带来了多个好处：
+
+- 跨浏览器兼容性：统一的事件 API，消除浏览器间差异。
+- 统一事件处理：提供一致的事件处理方式和事件模型。
+- 性能提升：通过事件代理技术提高事件处理效率。
+- 跨平台支持：在不同环境中提供一致的事件对象接口。

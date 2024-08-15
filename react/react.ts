@@ -43,6 +43,30 @@ export function createRoot(container: Container) {
 	};
 }
 
+export function createRoot(container: Container) {
+	let root = containerToRoot.get(container);
+	if (!root) {
+		root = createContainer(container);
+		containerToRoot.set(container, root);
+	} else {
+		throw '你在之前已经传递给createRoot()的container上调用了ReactDOM.createRoot()';
+	}
+	return {
+		render(element: ReactElement) {
+			if (containerToRoot.get(container) !== root) {
+				throw '不能更新一个卸载的root.';
+			}
+			clearContainerDOM(container);
+			initEvent(container, 'click');
+			return updateContainer(element, root);
+		},
+		unmount() {
+			containerToRoot.delete(container);
+			return updateContainer(null, root);
+		}
+	};
+}
+
 function markUpdateLaneFromFiberToRoot(fiber: FiberNode, lane: Lane) {
 	let node = fiber;
 	let parent = node.return;

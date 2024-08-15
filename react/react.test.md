@@ -163,5 +163,65 @@ function dispatchSetState(fiber,updateQueue, action) {
 	enqueueUpdate(updateQueue, update);
 	scheduleUpdateOnFiber(fiber)
 }
+
+
+function monutWorkInProcessHook() {
+    return {
+        next:null,
+        //todo memoizedState
+        // baseState: null,
+        memoizedState:null,
+        updateQueue: {}
+    }
+}
+//todo mountState
+function mountSetState (initialState) {
+    const hoook = monutWorkInProcessHook();
+    let memorizeState;
+
+    if(initialState instanceof Function) {
+        memorizeState = initialState();
+    }else {
+        memorizeState = initialState;
+    };
+
+    //todo 
+    const queue = createUpdateQueue();
+    // const update = createUpdate();
+    //todo
+    hook.updateQueue = queue;
+    //todo dispatchSetState
+    const dispatch = hook.dispatch = setStateDispatch.bind(null,currentlyRenderingFiber,queue);
+
+    return [memorizeState, dispatch];
+};
+
+function setStateDispatch(fiber, queue, action) {
+    //todo
+    const update = createUpdate(action);
+    enqueueUpdate(queue,update);
+    scheduleUpdateOnFiber(fiber)
+}
+
+function updateState() {
+	const hook = updateWorkInProcessHook();
+	const queue = hook.shared.pending;
+	//todo baseState, memorizeState
+	const baseState = hook.memorizeState;
+
+	hook.memorizeState = processUpdateQueue(base,queue,currentlyrenderingFiber)
+	return [hook.memorizeState,queue.dispatch]
+}
 ```
+
+### 单节点更新流程
+- key
+- type
+
+### deletion流程
+### 十、事件模型
+
+#### 实现ReactDOM与Reconciler对接将事件回调保存在DOM中，通过以下两个时机对接：
+
+#### React 使用合成事件系统带来了多个好处：
 
