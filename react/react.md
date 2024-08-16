@@ -403,14 +403,13 @@ function mountState(initialState) {
 function updateState<State>(): [State, Disptach<State>] {
 	const hook = updateWorkInProgressHook();
 	const queue = hook.updateQueue as UpdateQueue<State>;
-	const baseState = hook.memoizedState;
+	const baseState = hook.baseState;
 
 	// 缺少render阶段更新的处理逻辑
 
 	hook.memoizedState = processUpdateQueue(
 		baseState,
 		queue,
-		currentlyRenderingFiber as FiberNode
 	);
 	return [hook.memoizedState, queue.dispatch as Disptach<State>];
 }
@@ -480,3 +479,112 @@ const collectPaths = (
 - 统一事件处理：提供一致的事件处理方式和事件模型。
 - 性能提升：通过事件代理技术提高事件处理效率。
 - 跨平台支持：在不同环境中提供一致的事件对象接口。
+
+
+### 十一、diff
+
+#### 单节点 diff
+- 当前支持的情况：
+• A1->B1
+• A1->A2
+- 希要支持的情况：
+• АВС -> А
+「单/多节点」是指「更新后是单/多节点」。
+- 更细致的，我们需要区分4种情况：
+• key相同，type相同 == 复用当前节点
+例如：A1B2C3 -> A1
+• key相同，type不同 == 不存在任何复用的可能性
+例如：A1B2C3->B1
+• key不同，type相同 == 当前节点不能复用，但是可能以前的兄弟节点能复用
+• key不同，type不同 == 当前节点不能复用
+#### 多节点 diff
+在日常开发中，相较于新增和删除，更新组件发生的频率更高。所以Diff会优先判断当前节点是否属于更新。
+基于以上原因，Diff算法的整体逻辑会经历两轮遍历：
+
+**第一轮遍历**：处理更新的节点。
+第一轮遍历步骤如下：
+1. let i = 0，遍历newChildren，将newChildren[i]与oldFiber比较，判断DOM节点是否可复用。
+2. 如果可复用，i++，继续比较newChildren[i]与oldFiber.sibling，可以复用则继续遍历。
+3. 如果不可复用，分两种情况：
+   - key不同导致不可复用，立即跳出整个遍历，第一轮遍历结束。
+   - key相同type不同导致不可复用，会将oldFiber标记为DELETION，并继续遍历
+4. 如果newChildren遍历完（即i === newChildren.length - 1）或者oldFiber遍历完（即oldFiber.sibling === null），跳出遍历，第一轮遍历结束。
+
+对于第一轮遍历的结果，我们分别讨论：
+1. newChildren与oldFiber同时遍历完
+那就是最理想的情况：只需在第一轮遍历进行组件更新。此时Diff结束。
+2. newChildren没遍历完，oldFiber遍历完
+已有的DOM节点都复用了，这时还有新加入的节点，意味着本次更新有新节点插入，我们只需要遍历剩下的newChildren为生成的workInProgress fiber依次标记Placement。
+3. newChildren遍历完，oldFiber没遍历完
+意味着本次更新比之前的节点数量少，有节点被删除了。所以需要遍历剩下的oldFiber，依次标记Deletion。
+4. newChildren与oldFiber都没遍历完
+这意味着有节点在这次更新中改变了位置。
+
+**第二轮遍历**：处理剩下的不属于更新的节点。
+1. 为了快速的找到key对应的oldFiber，我们将所有还未处理的oldFiber存入以key为key，oldFiber为value的Map中。
+2. 遍历newChildren，找到对应 map 中的oldFiber，假如 map 中oldFiber的索引为 0，则lastPlacedIndex = 0， （lastPlacedIndex为最后一个可复用节点的索引）
+3. 继续遍历newChildren的下一个元素，如果在 map 中找到可以复用的节点，对比他的 index，如果 index > lastPlacedIndex,则更新lastPlacedIndex，如果小于则为当前复用的 fiber 标记 placement。
+4. 遍历完成后， map 中未复用的标记删除，未找到可复用节点的在遍历过程中都标记新增。
+
+多节点要支持的情況：
+• 插入 Placement
+• 别除 ChildDeletion
+• 移动 Placement
+
+整体流程分为4步。
+1. 将current中所有同级fiber保存在Map中
+2. 追历newChild数组，对于每净遍历到的element，存在两种情況：
+   - a.在Map中存在对应current fiber，且可以复用
+   - b.在Map中不存在对应current fiber，或不能复用
+3. 判断是插入还是移动最后Map中剩下的都标记删除
+
+#### commit阶段如何处理位置更新的节点？
+- 首先判断当前标记新增的节点是否有slibing节点
+- 有sibling的执行`insertChildToContainer`即`container.insertBefore(child, before);`
+  - 查找时要看都一个元素是否是稳定节点，例如当前元素的后边元素也是要 placement 的，则再找后一位然后`insertBefore`
+  - 如果一个元素，没有同级节点，还需要找父元素的兄弟节点，例如这种情况
+  ```jsx
+  <App/><div/>
+  function App() {
+	return <A/>
+  }
+  ```
+- 没有的执行`appendChildToContainer`
+
+```ts
+const commitPlacement = (finishedWork: FiberNode) => {
+	if (__LOG__) {
+		console.log('插入、移动DOM', finishedWork);
+	}
+	const hostParent = getHostParent(finishedWork) as Container;
+
+	const sibling = gethostSibling(finishedWork);
+
+	// appendChild / insertBefore
+	insertOrAppendPlacementNodeIntoContainer(finishedWork, hostParent, sibling);
+};
+function insertOrAppendPlacementNodeIntoContainer(
+	fiber: FiberNode,
+	parent: Container,
+	before?: Instance
+) {
+	if (fiber.tag === HostComponent || fiber.tag === HostText) {
+		if (before) {
+			insertChildToContainer(fiber.stateNode, parent, before);
+		} else {
+			appendChildToContainer(fiber.stateNode, parent);
+		}
+		return;
+	}
+	const child = fiber.child;
+	if (child !== null) {
+		insertOrAppendPlacementNodeIntoContainer(child, parent, before);
+		let sibling = child.sibling;
+
+		while (sibling !== null) {
+			insertOrAppendPlacementNodeIntoContainer(sibling, parent, before);
+			sibling = sibling.sibling;
+		}
+	}
+}
+```

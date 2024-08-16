@@ -207,9 +207,9 @@ function updateState() {
 	const hook = updateWorkInProcessHook();
 	const queue = hook.shared.pending;
 	//todo baseState, memorizeState
-	const baseState = hook.memorizeState;
+	const baseState = hook.baseState;
 
-	hook.memorizeState = processUpdateQueue(base,queue,currentlyrenderingFiber)
+	hook.memorizeState = processUpdateQueue(baseState,queue);
 	return [hook.memorizeState,queue.dispatch]
 }
 ```
@@ -224,4 +224,10 @@ function updateState() {
 #### 实现ReactDOM与Reconciler对接将事件回调保存在DOM中，通过以下两个时机对接：
 
 #### React 使用合成事件系统带来了多个好处：
+
+#### 单节点 diff
+
+#### 多节点 diff
+
+#### commit阶段如何处理位置更新的节点？
 
