@@ -1,4 +1,4 @@
-## 三、响应头信息
+## 一、响应头信息
 HTTP响应头（HTTP Response Headers）是服务器在响应客户端请求时返回的额外信息，描述了响应的各个方面，包括内容类型、缓存策略、服务器信息等。以下是一些常见且重要的HTTP响应头字段及其用途：
 
 ### 1. **Content-Type**
@@ -82,3 +82,66 @@ HTTP响应头（HTTP Response Headers）是服务器在响应客户端请求时�
    - **示例**: `Alt-Svc: h2="alt.example.com:443"`
 
 这些响应头字段为客户端提供了关于响应内容、缓存策略、安全性和跨域访问等方面的关键信息。在前端开发中，理解和正确使用这些头信息，有助于优化性能、提升安全性和增强用户体验。
+
+## 二、cors响应头都有哪些
+CORS（跨域资源共享）响应头用于指示服务器允许哪些跨域请求。以下是常见的 CORS 响应头及其作用：
+
+### 1. `Access-Control-Allow-Origin`
+指定允许访问资源的源（域名）。可以是具体的域名或通配符 `*`（表示允许所有域名）。
+```http
+Access-Control-Allow-Origin: https://example.com
+```
+
+### 2. `Access-Control-Allow-Methods`
+指定允许的 HTTP 方法。通常在预检请求的响应中使用。
+```http
+Access-Control-Allow-Methods: GET, POST, PUT, DELETE
+```
+
+### 3. `Access-Control-Allow-Headers`
+指定允许的自定义请求头。通常在预检请求的响应中使用。
+```http
+Access-Control-Allow-Headers: Content-Type, X-Custom-Header
+```
+
+### 4. `Access-Control-Allow-Credentials`
+指示是否允许发送凭据（如 Cookies）。值为 `true` 或 `false`。
+```http
+Access-Control-Allow-Credentials: true
+```
+
+### 5. `Access-Control-Expose-Headers`
+这个字段是给 XMLHttpRequest 对象赋能，让它不仅可以拿到基本的 6 个响应头字段（包括Cache-Control、Content-Language、Content-Type、Expires、Last-Modified和Pragma）
+指定哪些响应头可以暴露给浏览器的 JavaScript 代码。默认情况下，只有少数标准头部可以被访问。
+```http
+Access-Control-Expose-Headers: X-Custom-Header, Content-Length
+```
+那么在前端可以通过 `XMLHttpRequest.getResponseHeader('X-Custom-Header')` 拿到 X-Custom-Header 这个字段的值。
+### 6. `Access-Control-Max-Age`
+指定预检请求的结果可以被缓存的时间（以秒为单位）。在此时间内，不需要重复发送预检请求。
+```http
+Access-Control-Max-Age: 3600
+```
+
+### 示例
+以下是一个完整的 CORS 响应头示例，展示了如何配置这些头部：
+
+```http
+HTTP/1.1 200 OK
+Access-Control-Allow-Origin: https://example.com
+Access-Control-Allow-Methods: GET, POST, PUT, DELETE
+Access-Control-Allow-Headers: Content-Type, X-Custom-Header
+Access-Control-Allow-Credentials: true
+Access-Control-Expose-Headers: X-Custom-Header, Content-Length
+Access-Control-Max-Age: 3600
+```
+
+### 解释
+- `Access-Control-Allow-Origin: https://example.com`：只允许 `https://example.com` 访问资源。
+- `Access-Control-Allow-Methods: GET, POST, PUT, DELETE`：允许的 HTTP 方法。
+- `Access-Control-Allow-Headers: Content-Type, X-Custom-Header`：允许的自定义请求头。
+- `Access-Control-Allow-Credentials: true`：允许发送凭据。
+- `Access-Control-Expose-Headers: X-Custom-Header, Content-Length`：暴露的响应头。
+- `Access-Control-Max-Age: 3600`：预检请求结果缓存时间为 3600 秒。
+
+通过正确配置这些 CORS 响应头，可以控制和管理跨域请求的行为，确保安全性和灵活性。

@@ -211,3 +211,156 @@ fetch('https://example.com/api', {
 ```
 
 通过了解和使用这些 `Content-Type` 值，你可以更好地处理和传输不同类型的数据。
+
+---
+
+## 三、http头中referer 和 origin 的区别
+在 HTTP 请求头中，`Referer` 和 `Origin` 都用于指示请求的来源，但它们有不同的用途和信息内容。以下是它们的区别：
+
+### `Referer` 头
+- **定义**: `Referer` 头字段包含了当前请求的来源页面的 URL。
+- **用途**: 用于告诉服务器请求是从哪个页面发起的。常用于分析流量来源、广告点击跟踪等。
+- **内容**: 包含完整的 URL，包括协议、域名、路径和查询参数。
+- **示例**:
+  ```http
+  Referer: https://example.com/page.html
+  ```
+
+### `Origin` 头
+- **定义**: `Origin` 头字段包含了发起请求的源的协议、域名和端口。
+- **用途**: 主要用于跨域资源共享 (CORS) 请求中，服务器可以根据 `Origin` 头来决定是否允许请求。
+- **内容**: 只包含协议、域名和端口，不包括路径和查询参数。
+- **示例**:
+  ```http
+  Origin: https://example.com
+  ```
+
+### 主要区别
+1. **信息内容**:
+   - `Referer` 包含完整的 URL（包括路径和查询参数）。
+   - `Origin` 只包含协议、域名和端口。
+
+2. **用途**:
+   - `Referer` 用于指示请求的来源页面，常用于流量分析和广告跟踪。
+   - `Origin` 用于跨域请求的安全检查，帮助服务器决定是否允许请求。
+
+3. **隐私**:
+   - `Referer` 可能会泄露更多的用户信息（如具体的页面路径和查询参数）。
+   - `Origin` 提供更少的信息，通常用于安全性较高的场景。
+
+### 示例
+假设用户在 `https://example.com/page.html` 页面上点击了一个链接，链接指向 `https://another.com/resource`。
+
+#### `Referer` 头
+```http
+GET /resource HTTP/1.1
+Host: another.com
+Referer: https://example.com/page.html
+```
+
+#### `Origin` 头
+```http
+GET /resource HTTP/1.1
+Host: another.com
+Origin: https://example.com
+```
+
+### 代码示例
+在 JavaScript 中发起一个跨域请求时，浏览器会自动添加 `Origin` 头：
+
+```javascript
+fetch('https://another.com/resource', {
+  method: 'GET',
+  credentials: 'include'
+})
+.then(response => response.json())
+.then(data => console.log(data))
+.catch(error => console.error('Error:', error));
+```
+
+在这个请求中，浏览器会自动添加 `Origin` 头，但不会添加 `Referer` 头。`Referer` 头通常由浏览器在导航或资源请求时自动添加。
+
+通过理解 `Referer` 和 `Origin` 的区别，你可以更好地控制和管理 HTTP 请求的来源信息。
+
+## 四、用这两个头信息进行安全检测，但有些情况这些头信息会丢失，都是哪些情况
+在某些情况下，HTTP 请求头中的 `Referer` 和 `Origin` 信息可能会丢失或被省略。以下是一些常见的情况：
+
+### `Referer` 头丢失的情况
+1. **HTTPS 到 HTTP 的跳转**:
+   - 当用户从一个 HTTPS 页面导航到一个 HTTP 页面时，浏览器通常不会发送 `Referer` 头以保护用户隐私。
+   
+2. **隐私设置**:
+   - 用户的浏览器隐私设置可能会阻止发送 `Referer` 头。例如，某些浏览器的隐私模式或扩展插件会禁用 `Referer` 头。
+
+3. **Meta 标签或 HTTP 头**:
+   - 页面可以通过 `<meta>` 标签或 HTTP 头来控制 `Referer` 头的发送。例如，使用 `Referrer-Policy` 头可以指定浏览器在发送 `Referer` 头时应包含哪些信息。
+   ```html
+   <meta name="referrer" content="no-referrer">
+   ```
+   或
+   ```http
+   Referrer-Policy: no-referrer
+   ```
+
+4. **跨域请求**:
+   - 某些跨域请求可能不会包含 `Referer` 头，特别是在使用 `no-referrer` 或 `same-origin` 策略时。
+
+5. **IE6、7下使用window.location.href=url进行界面的跳转，会丢失Referer。**
+6. **IE6、7下使用window.open，也会缺失Referer。**
+
+### `Origin` 头丢失的情况
+1. **同源请求**:
+   - 对于同源请求（即请求的源和目标在同一个域名、协议和端口下），浏览器通常不会发送 `Origin` 头。
+
+2. **GET 请求**:
+   - 对于简单的 GET 请求，浏览器可能不会发送 `Origin` 头，除非请求是**跨域**的。
+
+3. **某些浏览器或版本**:
+   - 某些旧版本的浏览器可能不支持或不发送 `Origin` 头。
+
+4. **复杂==重定向==中可能会丢失**
+   - 假设你从 https://example.com 发起一个请求，并被重定向到 https://another.com：
+   - get 不丢失，post 丢失
+
+
+### 示例
+假设你有一个从 `https://example.com` 发起的请求：
+
+#### HTTPS 到 HTTP 的跳转
+```http
+GET /resource HTTP/1.1
+Host: another.com
+// No Referer header
+```
+
+#### 隐私设置或 Referrer-Policy
+```http
+GET /resource HTTP/1.1
+Host: another.com
+Referrer-Policy: no-referrer
+// No Referer header
+```
+
+#### 同源请求
+```http
+GET /resource HTTP/1.1
+Host: example.com
+// No Origin header
+```
+
+### 代码示例
+在 JavaScript 中发起一个跨域请求时，浏览器会自动添加 `Origin` 头，但在某些情况下可能不会添加 `Referer` 头：
+
+```javascript
+fetch('https://another.com/resource', {
+  method: 'GET',
+  credentials: 'include'
+})
+.then(response => response.json())
+.then(data => console.log(data))
+.catch(error => console.error('Error:', error));
+```
+
+在这个请求中，如果 `https://another.com` 是跨域的，浏览器会添加 `Origin` 头，但 `Referer` 头可能会根据浏览器设置或页面的 `Referrer-Policy` 而丢失。
+
+通过了解这些情况，你可以更好地设计和调试你的应用程序，确保在需要时正确地获取和使用 `Referer` 和 `Origin` 头信息。
