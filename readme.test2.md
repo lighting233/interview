@@ -8,8 +8,8 @@
 H2O
 2^8
 
-悬浮的内容
-悬浮的句子
+*[悬浮]: 的内容
+悬浮 的句子
 
 使用引用
 
@@ -31,19 +31,20 @@ todolist
 图片
 
 
-页脚注释
-
+页脚注释[^1]
+[^1]: 123
 
 ---
 
 #### 2代码块相关
 hello world
 高亮 行数
+```js {line-numbers highlight=[1-1 2-2]}
 function abc () {
     console.log('123);
 
 };
-
+```
 ---
 
 #### 2内联 html 代码
