@@ -6,6 +6,7 @@
  * @return {number[][]}
  */
 var threeSum = function (nums) {
+    //todo 排序
     nums.sort((a,b) => a - b);
     const res = [];
 
