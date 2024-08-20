@@ -32,3 +32,11 @@ delete
 ##### 3. **预检请求（Preflight Request）**
 
 #### 3.JSONP
+
+### 4.跨域请求携带 cookie 的问题
+
+##### 1. 客户端配置
+
+##### 2. 服务器配置
+
+##### 3. 服务器响应 `Access-Control-Allow-Credentials` 字段前是否携带 Cookie
