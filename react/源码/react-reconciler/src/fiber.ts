@@ -73,8 +73,8 @@ export class FiberRootNode {
 	container: Container;
 	current: FiberNode;
 	finishedWork: FiberNode | null;
-	pendingLanes: Lanes;
-	finishedLanes: Lanes;
+	pendingLanes: Lanes; //所有未被消费的 lane 的集合
+	finishedLanes: Lanes; //本次更新消费的 lane
 	callbackNode: CallbackNode | null;
 	callbackPriority: Lane;
 	pendingPassiveEffects: PendingPassiveEffects;

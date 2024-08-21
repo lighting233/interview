@@ -62,7 +62,7 @@ export function scheduleUpdateOnFiber(fiber: FiberNode, lane: Lane) {
 		console.log('开始schedule阶段', fiber, lane);
 	}
 	const root = markUpdateLaneFromFiberToRoot(fiber, lane);
-	// TODO 饥饿问题
+	// 记录 lane 到 fiberrootnode 上
 	markRootUpdated(root, lane);
 	console.log('root', root);
 	if (root === null) {

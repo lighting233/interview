@@ -1,7 +1,8 @@
 // @ts-nocheck
 
 //todo 一、ReactDOM.createRoot().render的流程
-//todo createRoot -> createContainer-> hostRootFiber-> root -> render -> updateContainer -> scheduleUpdateOnFiber
+//todo createRoot -> createContainer-> hostRootFiber-> root -> render initEvent-> updateContainer -> scheduleUpdateOnFiber-> markUpdateLaneFromFiberToRoot->
+//todo -> ensureRootIsScheduled
 export function createContainer(container: Container) {
 	const hostRootFiber = new FiberNode(HostRoot, {}, null);
 	const root = new FiberRootNode(container, hostRootFiber);
