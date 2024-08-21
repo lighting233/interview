@@ -6,8 +6,8 @@
   2. **IO 的瓶颈**：schedule 调度，设置优先级，提供上层 api-hooks，优化交互体验
 
 - **大型**，其中的关键是组件化，跨端和安全性
-  1. **组件化**：单项数据流，jsx 描述 ui，all in js提供更高的灵活性，组件话开发，与传统 jQuery 命令式开发不同，声明式开发更利于组件化。
-  2. **跨端跨浏览器**：虚拟 dom 可以通过核心包调用不同宿主环境的 api 给不同宿主环境使用，本身是一个 js 库，一些合成事件磨平浏览器间的差异。
+  1. **组件化**：单项数据流，jsx 描述 ui，all in js提供更高的灵活性，组件话开发，与传统 jQuery 命令式开发不同，**声明式开发**更利于组件化。
+  2. **跨端跨浏览器**：**虚拟 dom 可以**通过核心包调用**不同宿主环境的 api 给不同宿主环境**使用，本身是一个 js 库，一些**合成事件**磨平浏览器间的差异。
   3. **安全**：不直接操作 ui，提供 xss 检测，开发更加安全
 
 ---
@@ -424,64 +424,10 @@ function updateState<State>(): [State, Disptach<State>] {
    - 删除节点时需要递归子树，如果子树是 functioncomponent需要执行 effect 的回调，对于 hostcomponent 需要解绑 ref，对于子组件需要找他子节点对应的 dom
    - 删除也是深度优先遍历和 beginwork and completework顺序一样
 
-### 十、事件模型
-
-#### 实现ReactDOM与Reconciler对接将事件回调保存在DOM中，通过以下两个时机对接：
-- 创建DOM时 hostConfig中`createInstance`时执行`updateFiberProps`
-- 更新属性时
-  - 在`completeWork`中针对`HostComponent`保存在对应`FiberNode.updateQueue`中，并标记`update flag`,以数组的形式保存`[key1,value1,key2,value2]`
-  - 在 commit 阶段根据 flag 执行`commitMutationEffects -> commitMutationEffectsOnFiber -> commitUpdate(finishedWork)`
-
-- 在createRoot的 render 方法中进行`initEvent(container, validEventTypeList);`,为container添加addEventListener，执行dispatchEvent
-  1. 收集沿途的事件 收集从目标元素到HostRoot之间所有目标回调函数
-```ts
-const collectPaths = (
-	targetElement: PackagedElement,
-	container: Container,
-	eventType: string
-): Paths => {
-	const paths: Paths = {
-		capture: [],
-		bubble: []
-	};
-	// 收集事件回调是冒泡的顺序
-	while (targetElement && targetElement !== container) {
-		const eventProps = targetElement[elementEventPropsKey];
-		if (eventProps) {
-			const callbackNameList = getEventCallbackNameFromtEventType(eventType);
-			if (callbackNameList) {
-				callbackNameList.forEach((callbackName, i) => {
-					const eventCallback = eventProps[callbackName];
-					if (eventCallback) {
-						if (i === 0) {
-							// 反向插入捕获阶段的事件回调
-							paths.capture.unshift(eventCallback);
-						} else {
-							// 正向插入冒泡阶段的事件回调
-							paths.bubble.push(eventCallback);
-						}
-					}
-				});
-			}
-		}
-		targetElement = targetElement.parentNode as PackagedElement;
-	}
-	return paths;
-};
-```
-  2. 构造合成事件
-  3. 遍历captue
-  4. 遍历bubble
-
-#### React 使用合成事件系统带来了多个好处：
-
-- 跨浏览器兼容性：统一的事件 API，消除浏览器间差异。
-- 统一事件处理：提供一致的事件处理方式和事件模型。
-- 性能提升：通过事件代理技术提高事件处理效率。
-- 跨平台支持：在不同环境中提供一致的事件对象接口。
 
 
-### 十一、diff
+
+### 十、diff
 
 #### 单节点 diff
 - 当前支持的情况：
