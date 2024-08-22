@@ -324,7 +324,7 @@ export function commitHookEffectListUnmount(flags: Flags, lastEffect: Effect) {
 }
 
 // 用于执行effect create
-export function commitHookEffectListMount(flags: Flags, lastEffect: Effect) {
+export function commitHookEffectListCreate(flags: Flags, lastEffect: Effect) {
 	commitHookEffectList(flags, lastEffect, (effect) => {
 		const create = effect.create;
 		if (typeof create === 'function') {

@@ -1,7 +1,7 @@
 import { beginWork } from './beginWork';
 import {
 	commitHookEffectListDestroy,
-	commitHookEffectListMount,
+	commitHookEffectListCreate,
 	commitHookEffectListUnmount,
 	commitMutationEffects
 } from './commitWork';
@@ -251,29 +251,24 @@ function performSyncWorkOnRoot(root: FiberRootNode, lanes: Lanes) {
 }
 
 function flushPassiveEffects(pendingPassiveEffects: PendingPassiveEffects) {
-	if ((executionContext & (RenderContext | CommitContext)) !== NoContext) {
-		console.error('不能在React工作流程内执行useEffect回调');
-	}
-	let didFlushPassiveEffects = false;
+	let didFlushPassiveEffect = false;
 	pendingPassiveEffects.unmount.forEach((effect) => {
-		// 不需要HasEffect，因为unmount时一定会触发effect destroy
-		didFlushPassiveEffects = true;
-		commitHookEffectListDestroy(Passive, effect);
+		didFlushPassiveEffect = true;
+		commitHookEffectListUnmount(Passive, effect);
 	});
 	pendingPassiveEffects.unmount = [];
 
 	pendingPassiveEffects.update.forEach((effect) => {
-		didFlushPassiveEffects = true;
-		commitHookEffectListUnmount(Passive | HookHasEffect, effect);
+		didFlushPassiveEffect = true;
+		commitHookEffectListDestroy(Passive | HookHasEffect, effect);
 	});
-	// 任何create都得在所有destroy执行后再执行
 	pendingPassiveEffects.update.forEach((effect) => {
-		didFlushPassiveEffects = true;
-		commitHookEffectListMount(Passive | HookHasEffect, effect);
+		didFlushPassiveEffect = true;
+		commitHookEffectListCreate(Passive | HookHasEffect, effect);
 	});
 	pendingPassiveEffects.update = [];
 	flushSyncCallbacks();
-	return didFlushPassiveEffects;
+	return didFlushPassiveEffect;
 }
 
 function commitRoot(root: FiberRootNode) {

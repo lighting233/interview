@@ -1,0 +1,106 @@
+## useEffect
+- 当前 hook 的数据结构中的memorizeState存放 effect 数据结构，effect 的 next 直接指向下一个 effect
+
+### 数据结构
+
+```ts { .number-lines }
+    type EffectCallback = () => void;
+    export type HookDeps = any[] | null;
+    export interface Effect {
+	    tag: Flags;
+	    create: EffectCallback | void;
+	    destroy: EffectCallback | void;
+	    deps: HookDeps;
+	    next: Effect | null;
+     }
+```
+### 3种flag
+1. 对于fiber，新增 PassiveEffect，代表「当前fiber本次更新存在副作用」
+2. 对于effect hook, Passive代表「useEffect对应effect. 
+3. 对于effect hook, HookHasEffect代表「当前effect本次更新存在副作用」
+
+
+```ts { .number-lines }
+    function mountEffect(create,deps) {
+        const hook = mountWorkInProcessHook();
+        const nextDeps = deps === undefined ? null : deps;
+        currentlyRendingFiber.flags |= PassiveEffect;
+        hook.memosizeState = pushEffect(Passive | HookHasEffect, create, undefined, nextDeps)
+    }
+
+    function pushEffect(hookFlags,create,destory,deps) {
+        const effect = {
+            tag: hookFlags,
+            create,
+            destory,
+            deps,
+            next: null
+        } 
+        const fiber = currentlyRendingFiber;
+        const upDateQueue = fiber.upDateQueue;
+
+        if (updateQueue === null) {
+		    const updateQueue = createFCUpdateQueue();
+		    fiber.updateQueue = updateQueue;
+		    effect.next = effect;
+		    updateQueue.lastEffect = effect;
+	    } else {
+		// 插入effect
+		    const lastEffect = updateQueue.lastEffect;
+		    if (lastEffect === null) {
+			    effect.next = effect;
+			    updateQueue.lastEffect = effect;
+		} else {
+			const firstEffect = lastEffect.next;
+			lastEffect.next = effect;
+			effect.next = firstEffect;
+			updateQueue.lastEffect = effect;
+		}
+	}
+	return effect;
+    }
+```
+
+### 工作流程
+`FiberRootNode`上保存收集的回调
+```ts
+        // 保存未执行的effect
+		this.pendingPassiveEffects = {
+			// 属于卸载组件的
+			unmount: [],
+			// 属于更新组件的
+			update: []
+		};
+```
+
+#### commit阶段调度
+
+1. 首先调度回调
+```ts {.line-numbers}
+	if (
+		(finishedWork.flags & PassiveMask) !== NoFlags ||
+		(finishedWork.subtreeFlags & PassiveMask) !== NoFlags
+	) {
+		if (!rootDoesHasPassiveEffects) {
+			rootDoesHasPassiveEffects = true;
+			// 调度副作用
+			scheduleCallback(NormalPriority, () => {
+				// 执行副作用
+				flushPassiveEffects(root.pendingPassiveEffects);
+				return;
+			});
+		}
+	}
+```
+
+2. `commitMutationEffects(finishedWork, root);`中收集回调,`commitDeletion`收集 `unmount`, `commitPassiveEffect(unmountFiber, root, 'unmount');`;在`commitMutationEffectsOnFiber`中收集更新的回调
+
+```ts
+    if ((flags & PassiveEffect) !== NoFlags) {
+		// 收集因deps变化而需要执行的useEffect
+		commitPassiveEffect(finishedWork, root, 'update');
+		finishedWork.flags &= ~PassiveEffect;
+	}
+```
+
+3. 执行副作用`flushPassiveEffects`

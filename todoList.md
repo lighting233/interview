@@ -5,3 +5,4 @@
 - [ ] 5. 离屏 dom 整体插入 dom 树的操作
 - [ ] 6. Object.freeze
 - [ ] 7. LocalStorage能跨域吗？
+- [ ] 8. 一些跨域的其他方式，比如postMessage，当然WebSocket也是一种方式
