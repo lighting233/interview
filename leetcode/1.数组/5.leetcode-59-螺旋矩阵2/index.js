@@ -27,7 +27,7 @@ var generateMatrix = function (n) {
         for (; i < n - offset; i++) {
             res[i][j] = count++;
         }
-        //9. > startX因为左闭右开，不处理最后一个点，向右遍历需要 offset 是因为 n 不变，每一圈，需要缩减 1，但是startX每圈走完会++，所以不需要 offset
+        //todo 9. > startX因为左闭右开，不处理最后一个点，向右遍历需要 offset 是因为 n 不变，每一圈，需要缩减 1，但是startX每圈走完会++，所以不需要 offset
         for (; j > startX; j--) {
             res[i][j] = count++;
         };

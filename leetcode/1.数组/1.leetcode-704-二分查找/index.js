@@ -41,7 +41,7 @@ var search = function (nums, target) {
 var search = function (nums, target) {
     //1.判断空数组
     if (nums.length === 0) return -1;
-    //2.确定左闭右开区间， right = nums.length，因为不包含右边界了
+    //todo 2.确定左闭右开区间， right = nums.length，因为不包含右边界了
     let left = 0, right = nums.length;
     while (left < right) {
         //todo 右移一位是除 2

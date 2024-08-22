@@ -19,7 +19,7 @@
     //todo 节点相等，而不是值相等，有可能每个节点的值都相等
     // while(p.val !== q.val) {
     while(p !== q){
-        //todo 各自走完才换下一个，不然走的数量不对
+        //todo 如果没有交点的话，这样无法退出循环，因为 p 不会等于 null
         // p = p.next === null ? headB : p.next;
         // q = q.next === null ? headA : q.next;
         p = p === null ? headB : p.next;
@@ -44,3 +44,5 @@
 
     return p;
  };
+
+ 
