@@ -1,5 +1,5 @@
 [TOC]
-## 二、请求头信息
+## 一、请求头信息
 在HTTP请求中，请求头（HTTP Request Headers）包含了客户端向服务器发送的额外信息，用于描述请求的各个方面。这些头信息帮助服务器理解和处理请求。以下是一些常见且重要的HTTP请求头字段及其用途：
 
 ### 1. **Host**
@@ -177,6 +177,14 @@
    - `application/ld+json`: JSON-LD 数据
    - `application/x-tar`: TAR 压缩文件
 
+### 在发送端并没有对应的Content-Charset, 而是直接放在了Content-Type中：
+```http
+// 发送端
+Content-Type: text/html; charset=utf-8
+// 接收端
+Accept-Charset: charset=utf-8
+```
+![两端对应情况](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/3/22/170ffd6bb6d09c2d~tplv-t2oaga2asx-jj-mark:3024:0:0:0:q75.awebp)
 ### 示例
 以下是一些设置 `Content-Type` 的示例：
 
@@ -367,3 +375,38 @@ fetch('https://another.com/resource', {
 在这个请求中，如果 `https://another.com` 是跨域的，浏览器会添加 `Origin` 头，但 `Referer` 头可能会根据浏览器设置或页面的 `Referrer-Policy` 而丢失。
 
 通过了解这些情况，你可以更好地设计和调试你的应用程序，确保在需要时正确地获取和使用 `Referer` 和 `Origin` 头信息。
+
+---
+
+## 五、Connection 头的作用
+
+Connection 头字段在 HTTP 中的主要作用是控制连接的生命周期和管理连接的方式。
+1. 通过 keep-alive 可以复用连接，提高性能；
+   - 这种方式常用于 HTTP/1.1，HTTP/1.1 默认支持 keep-alive，即使没有显式设置 Connection: keep-alive，连接也会默认保持打开 
+2. 通过 close 可以释放资源；
+3. 通过 upgrade 可以实现协议的切换。这使得 HTTP 协议在不同场景下具有更大的灵活性和适应性
+   - 例如，当使用 WebSocket 时，客户端可能会发送请求头 `Connection: Upgrade` 和 `Upgrade: websocket`，以请求切换到 WebSocket 协议 
+
+## 六、`application/x-www-form-urlencoded`与`multipart/form-data`的区别
+
+### `application/x-www-form-urlencoded`
+- 其中的数据会被编码成以&分隔的键值对
+- 字符以URL编码方式编码。
+```js
+// 转换过程: {a: 1, b: 2} -> a=1&b=2 -> 如下(最终形式)
+"a%3D1%26b%3D2"
+```
+### `multipart/form-data`
+- 请求头中的`Content-Type`字段会包含`boundary`，且boundary的值有浏览器默认指定`Content-Type: multipart/form-data;boundary=----WebkitFormBoundaryRRJKeWfHPGrS4LKe`
+- 请求体
+```http
+Content-Disposition: form-data;name="data1";
+Content-Type: text/plain
+data1
+----WebkitFormBoundaryRRJKeWfHPGrS4LKe
+Content-Disposition: form-data;name="data2";
+Content-Type: text/plain
+data2
+----WebkitFormBoundaryRRJKeWfHPGrS4LKe--
+```
+==在实际的场景中，对于图片等文件的上传，基本采用`multipart/form-data`而不用`application/x-www-form-urlencoded`，因为没有必要做 URL 编码，带来巨大耗时的同时也占用了更多的空间。==

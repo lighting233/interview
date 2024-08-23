@@ -45,3 +45,41 @@ delete
 ##### 2. 服务器配置
 
 ##### 3. 服务器响应 `Access-Control-Allow-Credentials` 字段前是否携带 Cookie
+
+## 四、http 请求的特点
+
+### 优点
+- 灵活性
+  - 文本格式上
+  - 传输类型上
+
+### 缺点
+
+
+### http的 keep-alive 和 tcp 的keep-alive有关吗？
+
+
+### 对于定长包的处理
+
+
+### 对于不定长包的处理
+==Transfer-Encoding: chunked==
+
+### HTTP 如何处理大文件的传输？
+- ~~content-range：none~~  服务端响应头`Accept-Ranges: none`,告知客户端支持范围请求
+- range
+- 416 206
+- Content-Range
+
+#### 单段数据
+
+#### 多段数据
+- `Range: bytes=0-9, 30-39`
+- `Content-Type: multipart/byteranges;boundary=00000010101`
+
+## 五、Connection 头的作用
+- 例如，当使用 WebSocket 时，客户端可能会发送请求头 `Connection: Upgrade` 和 `Upgrade: websocket`，以请求切换到 WebSocket 协议 
+
+
+## 六、`application/x-www-form-urlencoded`与`multipart/form-data`的区别
+- 请求头中的`Content-Type`字段会包含`boundary`，且boundary的值有浏览器默认指定`Content-Type: multipart/form-data;boundary=----WebkitFormBoundaryRRJKeWfHPGrS4LKe`
