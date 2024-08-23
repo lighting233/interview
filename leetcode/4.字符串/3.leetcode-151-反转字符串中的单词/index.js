@@ -68,7 +68,7 @@ var reverseWords = function (s) {
         let letterStart = letterEnd;
         //todo 判断letterStart < s.length,因为 s 最后多个空格的话，判断letterStart = letterEnd = s.length
         //todo 'ab'.slice(2,2)为‘’，let a = ['','a','b'];a.join(' ')为' a b'
-        if (letterEnd < s.length) {
+        if (letterStart < s.length) {
             while (letterEnd < s.length && s[letterEnd] !== ' ') letterEnd++;
             res.unshift(s.slice(letterStart, letterEnd))
         }
