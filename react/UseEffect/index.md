@@ -25,14 +25,15 @@
         const hook = mountWorkInProcessHook();
         const nextDeps = deps === undefined ? null : deps;
         currentlyRendingFiber.flags |= PassiveEffect;
+		//mount时没有 destroy 函数
         hook.memosizeState = pushEffect(Passive | HookHasEffect, create, undefined, nextDeps)
     }
 
-    function pushEffect(hookFlags,create,destory,deps) {
+    function pushEffect(hookFlags,create,destroy,deps) {
         const effect = {
             tag: hookFlags,
             create,
-            destory,
+            destroy,
             deps,
             next: null
         } 
@@ -59,6 +60,53 @@
 	}
 	return effect;
     }
+
+function updateEffect(
+	create,
+	deps
+) {
+	const hook = updateWorkInProgressHook();
+	const nextDeps = deps === undefined ? null : deps;
+	let destroy;
+
+	if (currentHook !== null) {
+		const prevEffect = currentHook.memoizedState;
+		destroy = prevEffect.destroy;
+		if (nextDeps !== null) {
+			// 浅比较依赖
+			const prevDeps = prevEffect.deps;
+			if (areHookInputsEqual(prevDeps, nextDeps)) {
+				hook.memoizedState = pushEffect(Passive, create, destroy, nextDeps);
+				return;
+			}
+		}
+	}
+	// 接下来才是有副作用
+	(currentlyRenderingFiber as FiberNode).flags |= PassiveEffect;
+	//update时有了destroy
+	hook.memoizedState = pushEffect(
+		Passive | HookHasEffect,
+		create,
+		destroy,
+		nextDeps
+	);
+}
+
+function areHookInputsEqual(nextDeps: TEffectDeps, prevDeps: TEffectDeps) {
+	if (prevDeps === null || nextDeps === null) {
+		return false;
+	}
+	if(prevDeps.length !== nextDeps.length) {
+		return false;
+	}
+	for (let i = 0; i < prevDeps.length && i < nextDeps.length; i++) {
+		if (Object.is(prevDeps[i], nextDeps[i])) {
+			continue;
+		}
+		return false;
+	}
+	return true;
+}
 ```
 
 ### 工作流程
@@ -104,3 +152,26 @@
 ```
 
 3. 执行副作用`flushPassiveEffects`
+需要遍历两遍update，一遍收集 destroy 一遍收集 create
+```ts
+function flushPassiveEffects(pendingPassiveEffects: PendingPassiveEffects) {
+	let didFlushPassiveEffect = false;
+	pendingPassiveEffects.unmount.forEach((effect) => {
+		didFlushPassiveEffect = true;
+		commitHookEffectListUnmount(Passive, effect);
+	});
+	pendingPassiveEffects.unmount = [];
+
+	pendingPassiveEffects.update.forEach((effect) => {
+		didFlushPassiveEffect = true;
+		commitHookEffectListDestroy(Passive | HookHasEffect, effect);
+	});
+	pendingPassiveEffects.update.forEach((effect) => {
+		didFlushPassiveEffect = true;
+		commitHookEffectListCreate(Passive | HookHasEffect, effect);
+	});
+	pendingPassiveEffects.update = [];
+	flushSyncCallbacks();
+	return didFlushPassiveEffect;
+}
+```

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Dispatcher, Disptach } from 'react/src/currentDispatcher';
 import { Action } from 'shared/ReactTypes';
 import sharedInternals from 'shared/internals';

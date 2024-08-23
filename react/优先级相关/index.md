@@ -56,3 +56,130 @@ export function flushSyncCallbacks() {
 }
 ```
 ## commit阶段移除消费的lane
+
+## 优先级从何而来？
+- 不同交互产生不同优先级
+```ts
+const eventTypeToEventPriority = (eventType: string) => {
+	switch (eventType) {
+		case 'click':
+		case 'keydown':
+		case 'keyup':
+			return SyncLane;
+		case 'scroll':
+			return InputContinuousLane;
+		// TODO 更多事件类型
+		default:
+			return DefaultLane;
+	}
+};
+```
+- `runWithPriority`接收`eventTypeToEventPriority`返回的 lane 和一个回调函数，复制给全局变量`currentPriorityLevel`，使用`unstable_getCurrentPriorityLevel`可以拿到
+- 进一步还能推广到任何可以触发更新的上下文环境，比如 useEffect 回调中触发更新的优先级，首屏渲染优先级等。
+
+### 如何把 lanes 的优先级转化为 schduler 的五种优先级
+获取当前最高优先级，这个优先级和几个特定值比较大小，返回四种优先级，再和四种优先级匹配，默认的 default 是 normal 级别
+  1. ImmediatePriority,
+  2. UserBlockingPriority,
+  3. NormalPriority,
+  4. LowPriority,
+  5. IdlePriority,空闲优先级
+
+```ts
+// 将lane优先级 转化为 Schedule 优先级
+    let schedulerPriorityLevel;
+    switch (lanesToEventPriority(nextLanes)) {
+      case DiscreteEventPriority:
+        schedulerPriorityLevel = ImmediateSchedulerPriority;
+        break;
+      case ContinuousEventPriority:
+        schedulerPriorityLevel = UserBlockingSchedulerPriority;
+        break;
+      case DefaultEventPriority:
+        schedulerPriorityLevel = NormalSchedulerPriority;
+        break;
+      case IdleEventPriority:
+        schedulerPriorityLevel = IdleSchedulerPriority;
+        break;
+      default:
+        schedulerPriorityLevel = NormalSchedulerPriority;
+        break;
+    }
+    // 调度performConcurrentWorkOnRoot
+    // 将返回的taskNode，保存
+    newCallbackNode = scheduleCallback(
+      schedulerPriorityLevel,
+      performConcurrentWorkOnRoot.bind(null, root),
+    );
+
+export function lanesToEventPriority(lanes: Lanes): EventPriority {
+  const lane = getHighestPriorityLane(lanes);
+  if (!isHigherEventPriority(DiscreteEventPriority, lane)) {
+    return DiscreteEventPriority;
+  }
+  if (!isHigherEventPriority(ContinuousEventPriority, lane)) {
+    return ContinuousEventPriority;
+  }
+  if (includesNonIdleWork(lane)) {
+    return DefaultEventPriority;
+  }
+  return IdleEventPriority;
+}
+
+function getHighestPriorityLanes(lanes: Lanes | Lane): Lanes {
+  switch (getHighestPriorityLane(lanes)) {
+    case SyncLane:
+      return SyncLane;
+    case InputContinuousHydrationLane:
+      return InputContinuousHydrationLane;
+    case InputContinuousLane:
+      return InputContinuousLane;
+    case DefaultHydrationLane:
+      return DefaultHydrationLane;
+    case DefaultLane:
+      return DefaultLane;
+    case TransitionHydrationLane:
+      return TransitionHydrationLane;
+    case TransitionLane1:
+    case TransitionLane2:
+    case TransitionLane3:
+    case TransitionLane4:
+    case TransitionLane5:
+    case TransitionLane6:
+    case TransitionLane7:
+    case TransitionLane8:
+    case TransitionLane9:
+    case TransitionLane10:
+    case TransitionLane11:
+    case TransitionLane12:
+    case TransitionLane13:
+    case TransitionLane14:
+    case TransitionLane15:
+    case TransitionLane16:
+      return lanes & TransitionLanes;
+    case RetryLane1:
+    case RetryLane2:
+    case RetryLane3:
+    case RetryLane4:
+    case RetryLane5:
+      return lanes & RetryLanes;
+    case SelectiveHydrationLane:
+      return SelectiveHydrationLane;
+    case IdleHydrationLane:
+      return IdleHydrationLane;
+    case IdleLane:
+      return IdleLane;
+    case OffscreenLane:
+      return OffscreenLane;
+    default:
+      if (__DEV__) {
+        console.error(
+          'Should have found matching lanes. This is a bug in React.',
+        );
+      }
+      // This shouldn't be reachable, but as a fallback, return the entire bitmask.
+      return lanes;
+  }
+}
+```
+

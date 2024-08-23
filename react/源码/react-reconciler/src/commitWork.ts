@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { FiberNode, FiberRootNode, PendingPassiveEffects } from './fiber';
 import {
 	ChildDeletion,

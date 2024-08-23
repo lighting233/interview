@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { beginWork } from './beginWork';
 import {
 	commitHookEffectListDestroy,
