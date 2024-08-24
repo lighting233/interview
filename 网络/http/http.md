@@ -98,6 +98,12 @@ GET / HTTP/1.1
 
 当网页尝试从不同的源加载资源（如跨域请求）时，就会触发跨域问题。跨域问题会影响到多种操作，如 AJAX 请求、WebSocket 连接等。
 
+#### 同源策略限制了以下操作：
+
+1. AJAX 请求：一个网页不能通过 AJAX 请求访问不同源的资源。
+2. DOM 操作：一个网页不能访问或操作来自不同源的 DOM 元素。
+3. Cookies：一个源的 Cookie 不能被另一个源访问。
+
 #### 非同源站点有这样一些限制:
 
 - 不能读取和修改对方的 DOM
@@ -365,8 +371,10 @@ app.listen(3000, () => {
 - 实际内容比Content-Length短，则读取错误
 
 ### 对于不定长包的处理
+假设服务器要发送一个大的响应体，无法提前确定其总长度。在这种情况下，它可以使用 chunked 
+在 chunked 传输编码下，消息主体被分割成若干块（chunk），**每块包含其自身的长度**标记，客户端可以逐块接收并处理数据。适用于无法提前确定消息体总长度的情况。
 - 首先开启Connection: keep-alive
-- 响应头`Transfer-Encoding: chunked`
+- 响应头`Transfer-Encoding: chunked` 当使用 HTTP/2 时，Transfer-Encoding 头通常不再使用，因为 HTTP/2 本身已经有内置的帧分块机制。
 - Content-Length 字段会被忽略
 - 基于长连接持续推送动态内容
 
