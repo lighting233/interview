@@ -97,43 +97,49 @@ function markUpdateLaneFromFiberToRoot(fiber: FiberNode, lane: Lane) {
 }
 
 function ensureRootIsScheduled(root: FiberRootNode) {
-	const updateLanes = getNextLanes(root);
+	const updateLane = getNextLane(root);
 	const existingCallback = root.callbackNode;
 
-	if (updateLanes === NoLanes) {
+	if (updateLane === NoLane) {
 		if (existingCallback !== null) {
-			cancelSchedulerCallback(existingCallback);
+			unstable_cancelCallback(existingCallback);
 		}
 		root.callbackNode = null;
 		root.callbackPriority = NoLane;
 		return;
 	}
-	const curPriority = getHighestPriorityLane(updateLanes);
+
+	const curPriority = updateLane;
 	const prevPriority = root.callbackPriority;
 
 	if (curPriority === prevPriority) {
-		// 有更新在进行，比较该更新与正在进行的更新的优先级
-		// 如果优先级相同，则不需要调度新的，退出调度
 		return;
 	}
+
 	if (existingCallback !== null) {
-		cancelSchedulerCallback(existingCallback);
+		unstable_cancelCallback(existingCallback);
 	}
-	// 如果使用Scheduler调度，则会存在新的callbackNode，用React微任务调度不会存在
 	let newCallbackNode = null;
-	if (curPriority === SyncLane) {
-		// React调度
-		if (__LOG__) {
-			console.log('在微任务中调度执行，优先级：', updateLanes);
-		}
-		// 微任务中调度执行
-		scheduleSyncCallback(performSyncWorkOnRoot.bind(null, root, updateLanes));
-		scheduleMicrotask(flushSyncCallbacks);
+
+	if (__DEV__) {
+		console.log(
+			`在${updateLane === SyncLane ? '微' : '宏'}任务中调度，优先级：`,
+			updateLane
+		);
+	}
+
+	if (updateLane === SyncLane) {
+		// 同步优先级 用微任务调度
+		// [performSyncWorkOnRoot, performSyncWorkOnRoot, performSyncWorkOnRoot]
+		scheduleSyncCallback(performSyncWorkOnRoot.bind(null, root, updateLane));
+		scheduleMicroTask(flushSyncCallbacks);
 	} else {
-		// Scheduler调度
-		const schedulerPriority = lanesToSchedulerPriority(curPriority);
+		// 其他优先级 用宏任务调度
+		const schedulerPriority = lanesToSchedulerPriority(updateLane);
+
 		newCallbackNode = scheduleCallback(
 			schedulerPriority,
+			// @ts-ignore
 			performConcurrentWorkOnRoot.bind(null, root)
 		);
 	}
@@ -145,88 +151,101 @@ function performConcurrentWorkOnRoot(
 	root: FiberRootNode,
 	didTimeout: boolean
 ): any {
-	if ((executionContext & (RenderContext | CommitContext)) !== NoContext) {
-		throw '当前不应处于React工作流程内';
-	}
-
-	// 开始执行具体工作前，保证上一次的useEffct都执行了
-	// 同时要注意useEffect执行时触发的更新优先级是否大于当前更新的优先级
-	const didFlushPassiveEffects = flushPassiveEffects(
-		root.pendingPassiveEffects
-	);
-	const curCallbackNode = root.callbackNode;
-	if (didFlushPassiveEffects) {
-		if (root.callbackNode !== curCallbackNode) {
-			// 调度了更高优更新，这个更新已经被取消了
+	// 保证useEffect回调执行
+	const curCallback = root.callbackNode;
+	const didFlushPassiveEffect = flushPassiveEffects(root.pendingPassiveEffects);
+	if (didFlushPassiveEffect) {
+		if (root.callbackNode !== curCallback) {
 			return null;
 		}
 	}
 
-	const lanes = getNextLanes(root);
-	if (lanes === NoLanes) {
+	const lane = getNextLane(root);
+	const curCallbackNode = root.callbackNode;
+	if (lane === NoLane) {
 		return null;
 	}
+	const needSync = lane === SyncLane || didTimeout;
+	// render阶段
+	const exitStatus = renderRoot(root, lane, !needSync);
 
-	// 本次更新是否是并发更新？
-	// TODO 饥饿问题也会影响shouldTimeSlice
-	const shouldTimeSlice = !didTimeout;
-	const exitStatus = renderRoot(root, lanes, shouldTimeSlice);
-
-	ensureRootIsScheduled(root);
-	if (exitStatus === RootIncomplete) {
-		if (root.callbackNode !== curCallbackNode) {
-			// 调度了更高优更新，这个更新已经被取消了
-			return null;
-		}
-		return performConcurrentWorkOnRoot.bind(null, root);
-	}
-	if (exitStatus === RootCompleted) {
-		const finishedWork = root.current.alternate;
-		root.finishedWork = finishedWork;
-		root.finishedLanes = lanes;
-
-		// commit阶段操作
-		commitRoot(root);
-	} else {
-		throw '还未实现的并发更新结束状态';
+	switch (exitStatus) {
+		// 中断
+		case RootInComplete:
+			if (root.callbackNode !== curCallbackNode) {
+				return null;
+			}
+			return performConcurrentWorkOnRoot.bind(null, root);
+		case RootCompleted:
+			const finishedWork = root.current.alternate;
+			root.finishedWork = finishedWork;
+			root.finishedLane = lane;
+			wipRootRenderLane = NoLane;
+			commitRoot(root);
+			break;
+		case RootDidNotComplete:
+			markRootSuspended(root, lane);
+			wipRootRenderLane = NoLane;
+			ensureRootIsScheduled(root);
+			break;
+		default:
+			if (__DEV__) {
+				console.error('还未实现的并发更新结束状态');
+			}
 	}
 }
 
-function renderRoot(
-	root: FiberRootNode,
-	lanes: Lanes,
-	shouldTimeSlice: boolean
-) {
-	if (__LOG__) {
-		console.log(`开始${shouldTimeSlice ? '并发' : '同步'}render阶段`, root);
+function renderRoot(root: FiberRootNode, lane: Lane, shouldTimeSlice: boolean) {
+	if (__DEV__) {
+		console.log(`开始${shouldTimeSlice ? '并发' : '同步'}更新`, root);
 	}
-	const prevExecutionContext = executionContext;
-	executionContext |= RenderContext;
 
-	// 初始化操作
-	prepareFreshStack(root, lanes);
+	if (wipRootRenderLane !== lane) {
+		// 初始化
+		prepareFreshStack(root, lane);
+	}
 
-	// render阶段具体操作
 	do {
 		try {
+			if (
+				workInProgressSuspendedReason !== NotSuspended &&
+				workInProgress !== null
+			) {
+				const thrownValue = workInProgressThrownValue;
+
+				workInProgressSuspendedReason = NotSuspended;
+				workInProgressThrownValue = null;
+
+				throwAndUnwindWorkLoop(root, workInProgress, thrownValue, lane);
+			}
+
 			shouldTimeSlice ? workLoopConcurrent() : workLoopSync();
 			break;
 		} catch (e) {
-			console.error('workLoop发生错误', e);
-			workInProgress = null;
+			if (__DEV__) {
+				console.warn('workLoop发生错误', e);
+			}
+			c++;
+			if (c > 20) {
+				break;
+				console.warn('break!');
+			}
+			handleThrow(root, e);
 		}
 	} while (true);
 
-	executionContext = prevExecutionContext;
+	if (workInProgressRootExitStatus !== RootInProgress) {
+		return workInProgressRootExitStatus;
+	}
 
+	// 中断执行
 	if (shouldTimeSlice && workInProgress !== null) {
-		return RootIncomplete;
+		return RootInComplete;
 	}
-	if (!shouldTimeSlice && workInProgress !== null) {
-		console.error('render阶段结束时wip不为null');
+	// render阶段执行完
+	if (!shouldTimeSlice && workInProgress !== null && __DEV__) {
+		console.error(`render阶段结束时wip不应该不是null`);
 	}
-
-	workInProgressRootRenderLane = NoLane;
 	return RootCompleted;
 }
 
