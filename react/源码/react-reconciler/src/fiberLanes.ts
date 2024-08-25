@@ -1,3 +1,5 @@
+// @ts-nocheck
+import ReactCurrentBatchConfig from 'react/src/currentBatchConfig';
 import {
 	unstable_NormalPriority as NormalPriority,
 	unstable_ImmediatePriority as ImmediatePriority,
@@ -24,14 +26,15 @@ export function mergeLanes(laneA: Lane, laneB: Lane): Lane {
 
 // 获取update应有的优先级，根据update触发场景
 export function requestUpdateLane() {
-	// TODO render阶段触发更新
-	// TODO Transition
+	const isTransition = ReactCurrentBatchConfig.transition !== null;
+	if (isTransition) {
+		return TransitionLane;
+	}
 
-	// 从当前上下文中获取优先级信息
-	const currentSchedulerPriorityLevel = getCurrentSchedulerPriorityLevel();
-	const updateLane = schedulerPriorityToLane(currentSchedulerPriorityLevel);
-	console.warn('updateLane!', updateLane);
-	return updateLane;
+	// 从上下文环境中获取Scheduler优先级
+	const currentSchedulerPriority = unstable_getCurrentPriorityLevel();
+	const lane = schedulerPriorityToLane(currentSchedulerPriority);
+	return lane;
 }
 
 export function getHighestPriorityLane(lanes: Lanes): Lane {
@@ -41,7 +44,7 @@ export function getHighestPriorityLane(lanes: Lanes): Lane {
 export function markRootFinished(root: FiberRootNode, lanes: Lanes) {
 	root.pendingLanes &= ~lanes;
 }
-
+//比较一个 lane 是否在一个 lanes 中，而不是单纯的比较大小，位运算如果相交都为空，则不在这个优先级里
 export function isSubsetOfLanes(set: Lanes, subset: Lanes | Lane) {
 	return (set & subset) === subset;
 }

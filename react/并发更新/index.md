@@ -26,7 +26,7 @@
    6. 如果是同步优先级的开启同步微任务调度
    7. 如果不是同步把当前优先级转化为`scheduleCallback`的优先级开始调度`performConcurrentWorkOnRoot`;
    8. 函数执行完返回一个新的`performConcurrentWorkOnRoot`,root 上记录这个`callback`和当前优先级
-```ts
+```ts{.line-numbers}
 export function ensureRootIsScheduled(root: FiberRootNode) {
 	const updateLane = getNextLane(root);
 	const existingCallback = root.callbackNode;
@@ -80,7 +80,7 @@ export function ensureRootIsScheduled(root: FiberRootNode) {
    4. 根据`renderRoot`返回的状态决定
       1. 如果任务未完成，当前的回调不等于 root 上挂载的回调，说明有了更高优先级的任务，直接返回即可，当前等级的更新不再执行；如果之前和现在的 callback 相同，说明任务只是被中断了，优先级相同，返回这个`performConcurrentWorkOnRoot`记录到 `root.callbackNode`上。==schduler包的workLoop方法会执行scheduleCallback生成的 task 上的 callback 即performConcurrentWorkOnRoot，如果返回的是一个函数，则currentTask.callback等于返回的这个函数，当前 task 不会被 pop 掉，而是重新执行这个任务==
       2. 如果render任务完成了，则开启 commit 阶段。
-```ts
+```ts {.line-numbers}
 function performConcurrentWorkOnRoot(
 	root: FiberRootNode,
 	didTimeout: boolean
@@ -127,3 +127,38 @@ function performConcurrentWorkOnRoot(
 	}
 }
 ```
+
+```ts {.line-numbers}
+function workLoopSync() {
+	while (workInProgress !== null) {
+		performUnitOfWork(workInProgress);
+	}
+}
+function workLoopConcurrent() {
+	while (workInProgress !== null && !unstable_shouldYield()) {
+		performUnitOfWork(workInProgress);
+	}
+}
+
+function performUnitOfWork(fiber: FiberNode) {
+	const next = beginWork(fiber, wipRootRenderLane);
+	fiber.memoizedProps = fiber.pendingProps;
+
+	if (next === null) {
+		completeUnitOfWork(fiber);
+	} else {
+		workInProgress = next;
+	}
+}
+```
+
+### 实现并发更新的状态计算
+1. 状态计算是在`updateState`中的`processUpdateQueue`中消费的
+2. 获取本次更新优先级的 `update` 是在`isSubsetOfLanes`中获取，即当前更新的全局优先级为`renderLanes`，和`update.lanes` 取交集，在`renderLanes`范围中的是本次需要更新的，其余是跳过的，哪怕优先级更高
+
+### 如何兼顾 update 的连续性和 update 的优先级？
+- baseState是本次更新参与计算的初始state，memoizedState是上次更新计算的最终state
+- 如果本次更新没有update被跳过，則下次更新开始时baseState === memoizedState
+- 如果本次更新有update被跳过，则本次更新计算出的memoizedState为「考虑优先级」情况下计算的结果，baseState为「最后一个没被跳过的update 计算后的结果」（即第一个跳过的 update 的前一个 update），下次更新开始baseState  ！== memoizedState
+- 本次更新「被跳过的update及其后面的所有update」都会被保存在baseQueue中参与下次statei算
+- 本次更新「参与计算但保存在baseQueue中的update」，优先级会降低到NoLane， 因为NoLane和renderLanes取交集永远都在交集中

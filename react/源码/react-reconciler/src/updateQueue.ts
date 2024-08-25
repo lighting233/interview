@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Disptach } from 'react/src/currentDispatcher';
 import { Action } from 'shared/ReactTypes';
 import { Update } from './fiberFlags';
