@@ -45,7 +45,7 @@
 
 
 ### 5. HTTPS 和 `Secure` 标志
-
+==主域名和子域名在共享 Cookie 时，若设置了 `Secure`，它们都必须通过 HTTPS 才能访问该 Cookie。==
 
 ---
 
