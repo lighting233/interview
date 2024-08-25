@@ -34,5 +34,26 @@ var topKFrequent = function (nums, k) {
  * @return {number[]}
  */
 var topKFrequent = function (nums, k) {
+  const map = new Map();
+  for(let num of nums) {
+    map.set(num, (map.get(num) || 0) + 1);
+  };
 
+  const heap = new PriorityQueue({
+    compare: (a,b) => a.val - b.val
+  });
+
+  for(let [key, val] of map) {
+    heap.enqueue({key, val});
+    if(heap.size() > k) {
+      heap.dequeue()
+    }
+  };
+
+  const res = [];
+  while(heap.size()) {
+    res.push(heap.dequeue().key)
+  };
+
+  return res;
 };

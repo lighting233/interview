@@ -68,7 +68,16 @@ var inorderTraversal = function (root) {
  * @return {number[]}
  */
 var preorderTraversal = function (root) {
+    const res = [];
 
+    const dfs = (root) => {
+        if(root === null) return;
+        res.push(root.val);
+        dfs(root.left);
+        dfs(root.right);
+    }
+    dfs(root);
+    return res;
 };
 
 var postorderTraversal = function (root) {

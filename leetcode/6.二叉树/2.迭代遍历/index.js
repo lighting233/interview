@@ -79,13 +79,51 @@ var inorderTraversal = function (root) {
  * @return {number[]}
  */
 var preorderTraversal = function (root) {
+    if(root === null) return [];
+    const res = [];
+    const stack = [root];
+    let cur;
+    while(stack.length) {
+        cur = stack.pop();
+        res.push(cur.val);
+        cur.right && stack.push(cur.right);
+        cur.left && stack.push(cur.left);
+    };
 
+    return res;
 };
 
 var postorderTraversal = function (root) {
+    if(root === null) return [];
+    const res = [];
+    const stack = [];
+    let cur = root;
 
+    while(stack.length || cur) {
+        if(cur) {
+            stack.push(cur);
+            cur = cur.left;
+        }else {
+            cur = stack.pop();
+            res.push(cur.val);
+            cur = cur.right;
+        }
+    };
+    return res;
 };
 
 var inorderTraversal = function (root) {
+    //左右中 中右左
+    if(root === null) return [];
+    const res = [];
+    const stack = [root];
+    let cur;
+    while(stack.length) {
+        cur = stack.pop();
+        res.push(cur.val);
+        cur.left && stack.push(cur.left);
+        cur.right && stack.push(cur.right);
+    };
 
+    return res.reverse();
 };

@@ -1,0 +1,55 @@
+//24-8-25 第一次学习
+/**
+ * Definition for a binary tree node.
+ * function TreeNode(val, left, right) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.left = (left===undefined ? null : left)
+ *     this.right = (right===undefined ? null : right)
+ * }
+ */
+/**
+ * @param {TreeNode} root
+ * @return {TreeNode}
+ */
+var invertTree = function (root) {
+    //后序遍历，前序遍历也行，中序不行，因为左交换到右后，右处理右就给交换回来
+    const dfs = (root) => {
+        if (root === null) return;
+        dfs(root.left);
+        dfs(root.right);
+        [root.left, root.right] = [root.right, root.left];
+    }
+    dfs(root);
+    return root
+};
+
+/**
+ * Definition for a binary tree node.
+ * function TreeNode(val, left, right) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.left = (left===undefined ? null : left)
+ *     this.right = (right===undefined ? null : right)
+ * }
+ */
+/**
+ * @param {TreeNode} root
+ * @return {TreeNode}
+ */
+var invertTree = function (root) {
+    if(root === null) return root;
+    const queue = [root];
+
+    while(queue.length) {
+        let len = queue.length;
+
+        while(len) {
+            const node = queue.shift();
+            [node.left, node.right] = [node.right,node.left];
+            node.left && queue.push(node.left);
+            node.right && queue.push(node.right);
+            len--;
+        }
+    }
+
+    return root
+};

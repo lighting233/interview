@@ -9,25 +9,23 @@
  */
 /**
  * @param {TreeNode} root
- * @return {number[][]}
+ * @return {number}
  */
-var levelOrder = function (root) {
-    const res = [];
-    if(root === null) return res;
+ var minDepth = function(root) {
+    if(root === null) return 0;
     const queue = [root];
-
+    let res = 1;
     while(queue.length) {
         let len = queue.length;
-        const line = [];
 
         while(len) {
             const node = queue.shift();
-            line.push(node.val);
+            if(node.left === null && node.right === null) return res;
             node.left && queue.push(node.left);
             node.right && queue.push(node.right);
             len--;
         }
-        res.push(line);
+        res++;
     };
 
     return res;
@@ -43,8 +41,8 @@ var levelOrder = function (root) {
  */
 /**
  * @param {TreeNode} root
- * @return {number[][]}
+ * @return {number}
  */
-var levelOrder = function (root) {
-
+ var minDepth = function(root) {
+   
 };
