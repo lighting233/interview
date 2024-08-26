@@ -39,7 +39,10 @@ function updateTransition() {
 
 function startTransition(setPending, callback) {
 	setPending(true);
+	//todo
 	const prevTransition = currentBatchConfig.transition;
+	currentBatchConfig.transition = 1;
+	// const prevTransition = currentBatchConfig.transition;
 	callback();
 	setPending(false);
 	currentBatchConfig.transition = prevTransition;

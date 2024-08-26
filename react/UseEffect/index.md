@@ -175,3 +175,7 @@ function flushPassiveEffects(pendingPassiveEffects: PendingPassiveEffects) {
 	return didFlushPassiveEffect;
 }
 ```
+
+## useLayoutEffect
+- `useLayoutEffect` 在 `Mutation` 这个阶段，执行我们删除节点和更新节点的销毁逻辑，也就是 `destroy` 函数，在 `Layout` 这个阶段，执行我们节点的副作用函数 `create` 逻辑并且挂载我们的 destroy 函数.
+- 我们发现`useLayoutEffect`的`create`函数在`layout`阶段同步执行，我们已经知道`commitRootImpl`最后阶段会执行`flushSyncCallbacks`检测并执行同步任务，而`useLayoutEffect`中触发的调度任务（setState）将是同步的优先级， 因此如果我们在`useLayouteffect`中`setState`将会直接重新发起`render`的流程而不是异步执行，即`useLayoutEffect`的`create`函数中触发的任何动作都会在本轮事件循环中同步执行。

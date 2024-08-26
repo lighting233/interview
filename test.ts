@@ -73,3 +73,23 @@ function updateState() {
     return [hook.memoizedState, hook.dispatch]
 }
 
+function mountTransition() {
+    const hook = mountWorkInProcessHook();
+    const [isPending,setPending] = mountState(false);
+    const start = startTransition.bind(null,setPending);
+    hook.memoizedState = start;
+    return [isPending,start];
+}
+
+function updateTransition() {
+    const hook = updateWorkInProcessHook();
+    const start = hook.memoizedState;
+    return [hook.isPending,start];
+}
+
+function startTransition(setPending,callback) {
+    setPending(true);
+    let prevTransition = config.transition;
+    callback();
+    setPending(false);
+}

@@ -293,74 +293,64 @@ function flushPassiveEffects(pendingPassiveEffects: PendingPassiveEffects) {
 
 function commitRoot(root: FiberRootNode) {
 	const finishedWork = root.finishedWork;
-	const pendingPassiveEffects = root.pendingPassiveEffects;
 
 	if (finishedWork === null) {
 		return;
 	}
-	if (__LOG__) {
-		console.log('开始commit阶段', finishedWork);
+
+	if (__DEV__) {
+		console.warn('commit阶段开始', finishedWork);
 	}
-	const lanes = root.finishedLanes;
+	const lane = root.finishedLane;
+
+	if (lane === NoLane && __DEV__) {
+		console.error('commit阶段finishedLane不应该是NoLane');
+	}
 
 	// 重置
 	root.finishedWork = null;
-	root.finishedLanes = NoLanes;
-	root.callbackNode = null;
-	root.callbackPriority = NoLane;
+	root.finishedLane = NoLane;
 
-	markRootFinished(root, lanes);
+	markRootFinished(root, lane);
 
-	if (lanes === NoLane) {
-		console.error('commit阶段finishedLanes不应该是NoLanes');
-	}
-
-	/*
-		useEffect的执行包括2种情况：
-			1. deps变化导致的
-			2. 组件卸载，触发destory
-			首先在这里调度回调
-	*/
 	if (
 		(finishedWork.flags & PassiveMask) !== NoFlags ||
 		(finishedWork.subtreeFlags & PassiveMask) !== NoFlags
 	) {
-		if (!rootDoesHavePassiveEffects) {
-			rootDoesHavePassiveEffects = true;
-			scheduleCallback(NormalSchedulerPriority, () => {
-				flushPassiveEffects(pendingPassiveEffects);
+		if (!rootDoesHasPassiveEffects) {
+			rootDoesHasPassiveEffects = true;
+			// 调度副作用
+			scheduleCallback(NormalPriority, () => {
+				// 执行副作用
+				flushPassiveEffects(root.pendingPassiveEffects);
 				return;
 			});
 		}
 	}
 
+	// 判断是否存在3个子阶段需要执行的操作
+	// root flags root subtreeFlags
 	const subtreeHasEffect =
 		(finishedWork.subtreeFlags & (MutationMask | PassiveMask)) !== NoFlags;
 	const rootHasEffect =
 		(finishedWork.flags & (MutationMask | PassiveMask)) !== NoFlags;
 
 	if (subtreeHasEffect || rootHasEffect) {
-		const prevExecutionContext = executionContext;
-		executionContext |= CommitContext;
-		// 有副作用要执行
-
-		// 阶段1/3:beforeMutation
-
-		// 阶段2/3:Mutation
+		// beforeMutation
+		// mutation Placement
 		commitMutationEffects(finishedWork, root);
 
-		// Fiber Tree切换
 		root.current = finishedWork;
 
 		// 阶段3/3:Layout
-
-		executionContext = prevExecutionContext;
+		commitLayoutEffects(finishedWork, root);
 	} else {
-		// Fiber Tree切换
 		root.current = finishedWork;
 	}
-
-	rootDoesHavePassiveEffects = false;
+	// 检测并执行同步任务
+	flushSyncCallbacks();
+	
+	rootDoesHasPassiveEffects = false;
 	ensureRootIsScheduled(root);
 }
 
