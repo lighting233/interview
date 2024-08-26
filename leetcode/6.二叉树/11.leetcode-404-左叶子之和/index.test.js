@@ -1,4 +1,3 @@
-//24-8-25 第一次学习
 /**
  * Definition for a binary tree node.
  * function TreeNode(val, left, right) {
@@ -9,9 +8,9 @@
  */
 /**
  * @param {TreeNode} root
- * @return {string[]}
+ * @return {number}
  */
- var binaryTreePaths = function(root) {
+ var sumOfLeftLeaves = function(root) {
 
  };
 
@@ -25,8 +24,8 @@
  */
 /**
  * @param {TreeNode} root
- * @return {string[]}
+ * @return {number}
  */
- var binaryTreePaths = function(root) {
+ var sumOfLeftLeaves = function(root) {
 
  };

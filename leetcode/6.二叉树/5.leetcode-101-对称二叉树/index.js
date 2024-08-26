@@ -42,5 +42,19 @@ var isSymmetric = function (root) {
  * @return {boolean}
  */
 var isSymmetric = function (root) {
+    const compare = (left,right) => {
+        if(left === null && right === null) {
+            return true;
+        }else if(left === null || right === null) {
+            return false;
+        }else if(left.val !== right.val) {
+            return false;
+        };
+        const outSide = compare(left.left,right.right);
+        const inner = compare(left.right,right.left);
 
+        return outSide && inner;
+    };
+
+    return compare(root.left,root.right);
 };

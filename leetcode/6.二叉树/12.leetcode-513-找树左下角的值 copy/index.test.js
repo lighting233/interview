@@ -8,9 +8,9 @@
  */
 /**
  * @param {TreeNode} root
- * @return {string[]}
+ * @return {number}
  */
- var binaryTreePaths = function(root) {
+ var findBottomLeftValue = function(root) {
 
  };
 
@@ -24,8 +24,8 @@
  */
 /**
  * @param {TreeNode} root
- * @return {string[]}
+ * @return {number}
  */
- var binaryTreePaths = function(root) {
+ var findBottomLeftValue = function(root) {
 
  };
