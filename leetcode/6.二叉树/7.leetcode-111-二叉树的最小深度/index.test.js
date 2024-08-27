@@ -33,5 +33,14 @@
  * @return {number}
  */
  var minDepth = function(root) {
-    
+    const getHeight = (root) => {
+        if(root === null) return 0;
+        const leftHeight = getHeight(root.left);
+        const rightHeight = getHeight(root.right);
+        if(leftHeight === 0 && rightHeight !== 0) return 1 + rightHeight;
+        if(rightHeight === 0 && leftHeight !== 0) return 1 + leftHeight;
+
+        return 1 + Math.min(leftHeight, rightHeight);
+    };
+    return getHeight(root);
  };

@@ -10,9 +10,22 @@
  * @param {TreeNode} root
  * @return {string[]}
  */
- var binaryTreePaths = function(root) {
+var binaryTreePaths = function (root) {
+    const res = [];
+    const traversal = (root,curPath) => {
+        if(root.left === null && root.right === null) {
+            curPath += root.val;
+            res.push(curPath);
+            return;
+        };
 
- };
+        curPath += root.val + '->';
+        root.left && traversal(root.left, curPath);
+        root.right && traversal(root.right, curPath);
+    };
+    traversal(root,'');
+    return res;
+};
 
 /**
  * Definition for a binary tree node.
@@ -26,6 +39,6 @@
  * @param {TreeNode} root
  * @return {string[]}
  */
- var binaryTreePaths = function(root) {
+var binaryTreePaths = function (root) {
 
- };
+};

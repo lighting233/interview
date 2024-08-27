@@ -19,7 +19,9 @@ function updateMemo<T>(nextCreate: () => T, deps: HookDeps | undefined) {
 		}
 	}
 	const nextValue = nextCreate();
-	return [nextValue,nextDeps]
+	//todo 
+	hook.memoizedState = [nextValue, nextDeps];
+	return nextValue
 }
 ```
 
@@ -42,8 +44,9 @@ function updateCallback<T>(callback: T, deps: HookDeps | undefined) {
 			return prevState[0]
 		}
 	}
-
-	return [callback,nextDeps]
+	//todo 
+	hook.memoizedState = [callback, nextDeps];
+	return callback;
 	
 }
 ```
