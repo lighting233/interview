@@ -1,6 +1,8 @@
 // @ts-nocheck
 
 import { scheduleUpdateOnFiber } from "./react/react";
+import { PassiveEffect } from "./react/源码/react-reconciler/src/fiberFlags";
+import { requestUpdateLane } from "./react/源码/react-reconciler/src/fiberLanes";
 import { HookHasEffect } from "./react/源码/react-reconciler/src/hookEffectTags";
 import { createUpdate, createUpdateQueue, enqueueUpdate, processUpdateQueue } from "./react/源码/react-reconciler/src/updateQueue";
 
@@ -92,4 +94,125 @@ function startTransition(setPending,callback) {
     let prevTransition = config.transition;
     callback();
     setPending(false);
+}
+
+function mountState(initialState) {
+    const  hook = mountWorkInProcessHook();
+    let memoizeState;
+
+    //todo instanceof
+    if( initialState instanceof Function) {
+        memoizeState = initialState();
+    }else {
+        memoizeState = initialState;
+    };
+    hook.memoizedState = memoizeState;
+    //todo hook.baseState = memoizedState;
+    const queue = createUpdateQueue();
+    //todo
+    hook.updateQueue = queue;
+    const dispatch = queue.dispatch = setStateDispatch.bind(null,queue,currentlyRendingFiber);
+    return [hook.memoizedState,dispatch];
+};
+
+//todo dispatchSetState
+function dispatchSetState(queue,fiber,action) {
+    const lane = requestUpdateLane();
+    const update = createUpdate(action,lane);
+    enqueueUpdate(queue,update);
+    scheduleUpdateOnFiber(fiber,lane);
+}
+
+function updateState() {
+    const hook = updateWorkInProcessHook();
+    const updateQueue = hook.updateQueue
+    hook.memoizedState = processUpdateQueue(hook.baseState,renderLanes);
+
+    return [hook.memoizedState,updateQueue.dispatch]
+}
+
+function mountEffect(create,deps) {
+    const  hook = mountWorkInProcessHook();
+    const nextDeps = deps === undefined ? null : deps;
+    currentlyRendingFiber.flasg |= PassiveEffect;
+    hook.memoizeState = pushPassiveEffect(Passive | HookHasEffect,create,undefined,nextDeps);
+
+    //todo
+    
+}
+
+function updateEffect(create,deps) {
+    const hook = updateWorkInProcessHook();
+    const nextDeps = deps === undefined ? null : deps;
+    const {
+        prevDeps,
+        destroy
+    } = hook.memoizedState;
+    if(nextDeps !== null) {
+        if(Object.is(nextDeps,prevDeps)) {
+            hook.memoizeState = pushPassiveEffect(Passive,create,destroy,nextDeps);
+        }
+    };
+    currentlyRendingFiber.flasg |= PassiveEffect;
+    hook.memoizeState = pushPassiveEffect(Passive | HookHasEffect,create,destroy,nextDeps);
+}
+
+function mountTransition() {
+    const  hook = mountWorkInProcessHook();
+    const [isPending,setPending] = mountState(false);
+    const start = startTransition.bind(null,setPending);
+    //todo 
+    // hook.memoizeState = [isPending,start]
+    hook.memoizeState = start;
+    return [isPending,start]
+};
+
+function updateTransition() {
+    const hook = updateWorkInProcessHook();
+    //todo
+    const [isPending] = updateState();
+    return [isPending,hook.memoizeState];
+}
+
+function startTransition(setPending,callback) {
+    setPending(true);
+    let prevTransition = currentBatchConfig.transition;
+    currentBatchConfig.transition = 1;
+
+    callback();
+    setPending(false);
+    currentBatchConfig.transition = prevTransition;
+
+}
+
+function mountRef(initialVal) {
+    const  hook = mountWorkInProcessHook();
+    hook.memoizeState = {
+        current: initialVal
+    };
+    return hook.memoizeState
+}
+
+function mountMemo(create,deps) {
+    const  hook = mountWorkInProcessHook();
+    const nextDeps = deps === undefined ? null : deps;
+    const nextValue = create();
+    hook.memoizeState = [nextValue,nextDeps];
+    return nextValue;
+}
+
+function updateMemo(create,deps) {
+    const  hook = mountWorkInProcessHook();
+    const nextDeps = deps === undefined ? null : deps;
+    const [prevValue, prevDeps] = hook.memoizeState;
+
+    if(nextDeps !== null) {
+        if(Object.is(nextDeps,prevDeps)) {
+            hook.memoizeState = [prevValue,nextDeps];
+            return;
+        }
+    }
+    const nextValue = create();
+    hook.memoizeState = [nextValue,nextDeps];
+    return nextValue;
 }

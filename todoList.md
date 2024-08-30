@@ -7,3 +7,4 @@
 - [ ] 7. LocalStorage能跨域吗？
 - [ ] 8. 一些跨域的其他方式，比如postMessage，当然WebSocket也是一种方式
 - [ ] 9. baiout 和 eigerstate 优化
+- [ ] 10. useDeferedValue

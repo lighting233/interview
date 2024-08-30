@@ -44,6 +44,7 @@ function updateEffect(create,deps) {
     //todo PassiveEffect | HookHasEffect
     hook.memorizeState = pushEffect(Passive | HookHasEffect,create,detroy,nextDeps)
 }
+
 ```
 
 ### 工作流程

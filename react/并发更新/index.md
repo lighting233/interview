@@ -154,7 +154,7 @@ function performUnitOfWork(fiber: FiberNode) {
 
 ### 实现并发更新的状态计算
 1. 状态计算是在`updateState`中的`processUpdateQueue`中消费的
-2. 获取本次更新优先级的 `update` 是在`isSubsetOfLanes`中获取，即当前更新的全局优先级为`renderLanes`，和`update.lanes` 取交集，在`renderLanes`范围中的是本次需要更新的，其余是跳过的，哪怕优先级更高
+2. 获取本次更新优先级的 `update` 是在`isSubsetOfLanes`中获取，即当前更新的全局优先级为`renderLanes`，和`update.lanes` 取交集(按位与，等于自己)，在`renderLanes`范围中的是本次需要更新的，其余是跳过的，哪怕优先级更高
 
 ### 如何兼顾 update 的连续性和 update 的优先级？
 - baseState是本次更新参与计算的初始state，memoizedState是上次更新计算的最终state

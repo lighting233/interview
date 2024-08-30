@@ -112,7 +112,31 @@ export class FiberNode {
 #### useState
 
 ```ts
+function mountState(initialState) {
+    const  hook = mountWorkInProcessHook();
+    let memoizeState;
 
+    //todo instanceof
+    if( initialState instanceof Function) {
+        memoizeState = initialState();
+    }else {
+        memoizeState = initialState;
+    };
+    hook.memoizedState = memoizeState;
+    //todo hook.baseState = memoizedState;
+    const queue = createUpdateQueue();
+    //todo
+    hook.updateQueue = queue;
+    const dispatch = queue.dispatch = setStateDispatch.bind(null,queue,currentlyRendingFiber);
+    return [hook.memoizedState,dispatch];
+};
+//todo dispatchSetState
+function dispatchSetState(queue,fiber,action) {
+    const lane = requestUpdateLane();
+    const update = createUpdate(action,lane);
+    enqueueUpdate(queue,update);
+    scheduleUpdateOnFiber(fiber,lane);
+}
 ```
 
 ### 单节点更新流程

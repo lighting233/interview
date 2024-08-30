@@ -47,4 +47,32 @@ function startTransition(setPending, callback) {
 	setPending(false);
 	currentBatchConfig.transition = prevTransition;
 }
+
+function mountTransition() {
+    const  hook = mountWorkInProcessHook();
+    const [isPending,setPending] = mountState(false);
+    const start = startTransition.bind(null,setPending);
+    //todo 
+    // hook.memoizeState = [isPending,start]
+    hook.memoizeState = start;
+    return [isPending,start]
+};
+
+function updateTransition() {
+    const hook = updateWorkInProcessHook();
+    //todo
+    const [isPending] = updateState();
+    return [isPending,hook.memoizeState];
+}
+
+function startTransition(setPending,callback) {
+    setPending(true);
+    let prevTransition = currentBatchConfig.transition;
+    currentBatchConfig.transition = 1;
+
+    callback();
+    setPending(false);
+    currentBatchConfig.transition = prevTransition;
+
+}
 ```
