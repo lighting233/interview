@@ -11,9 +11,23 @@
  * @param {TreeNode} root
  * @return {boolean}
  */
- var isSymmetric = function(root) {
+var isSymmetric = function (root) {
+    const compare = (left,right) => {
+        if(left === null && right === null) {
+            return true;
+        }else if(left === null || right === null) {
+            return false;
+        }else if(left.val !== right.val) {
+            return false;
+        };
 
- };
+        const outer = compare(left.left,right.right);
+        const inner = compare(left.right,right.left);
+        return outer && inner;
+    };
+
+    return compare(root.left,root.right)
+};
 
 /**
  * Definition for a binary tree node.
@@ -27,6 +41,6 @@
  * @param {TreeNode} root
  * @return {boolean}
  */
- var isSymmetric = function(root) {
+var isSymmetric = function (root) {
 
- };
+};

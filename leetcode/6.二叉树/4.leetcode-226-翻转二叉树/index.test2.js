@@ -11,9 +11,24 @@
  * @param {TreeNode} root
  * @return {TreeNode}
  */
- var invertTree = function(root) {
+var invertTree = function (root) {
+    if (root === null) return root;
+    const queue = [root];
 
- };
+    while (queue.length) {
+        let len = queue.length;
+
+        while (len) {
+            const node = queue.shift();
+            [node.left, node.right] = [node.right, node.left];
+            node.left && queue.push(node.left);
+            node.right && queue.push(node.right);
+            len--;
+        }
+    };
+
+    return root;
+};
 
 /**
  * Definition for a binary tree node.
@@ -27,6 +42,13 @@
  * @param {TreeNode} root
  * @return {TreeNode}
  */
- var invertTree = function(root) {
-
- };
+var invertTree = function (root) {
+    const dfs = (root) => {
+        if (root === null) return;
+        [root.left, root.right] = [root.right, root.left];
+        dfs(root.left);
+        dfs(root.right);
+    }
+    dfs(root);
+    return root;
+};
