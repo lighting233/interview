@@ -1,4 +1,3 @@
-//24-8-26 第一次学习
 /**
  * Definition for a binary tree node.
  * function TreeNode(val, left, right) {
@@ -9,9 +8,10 @@
  */
 /**
  * @param {TreeNode} root
+ * @param {number} k
  * @return {number}
  */
- var findBottomLeftValue = function(root) {
+ var kthSmallest = function(root, k) {
 
  };
 
@@ -25,8 +25,9 @@
  */
 /**
  * @param {TreeNode} root
+ * @param {number} k
  * @return {number}
  */
- var findBottomLeftValue = function(root) {
+ var kthSmallest = function(root, k) {
 
  };

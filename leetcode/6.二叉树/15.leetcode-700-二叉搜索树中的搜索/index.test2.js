@@ -8,9 +8,10 @@
  */
 /**
  * @param {TreeNode} root
- * @return {number}
+ * @param {number} val
+ * @return {TreeNode}
  */
- var findBottomLeftValue = function(root) {
+ var searchBST = function(root, val) {
 
  };
 
@@ -24,8 +25,9 @@
  */
 /**
  * @param {TreeNode} root
- * @return {number}
+ * @param {number} val
+ * @return {TreeNode}
  */
- var findBottomLeftValue = function(root) {
+ var searchBST = function(root, val) {
 
  };
