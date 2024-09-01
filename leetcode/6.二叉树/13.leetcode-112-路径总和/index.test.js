@@ -11,9 +11,28 @@
  * @param {number} targetSum
  * @return {boolean}
  */
- var hasPathSum = function(root, targetSum) {
+var hasPathSum = function (root, targetSum) {
+    if(root === null) return false;
 
- };
+    const traversal = (root, count) => {
+        if(root.left === null && root.right === null) {
+            return count === 0;
+        };
+        let left;
+        if(root.left) {
+            left =  traversal(root.left, count - root.left.val);
+            if(left) return true;
+        };
+        let right;
+        if(root.right) {
+            right =  traversal(root.right, count - root.right.val);
+            if(right) return true;
+        };
+
+        return false;
+    }
+    return traversal(root, targetSum - root.val);
+};
 
 /**
  * Definition for a binary tree node.
@@ -28,6 +47,6 @@
  * @param {number} targetSum
  * @return {boolean}
  */
- var hasPathSum = function(root, targetSum) {
+var hasPathSum = function (root, targetSum) {
 
- };
+};

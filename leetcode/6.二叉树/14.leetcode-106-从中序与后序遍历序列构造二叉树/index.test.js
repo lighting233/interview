@@ -37,5 +37,13 @@ var buildTree = function (inorder, postorder) {
  * @return {TreeNode}
  */
 var buildTree = function (preorder, inorder) {
+    //todo preorder.length === 0,递归要有终止条件，叶子节点要有 null 节点
+    if(preorder.length === 0) return null;
+    const rootVal = preorder.shift();
+    const index = inorder.indexOf(rootVal);
+    const root = new TreeNode(rootVal);
+    root.left = buildTree(preorder.slice(0,index),inorder.slice(0,index));
+    root.right = buildTree(preorder.slice(index),inorder.slice(index+1));
 
+    return root;
 };

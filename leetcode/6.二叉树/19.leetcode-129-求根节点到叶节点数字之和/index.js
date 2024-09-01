@@ -11,9 +11,22 @@
  * @param {TreeNode} root
  * @return {number}
  */
- var sumNumbers = function(root) {
+var sumNumbers = function (root) {
+    let res = 0;
 
- };
+    const traversal = (root, curVal) => {
+        if(root.left === null && root.right === null) {
+            res+=Number(curVal);
+            return;
+        };
+        root.left && traversal(root.left, curVal + root.left.val);
+        root.right && traversal(root.right, curVal + root.right.val);
+    };
+
+    traversal(root, root.val + '');
+
+    return res;
+};
 
 /**
  * Definition for a binary tree node.
@@ -27,6 +40,6 @@
  * @param {TreeNode} root
  * @return {number}
  */
- var sumNumbers = function(root) {
+var sumNumbers = function (root) {
 
- };
+};

@@ -10,9 +10,24 @@
  * @param {TreeNode} root
  * @return {boolean}
  */
- var isValidBST = function(root) {
+var isValidBST = function (root) {
+    let prev = null;
 
- };
+    const inorder = (root) => {
+        if(root === null) return true;
+        const left = inorder(root.left);
+        //todo >=
+        // if(prev !== null && prev.val > root.val) {
+        if(prev !== null && prev.val >= root.val) {
+            return false;
+        };
+        prev = root;
+        const right = inorder(root.right);
+        return right && left;
+    };
+
+    return inorder(root);
+};
 
 /**
  * Definition for a binary tree node.
@@ -26,6 +41,6 @@
  * @param {TreeNode} root
  * @return {boolean}
  */
- var isValidBST = function(root) {
+var isValidBST = function (root) {
 
- };
+};

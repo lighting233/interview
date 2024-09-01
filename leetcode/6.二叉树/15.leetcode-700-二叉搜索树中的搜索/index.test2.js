@@ -11,9 +11,16 @@
  * @param {number} val
  * @return {TreeNode}
  */
- var searchBST = function(root, val) {
-
- };
+var searchBST = function (root, val) {
+    if(root === null) return null;
+    if(root.val === val) {
+        return root;
+    }else if(root.val < val) {
+        return searchBST(root.right,val);
+    }else if(root.val > val) {
+        return searchBST(root.left,val);
+    };
+};
 
 /**
  * Definition for a binary tree node.
@@ -28,6 +35,15 @@
  * @param {number} val
  * @return {TreeNode}
  */
- var searchBST = function(root, val) {
+var searchBST = function (root, val) {
+    while(root !== null) {
+        if(root.val === val) return root;
+        if(root.val < val) {
+            root = root.right;
+        }else {
+            root = root.left;
+        }
+    };
 
- };
+    return null;
+};
