@@ -43,5 +43,13 @@ var lowestCommonAncestor = function (root, p, q) {
  * @return {TreeNode}
  */
 var lowestCommonAncestor = function (root, p, q) {
-
+    if(root === null) return null;
+    if(root === p || root === q) return root;
+    const left = lowestCommonAncestor(root.left, p, q);
+    const right = lowestCommonAncestor(root.right, p, q);
+    //todo 都存在的情况
+    if(left && right) return root;
+    if(left && right === null) return left;
+    if(left === null && right) return right;
+    return null;
 };
