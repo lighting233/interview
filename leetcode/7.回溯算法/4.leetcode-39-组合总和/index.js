@@ -17,8 +17,8 @@ var combinationSum = function (candidates, target) {
             return;
         };
         for(let i = startIdx; i < candidates.length; i++) {
-            //横向剪枝，因为重复的元素已经在纵向的时候使用过了
-            if(i > startIdx && candidates[i - 1] === candidates[i]) continue;
+            // //横向剪枝，因为重复的元素已经在纵向的时候使用过了
+            // if(i > startIdx && candidates[i - 1] === candidates[i]) continue;
             if(sum > target) break;
             sum+=candidates[i];
             path.push(candidates[i])
@@ -39,5 +39,29 @@ var combinationSum = function (candidates, target) {
  * @return {number[][]}
  */
 var combinationSum = function (candidates, target) {
+    candidates.sort((a,b) => a - b);
+    const res = [];
+    const path = [];
 
+    const dfs = (startIdx,sum) => {
+        if(sum === target) {
+            res.push([...path]);
+            return;
+        };
+
+        for(let i = startIdx; i < candidates.length; i++) {
+            const num = candidates[i];
+            //todo 在这剪枝
+            if(sum + num > target) break;
+            sum+=num;
+            path.push(num);
+            dfs(i,sum);
+            sum-=num;
+            path.pop();
+        }
+    };
+
+    dfs(0,0);
+
+    return res;
 };

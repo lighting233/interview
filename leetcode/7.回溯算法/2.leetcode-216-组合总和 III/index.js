@@ -41,5 +41,29 @@ var combinationSum3 = function (k, n) {
  * @return {number[][]}
  */
 var combinationSum3 = function (k, n) {
+    const res = [];
+    const path = [];
 
+    const dfs = (startIdx,sum) => {
+        if(sum > n) return;
+        //todo path.length === k
+        if(path.length === k) {
+            if(sum === n) {
+                res.push([...path]);
+                
+            };
+            return;
+        }
+        
+
+        for(let i = startIdx; i + (k - (path.length + 1)) <= 9; i++) {
+            sum+=i;
+            path.push(i);
+            dfs(i + 1,sum);
+            sum-=i;
+            path.pop();
+        }
+    };
+    dfs(1,0);
+    return res;
 };
