@@ -7,7 +7,7 @@
 - [ ] 7. LocalStorage能跨域吗？
 - [ ] 8. 一些跨域的其他方式，比如postMessage，当然WebSocket也是一种方式
 - [x] 9. baiout 和 eigerstate 优化
-- [ ] 10. useDeferedValue
+- [x] 10. useDeferedValue
 - [ ] 11. Bom 对象 https://juejin.cn/post/7116113618550292516
 - [ ] 12. BFC
 - [ ] 13. css 权重

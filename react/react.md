@@ -91,7 +91,7 @@ export class FiberNode {
 		// 状态
 		this.pendingProps = pendingProps;
 		this.memoizedProps = null;
-		this.updateQueue = null;
+		this.updateQueue = null; //FunctionComponent上存储 effect 链表
 		this.memoizedState = null;
 
 		// 副作用
