@@ -29,9 +29,15 @@ var subsets = function (nums) {
     const res = [];
     const path = [];
 
-    const dfs = () => {
-    
+    const dfs = (startIdx) => {
+        res.push([...path]);
+
+        for(let i = startIdx; i < nums.length; i++) {
+            path.push(nums[i]);
+            dfs(i+1);
+            path.pop();
+        }
     };
-    dfs();
+    dfs(0);
     return res;
 };

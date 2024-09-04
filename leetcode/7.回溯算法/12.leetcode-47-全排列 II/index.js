@@ -35,12 +35,28 @@ var permuteUnique = function (nums) {
  * @return {number[][]}
  */
 var permuteUnique = function (nums) {
+    nums.sort((a,b) => a -b);
     const res = [];
     const path = [];
 
-    const dfs = () => {
-    
+    const dfs = (used) => {
+        if(path.length === nums.length) {
+            res.push([...path]);
+            return;
+        };
+
+        for(let i = 0; i < nums.length; i++) {
+            //todo nums = [1,1,2] 纵向第二行也不能取 1 了
+            // if(i > 0 && nums[i] === nums[i - 1]) continue;
+            if(i > 0 && nums[i] === nums[i - 1] && !used[i - 1]) continue;
+            if(used[i]) continue;
+            path.push(nums[i]);
+            used[i] = true;
+            dfs(used);
+            path.pop();
+            used[i] = false;
+        }
     };
-    dfs();
+    dfs([]);
     return res;
 };

@@ -41,9 +41,21 @@ var findSubsequences = function (nums) {
     const res = [];
     const path = [];
 
-    const dfs = () => {
-    
+    const dfs = (startIdx) => {
+        if(path.length > 1) {
+            res.push([...path]);
+        };
+        const set = new Set();
+        for(let i = startIdx; i < nums.length; i++) {
+            if(set.has(nums[i])) continue;
+            //todo 比较大小
+            if(path.length > 0 && nums[i] < path.at(-1)) continue;
+            set.add(nums[i]);
+            path.push(nums[i]);
+            dfs(i+1);
+            path.pop();
+        }
     };
-    dfs();
+    dfs(0);
     return res;
 };
