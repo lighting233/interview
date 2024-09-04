@@ -133,6 +133,7 @@ function ensureRootIsScheduled(root: FiberRootNode) {
 		// [performSyncWorkOnRoot, performSyncWorkOnRoot, performSyncWorkOnRoot]
 		scheduleSyncCallback(performSyncWorkOnRoot.bind(null, root, updateLane));
 		scheduleMicroTask(flushSyncCallbacks);
+		newCallbackNode = null;
 	} else {
 		// 其他优先级 用宏任务调度
 		const schedulerPriority = lanesToSchedulerPriority(updateLane);
@@ -172,6 +173,8 @@ function performConcurrentWorkOnRoot(
 	switch (exitStatus) {
 		// 中断
 		case RootInComplete:
+			//传入 now 是检测饥饿状态
+			ensureRootIsScheduled(root, now());
 			if (root.callbackNode !== curCallbackNode) {
 				return null;
 			}
