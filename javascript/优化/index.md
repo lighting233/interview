@@ -8,3 +8,17 @@
 
 ## 二、`beginWork`性能优化策略
 - 一个节点下可能有很多个子节点，都标记了placement，那就要插入 dom 多次，我们可以建立好一个离屏dom 树，对 div 进行一次整体的placement操作。
+
+## 三、事件委托
+- 每次用户触发事件时，合成器线程也需要和主线程通信并等待反馈，流畅的合成器独立处理合成帧的模式就失效了
+- 渲染进程控制 gui 线程和 js 线程，他们之间互斥，本来合成线程可以独立并行执行，但是合成线程生成合成帧需要等待非快速滚动区域的事件绑定处理完成，才能进行合成
+- 只需要在事件监听时传递passtive参数为 true，passtive会告诉浏览器你既要绑定事件，又要让组合器线程直接跳过主线程的事件处理直接合成创建组合帧
+```js
+document.body.addEventListener('touchstart', 
+event => {
+    if (event.target === area) {
+        event.preventDefault()
+    }
+ }, {passive: true});
+
+```
