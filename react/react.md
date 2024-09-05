@@ -118,6 +118,7 @@ export class FiberNode {
 2. this.setState
 3. useState，useReducer的dispatch方法
 4. useContext
+5. useSyncExternalStore
 
 不常见的：
 1. this.forceUpdate() 
