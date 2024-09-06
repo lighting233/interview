@@ -39,5 +39,26 @@ var findBottomLeftValue = function (root) {
  * @return {number}
  */
 var findBottomLeftValue = function (root) {
+    let maxDepth = 0;
+    let res;
 
+    const dfs = (root,curDepth) => {
+        if(root.left === null && root.right === null && curDepth > maxDepth) {
+            maxDepth = curDepth;
+            res =  root.val;
+            return;
+        };
+        curDepth++;
+        if(root.left) {
+            //todo 不能找到了就返回，因为右边可能比左边深
+            // return dfs(root.left, curDepth);
+            dfs(root.left, curDepth);
+        }
+
+        if(root.right) {
+            dfs(root.right,curDepth)
+        }
+    };
+    dfs(root,1)
+    return res;
 };

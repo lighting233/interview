@@ -48,5 +48,18 @@ var hasPathSum = function (root, targetSum) {
  * @return {boolean}
  */
 var hasPathSum = function (root, targetSum) {
+    if(root === null) return false;
 
+    const dfs = (root,count) => {
+        if(root.left === null && root.right === null) {
+            return count === 0;
+        };
+
+        if(root.left && dfs(root.left,count - root.left.val)) return true;
+        if(root.right && dfs(root.right,count - root.right.val)) return true;
+
+        return false;
+    }
+    
+    return dfs(root,targetSum - root.val)
 };

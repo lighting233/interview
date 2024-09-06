@@ -19,7 +19,8 @@ const res3 = [
     77, 96, 106, 40, 39, 343,
     47, 746, 530, 129, 112, 131
 ]
-
+const errorArr3 = [513,236,96]
+const forgetArr3 = [230]
 const total = res1.concat(res2,res3);
 console.log(total.length)
 

@@ -41,5 +41,16 @@ var sumNumbers = function (root) {
  * @return {number}
  */
 var sumNumbers = function (root) {
+    let res = 0;
 
+    const dfs = (root,path) => {
+        if(root.left === null && root.right === null) {
+            res+= Number(path);
+            return;
+        };
+        root.left && dfs(root.left, path+root.left.val);
+        root.right && dfs(root.right, path+root.right.val);
+    };
+    dfs(root,'' + root.val);
+    return res;
 };

@@ -39,5 +39,18 @@ var getMinimumDifference = function (root) {
  * @return {number}
  */
 var getMinimumDifference = function (root) {
+    let res = Infinity;
+    let prev =null;
+    const dfs = (root) => {
+        if(root === null ) return;
+        dfs(root.left);
+        if(prev) {
+            res = Math.min(res,root.val - prev.val);
+        };
+        prev = root;
+        dfs(root.right);
+    };
+    dfs(root);
 
+    return res;
 };
