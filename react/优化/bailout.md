@@ -12,8 +12,8 @@
 - bailout发生在步骤2：组件树开始render后，命中了bailout的组件的子孙组件不会render。
 
 ### 与 React.memo的区别
-- bailout 是父组件的状态没有变化，则可以不渲染子组件
-- memo 的作用是，比较当前子组件接收的 props 是否变化，没变化，即使父组件的状态在变化，子组件也可以不渲染
+- bailout 是父组件的状态没有变化，则可以不渲染子组件。优化的是组件更新前后 state 变没变化，没变化不 renconcile
+- memo 的作用是，比较当前子组件接收的 props 是否变化，没变化，即使父组件的状态在变化，子组件也可以不渲染。优化的是组件接收父元素的 props，比较 props 前后发没发生变化，没变化再继续 bailut 的流程
 
 ### 一个 FiberNode 什么时候可以跳过 reconciler 流程呢？
 - `reconciler`也就是 diff 决定的是是否复用已有的 `fiber` 还是根据当前的`element`创建一个新 fiber

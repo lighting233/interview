@@ -11,7 +11,7 @@
 - [ ] 11. Bom 对象 https://juejin.cn/post/7116113618550292516
 - [ ] 12. BFC
 - [ ] 13. css 权重
-- [ ] 14. 不可变数据
+- [x] 14. 不可变数据
 - [ ] 15. offsetTop
 - [ ] 16. 垃圾回收
 - [ ] 17. createPortal和 fluhSync，use

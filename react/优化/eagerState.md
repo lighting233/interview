@@ -17,6 +17,7 @@
 - 一个保存「当前视图」对应的相关信息，被称为**current fiber**
 - 一个保存「接下来要变化的视图」对应的相关信息，被称为**wip fiber**，`updateNum`中被预设的是`wip fiber`。
 - 当组件触发更新后，会在组件对应的2个fiber上都「标记更新」
+- wip 当前优先级的任务执行完后进入 commit（可能树上还存在低优先级的 lane 被跳过），然后在 mountion 阶段后，切换 fiber 树，这时新的 wip 树带着上一次被跳过的优先级
 ```ts {.line-numbers highlight=[20-23]}
 export const enqueueUpdate = <State>(
 	updateQueue: UpdateQueue<State>,

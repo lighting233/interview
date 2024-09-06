@@ -1,5 +1,11 @@
 ## useImperativeHandle
 ```ts {.line-numbers}
+
+function useImperativeHandle(ref,factory,des){
+   ref.current = factory();
+}
+
+
 function Child(props,ref){
   const childRef = React.useRef();
   //函数组件自定义暴露给父组件ref对象

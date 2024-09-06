@@ -1,8 +1,9 @@
-function mountReducer(reducer,initial,init) {
+function mountReducer(reducer,initial,init?: I => S,) {
     const hook = mountWorkInProcessHook();
     let initialState;
-    if(initial instanceof Function) {
-        initialState = initial();
+    //todo
+    if(init !== undefined) {
+        initialState = init(initial);
     }else {
         initialState = initial;
     };
