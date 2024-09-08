@@ -15,3 +15,6 @@
 - [ ] 15. offsetTop
 - [ ] 16. 垃圾回收
 - [ ] 17. createPortal和 fluhSync，use
+- [ ] 18. filter
+- [ ] 19. 浮点数计算
+- [ ] 20. postMessage、MessageChannel的区别
