@@ -9,8 +9,8 @@
 - [x] 9. baiout 和 eigerstate 优化
 - [x] 10. useDeferedValue
 - [ ] 11. Bom 对象 https://juejin.cn/post/7116113618550292516
-- [ ] 12. BFC
-- [ ] 13. css 权重
+- [x] 12. BFC
+- [x] 13. css 权重
 - [x] 14. 不可变数据
 - [ ] 15. offsetTop
 - [ ] 16. 垃圾回收
@@ -18,3 +18,4 @@
 - [ ] 18. filter
 - [ ] 19. 浮点数计算
 - [ ] 20. postMessage、MessageChannel的区别
+- [ ] 21. 小于 12px
