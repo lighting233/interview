@@ -29,5 +29,17 @@ var combinationSum4 = function (nums, target) {
  * @return {number}
  */
 var combinationSum4 = function (nums, target) {
+    const dp = Array(target + 1).fill(0);
+    dp[0] = 1;
 
+    for(let j = 0; j <= target; j++) {
+        for(let i = 0; i < nums.length; i++) {
+            //todo <=
+            if(nums[i] <= j) {
+                dp[j] = dp[j] + dp[j - nums[i]]
+            }
+        }
+    }
+
+    return dp[target]
 };

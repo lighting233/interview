@@ -12,9 +12,24 @@
  * @param {TreeNode} root
  * @return {number}
  */
- var rob = function(root) {
+var rob = function (root) {
+    //定义一个一维 dp 数组,dp[0]不偷最大的金币数量，dp[1]偷
+    const postorder = ( root ) => {
+        if(root === null) return [0,0];
+        const left = postorder(root.left);
+        const right = postorder(root.right);
+        //后序遍历，当前节点的值，需要他的左右子节点的值来确定
+        //偷当前节点
+        const val1 = root.val + left[0] + right[0];
+        //不偷
+        const val2 = Math.max(left[0],left[1]) + Math.max(right[0],right[1]);
 
- };
+        return [val2,val1]
+    };
+    const res = postorder(root);
+
+    return Math.max(res[0],res[1])
+};
 
 /**
  * Definition for a binary tree node.
@@ -28,6 +43,6 @@
  * @param {TreeNode} root
  * @return {number}
  */
- var rob = function(root) {
+var rob = function (root) {
 
- };
+};

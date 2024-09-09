@@ -26,5 +26,16 @@ var coinChange = function (coins, amount) {
  * @return {number}
  */
 var coinChange = function (coins, amount) {
+    const dp = Array(amount + 1).fill(Infinity);
 
+    //todo 初始化
+    dp[0] = 0
+    for(let coin of coins) {
+        for(let j = coin; j <= amount; j++) {
+            dp[j] = Math.min(dp[j], dp[j - coin] + 1)
+        }
+    }
+
+    //返回值判断Infinity
+    return dp[amount] === Infinity ? -1 : dp[amount]
 };
