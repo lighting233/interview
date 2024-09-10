@@ -28,5 +28,18 @@ var wordBreak = function (s, wordDict) {
  * @return {boolean}
  */
 var wordBreak = function (s, wordDict) {
+    const len = s.length;
+    const dp = Array(len + 1).fill(false);
+    dp[0] = true;
 
+    for(let j = 0; j <= len; j++) {
+        for(let word of wordDict) {
+            //todo 背包 j 要大于单词
+            if(j >=  word.length && dp[j - word.length] === true && s.slice(j - word.length, j) === word) {
+                dp[j] = true;
+            }
+        }
+    };
+
+    return dp[len];
 };

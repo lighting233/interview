@@ -45,4 +45,14 @@ var rob = function (root) {
  */
 var rob = function (root) {
 
+    const postorder = (root) => {
+        if(root === null) return [0,0];
+        const left = postorder(root.left);
+        const right = postorder(root.right);
+        return [left[1] + right[1] + root.val, Math.max(left[1],left[0]) + Math.max(right[0], right[1])]
+    };
+
+    const [res1, res2] = postorder(root);
+
+    return Math.max(res1,res2);
 };

@@ -63,10 +63,27 @@
     <div class="child2">233</div>
     <script>
 
-        for(let i = 0; i <100;i++) {
-            const a = i;
-            console.log(i)
+        /**
+ * @param {string} s
+ * @param {string[]} wordDict
+ * @return {boolean}
+ */
+var wordBreak = function (s, wordDict) {
+    const len = s.length;
+    const dp = Array(len + 1).fill(false);
+    dp[0] = true;
+
+    for(let j = 0; j <= len; j++) {
+        for(let word of wordDict) {
+            if(word.length >= j && dp[j - word.length] === true && s.slice(j - word.length, j) === word) {
+                dp[j] = true;
+            }
         }
+    };
+
+    return dp[len];
+};
+wordBreak("leetcode",["leet", "code"])
     </script>
 </body>
 </html>
