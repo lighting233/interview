@@ -2,7 +2,7 @@
 - [ ] 2. 什么是幽灵依赖？
 - [ ] 3. 子域名父域名间的通信
 - [x] 4. 需要知道dns解析是很耗时的，因此如果解析域名过多，会让首屏加载变得过慢，可以考虑dns-prefetch优化
-- [ ] 5. 离屏 dom 整体插入 dom 树的操作
+- [x] 5. 离屏 dom 整体插入 dom 树的操作
 - [ ] 6. Object.freeze
 - [ ] 7. LocalStorage能跨域吗？
 - [ ] 8. 一些跨域的其他方式，比如postMessage，当然WebSocket也是一种方式
