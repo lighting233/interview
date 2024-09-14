@@ -25,13 +25,18 @@ const forgetArr3 = [230]
 
 //todo 第四周
 const arr4 = [494, 474, 518, 377, 322, 297, 139, 198, 213, 337, 121, 122, 123, 188, 309, 714, 300, 674, 718, 1143, 1035, 53];
-const res4 = []
+const res4 = [198, 213, 300, 53, 322,
+    494, 718, 337, 122, 1143,
+    139, 518, 121, 1035, 674,
+    377, 474, 297, 309, 123,
+    188, 714]
+
+const errorArr4 = [322]
 
 
 
 
-
-const result = shuffleArray(arr3)
+const result = shuffleArray(arr4)
 console.log(result)
 
 function shuffleArray(array) {

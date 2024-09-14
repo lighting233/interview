@@ -29,5 +29,17 @@ var maxSubArray = function (nums) {
  * @return {number}
  */
 var maxSubArray = function (nums) {
-
+    const len  = nums.length;
+    const dp = Array(len).fill(0);
+    dp[0] = nums[0];
+    let res = dp[0];
+    for(let i = 1; i < len; i++) {
+        if(dp[i - 1] + nums[i] > nums[i]) {
+            dp[i] = dp[i - 1] + nums[i]
+        }else {
+            dp[i] = nums[i]
+        };
+        res = Math.max(res,dp[i])
+    }
+    return res;
 };
