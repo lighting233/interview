@@ -20,3 +20,4 @@
 - [ ] 20. postMessage、MessageChannel的区别
 - [ ] 21. 小于 12px
 - [ ] 22. common.js
+- [ ] 23. [WeakMap](https://juejin.cn/post/7271643757640073216)

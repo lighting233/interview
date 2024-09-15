@@ -117,19 +117,16 @@ Tapable 将事件处理函数按照钩子类型分为**同步钩子**（Sync Hoo
 const { SyncHook } = require('tapable');
 
 class MyPlugin {
-  constructor() {
-    this.hooks = {
-      beforeRun: new SyncHook(['compiler']),
-      done: new SyncHook(['stats'])
-    };
+  constructor(options) {
+    this.options = options;
   }
 
   apply(compiler) {
-    this.hooks.beforeRun.tap('MyPlugin', compiler => {
+    compiler.hooks.beforeRun.tap('MyPlugin', compiler => {
       console.log('Webpack is starting to run...');
     });
 
-    this.hooks.done.tap('MyPlugin', stats => {
+    compiler.hooks.done.tap('MyPlugin', stats => {
       console.log('Webpack has finished running.');
     });
   }
@@ -376,3 +373,65 @@ class Compilation {
     }
 }
 ```
+---
+## 8.在webpack的构建过程中，compiler和compilation的作用是什么?
+
+### 1. compiler(编译器）
+- `compiler`对象可以理解为一个和 `webpack` 环境整体绑定的一个对象，它包含了所有的环境配置，包括 `options，loader` 和 `plugin`，当 `webpack` 启动时，这个对象会被实例化，并且他是全局唯一的
+- `compiler` 在 `webpack` 构建之初就已经创建，并且贯穿`webpack`整个生命周 ( before - run - beforeCompiler - complie - make - finishMake - afterComplier - done)
+- `compilation`是到准备编译模块时，才会创建`compilation`对象
+- `compiler` 是Webpack构建过程的入口点，它负责启动整个构建流程，触发各种编译事件，并最终生成输出文件。
+
+### 2.Compilation（编译）
+- `compilation` 是Webpack每次构建过程中的一个实例，代表了一次完整的编译过程。每当Webpack开始新的构建时，都会创建一个新的`compilation`对象。`compilation`对象包含了当前构建过程的所有信息，包括模块、依赖关系、生成的资源等等。作用：
+  - 跟踪模块的变化，管理模块之间的依赖关系。
+  - 生成最终的输出资源，如JavaScript文件、CSS文件等。
+  - 触发各种编译事件，供插件处理。例如，在模块成功编译后触发事件，插件可以在这些事件中执行自定义逻辑。
+  - 记录编译过程中的警告和错误信息。
+- 在使用`watch`，源代码发生改变的时候就需要重新编译模块，但是`compiler`可以继续使用
+- 如果使用`compiler`则需要初始化注册所有`plugin`，但是`plugin`没必要重新注册这时候就需要创建一个新的`compilation`对象
+- 而只有修改新的`webpack`配置才需要重新运行 `npm run build` 来重新生成 `compiler`对象
+
+## 9.Webpack vs Vite的核心差异
+**1. 构建速度:**
+  - Webpack: Webpack的构建速度相对较慢，尤其在大型项目中，因为它需要**分析整个依赖图**，进行多次文件扫描和转译。
+  - Vite: Vite以**开发模式下的极速构建著称**。它利用**ES模块**的特性，**只构建正在编辑的文件**，而不是整个项目。这使得它在开发环境下几乎是即时的。
+**2. 开发模式:**
+  - Webpack: Webpack通常使用热模块替换（HMR）来实现快速开发模式，但配置相对复杂。
+  - Vite: Vite的开发模式非常轻量且快速，支持HMR，但无需额外配置，因为它默认支持。
+**3. 配置复杂度:**
+  - Webpack: Webpack的配置相对复杂，特别是在处理不同类型的资源和加载器时。
+  - Vite: Vite鼓励零配置，使得项目起步非常简单，但同时也支持自定义配置，使其适用于复杂项目。
+**4. 插件生态:**
+  - Webpack: Webpack拥有庞大的插件生态系统，适用于各种不同的需求。
+  - Vite: Vite也有相当数量的插件，但相对较小，因为它的开发模式和构建方式减少了对一些传统插件的需求。
+**5. 编译方式:**
+  - Webpack: Webpack使用了多种加载器和插件来处理不同类型的资源，如JavaScript、CSS、图片等。
+  - Vite: Vite利用ES模块原生支持，使用原生浏览器导入来处理模块，不需要大规模的编译和打包。
+**6. 应用场景:**
+  - Webpack: 适用于复杂的大型项目，特别是需要大量自定义配置和复杂构建管道的项目。
+  - Vite: 更适用于小到中型项目，或者需要快速开发原型和小型应用的场景。
+**7. 打包原理:**
+  - Webpack: Webpack的打包原理是将所有资源打包成一个或多个bundle文件，通常是一个JavaScript文件。
+  - Vite: Vite的打包原理是保持开发时的模块化结构，使用浏览器原生的导入机制，在生产环境中进行代码分割和优化。
+
+工具链的组成：
+1. 开发服务器
+2. 构建工具
+优缺点:
+**Webpack:**
+- nodejs服务端的
+- webpack 针对组件库可以打包umd amd 等格式
+- webpack针对前端页面工程打包的结果是cjs
+优点：灵活、强大、适用于复杂场景、庞大的插件生态。
+缺点：构建速度较慢、配置复杂、开发体验不如Vite流畅。
+
+**Vite:**
+- vite是基于浏览器的
+- Vite对项目打包后是esModule格式
+- 只是因为没用babel和teaser，转译和压缩俩耗时大户被干掉了，别的流程还是一样慢，rollup也是js
+- esbuild使用 go 语言编写，可以多线程打包
+- 构建工具rollup
+优点：极快的开发构建速度、零配置启动、原生ES模块支持、适用于小型项目和快速原型开发。
+缺点：插件生态相对较小、不太适用于复杂大型项目。
+![vite](../img/vite.png)
