@@ -34,7 +34,8 @@ const res4 = [198, 213, 300, 53, 322,
 const errorArr4 = [322]
 
 
-
+//todo 第五周
+const arr5 = [392, 115, 583, 72, 647, 516, 739, 496, 503, 42, 84]
 
 const result = shuffleArray(arr4)
 console.log(result)
@@ -46,4 +47,7 @@ function shuffleArray(array) {
     }
     return array;
 }
+const sort = arr1.concat(arr2, arr3, arr4, arr5).sort((a, b) => a - b);
+console.log('%c 🍻 sort: ', 'font-size:20px;background-color: #6EC1C2;color:#fff;', sort);
 
+const todolist = [2, 3, 5, 6, 11, 14, 21, 22, 25, 26, 33, 34, 35, 41, 49, 54, 55, 58, 61, 71, 74, 76, 80, 82, 88, 92, 100]
