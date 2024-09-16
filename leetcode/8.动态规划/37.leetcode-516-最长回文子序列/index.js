@@ -9,17 +9,17 @@ var longestPalindromeSubseq = function (s) {
     const len = s.length;
     const dp = Array(len).fill(0).map(() => Array(len).fill(0));
 
-    for(let i = 0; i < len; i++) {
+    for (let i = 0; i < len; i++) {
         //i === j时， i 和 i+1相等的情况被包含在递推公式里了
         dp[i][i] = 1;
     }
-   
-    for(let i = len - 1; i >= 0; i--) {
+
+    for (let i = len - 1; i >= 0; i--) {
         //j = i+1,等于 i 的情况初始化过了，i == j 的话递推公式会越界dp[i][j - 1]
-        for(let j = i + 1; j < len; j++) {
-            if(s[i] === s[j]) {
+        for (let j = i + 1; j < len; j++) {
+            if (s[i] === s[j]) {
                 dp[i][j] = dp[i + 1][j - 1] + 2
-            }else {
+            } else {
                 //不相同分别考虑每个元素 aab
                 dp[i][j] = Math.max(dp[i + 1][j], dp[i][j - 1])
             }
@@ -32,5 +32,23 @@ var longestPalindromeSubseq = function (s) {
  * @return {number}
  */
 var longestPalindromeSubseq = function (s) {
+    let res = 0;
+    const len = s.length;
+    const dp = Array(len).fill(0).map(() => Array(len).fill(0));
 
+    for(let i = 0; i < len; i++) {
+        dp[i][i] = 1;
+    }
+
+    for (let i = len - 1; i >= 0; i--) {
+        for (let j = i + 1; j < len; j++) {
+            if (s[i] === s[j]) {
+                dp[i][j] = dp[i + 1][j - 1] + 2
+            } else {
+                dp[i][j] = Math.max(dp[i][j - 1], dp[i + 1][j])
+            }
+        }
+    }
+
+    return dp[0][len - 1];
 };
