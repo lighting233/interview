@@ -6,10 +6,11 @@
  * }
  */
 /**
- * @param {ListNode} head
- * @return {boolean}
+ * @param {ListNode} l1
+ * @param {ListNode} l2
+ * @return {ListNode}
  */
- var isPalindrome = function(head) {
+ var addTwoNumbers = function(l1, l2) {
 
  };
 /**
@@ -20,9 +21,10 @@
  * }
  */
 /**
- * @param {ListNode} head
- * @return {boolean}
+ * @param {ListNode} l1
+ * @param {ListNode} l2
+ * @return {ListNode}
  */
- var isPalindrome = function(head) {
+ var addTwoNumbers = function(l1, l2) {
 
  };

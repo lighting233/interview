@@ -7,9 +7,9 @@
  */
 /**
  * @param {ListNode} head
- * @return {boolean}
+ * @return {ListNode}
  */
- var isPalindrome = function(head) {
+ var deleteDuplicates = function(head) {
 
  };
 /**
@@ -21,8 +21,8 @@
  */
 /**
  * @param {ListNode} head
- * @return {boolean}
+ * @return {ListNode}
  */
- var isPalindrome = function(head) {
+ var deleteDuplicates = function(head) {
 
  };
