@@ -139,6 +139,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
 1. **popstate事件**
 - `history.pushState()` 和 `history.replaceState()` 不会触发 `popstate` 事件。 `popstate` 事件仅在浏览器执行**主动导航**时触发，例如用户点击浏览器的**后退或前进按钮**，或通过 `history.back()、history.forward()、history.go()` 方法触发导航时触发。
 通过 `a` 标签或者 `window.location` 进行页面跳转时，都会触发 `window.onload` 事件，页面完成渲染。点击浏览器的后退键或前进键，根据浏览器的不同机制，也会重新加载（Chrome 浏览器），或保留之前的页面（Safari 浏览器）。
+- `history.pushState()` 和 `history.replaceState()` 是 `HTML5 History API` 中的两个方法，用于在浏览器历史记录中添加或修改记录，并更新地址栏的 URL，而不会触发页面刷新
 
 **注意事项：**
 - 仅仅调用`pushState()`方法或`replaceState()`方法 ，并不会触发该事件;
@@ -148,3 +149,172 @@ ReactDOM.createRoot(document.getElementById("root")).render(
 
 1. **hashchange事件**
 每当hash值发生变化时，就会触发`hashchange`事件，hash值的变化也会触发`popstate`事件
+
+## 8.如何实现前端路由
+实现前端路由，需要解决两个核心问题
+1. 如何改变 URL 却不引起页面刷新？
+2. 如何监测 URL 变化？
+
+```ts
+export function RouterProvider({
+  fallbackElement,
+  router,
+  future,
+}: RouterProviderProps): React.ReactElement {
+  let [state, setStateImpl] = React.useState(router.state);
+  let { v7_startTransition } = future || {};
+
+  let setState = React.useCallback<RouterSubscriber>(
+    (newState: RouterState) => {
+      if (v7_startTransition && startTransitionImpl) {
+        startTransitionImpl(() => setStateImpl(newState));
+      } else {
+        setStateImpl(newState);
+      }
+    },
+    [setStateImpl, v7_startTransition]
+  );
+
+  // Need to use a layout effect here so we are subscribed early enough to
+  // pick up on any render-driven redirects/navigations (useEffect/<Navigate>)
+  React.useLayoutEffect(() => router.subscribe(setState), [router, setState]);
+
+  return (
+    <>
+      <DataRouterContext.Provider value={dataRouterContext}>
+        <DataRouterStateContext.Provider value={state}>
+          <Router
+            basename={basename}
+            location={state.location}
+            navigationType={state.historyAction}
+            navigator={navigator}
+            future={{
+              v7_relativeSplatPath: router.future.v7_relativeSplatPath,
+            }}
+          >
+            {state.initialized || router.future.v7_partialHydration ? (
+              <DataRoutes
+                routes={router.routes}
+                future={router.future}
+                state={state}
+              />
+            ) : (
+              fallbackElement
+            )}
+          </Router>
+        </DataRouterStateContext.Provider>
+      </DataRouterContext.Provider>
+      {null}
+    </>
+  );
+}
+
+
+export function Routes({
+  children,
+  location,
+}: RoutesProps): React.ReactElement | null {
+  return useRoutes(createRoutesFromChildren(children), location);
+}
+
+export function useRoutes(
+  routes: RouteObject[],
+  locationArg?: Partial<Location> | string
+): React.ReactElement | null {
+  return useRoutesImpl(routes, locationArg);
+}
+
+// Internal implementation with accept optional param for RouterProvider usage
+export function useRoutesImpl(
+  routes: RouteObject[],
+  locationArg?: Partial<Location> | string,
+  dataRouterState?: RemixRouter["state"],
+  future?: RemixRouter["future"]
+): React.ReactElement | null {
+
+  let { matches: parentMatches } = React.useContext(RouteContext);
+
+
+  let renderedMatches = _renderMatches(
+    matches &&
+      matches.map((match) =>
+        Object.assign({}, match, {
+          params: Object.assign({}, parentParams, match.params),
+          pathname: joinPaths([
+            parentPathnameBase,
+            // Re-encode pathnames that were decoded inside matchRoutes
+            navigator.encodeLocation
+              ? navigator.encodeLocation(match.pathname).pathname
+              : match.pathname,
+          ]),
+          pathnameBase:
+            match.pathnameBase === "/"
+              ? parentPathnameBase
+              : joinPaths([
+                  parentPathnameBase,
+                  // Re-encode pathnames that were decoded inside matchRoutes
+                  navigator.encodeLocation
+                    ? navigator.encodeLocation(match.pathnameBase).pathname
+                    : match.pathnameBase,
+                ]),
+        })
+      ),
+    parentMatches,
+    dataRouterState,
+    future
+  );
+
+  // When a user passes in a `locationArg`, the associated routes need to
+  // be wrapped in a new `LocationContext.Provider` in order for `useLocation`
+  // to use the scoped location instead of the global location.
+  if (locationArg && renderedMatches) {
+    return (
+      <LocationContext.Provider
+        value={{
+          location: {
+            pathname: "/",
+            search: "",
+            hash: "",
+            state: null,
+            key: "default",
+            ...location,
+          },
+          navigationType: NavigationType.Pop,
+        }}
+      >
+        {renderedMatches}
+      </LocationContext.Provider>
+    );
+  }
+
+  return renderedMatches;
+}
+
+
+function initialize() {
+
+    unlistenHistory = init.history.listen(
+      ({ action: historyAction, location, delta }) => {
+       
+        return startNavigation(historyAction, location);
+      }
+    );
+
+    return router;
+  }
+```
+
+### 流程
+1. 点击 `Link` 或者 `useNavigate`的 `nagivate` 方法，底层都是调用 `router` 的 `nagivate` 方法
+2. `matchRoutes`把`routes`扁平化
+3. 调用`matchRouteBranch`匹配路由得到`matches`数组
+4. 接着调用 `history` 的 `pushState` 或者 `replaceState` 修改 `history`
+5. 执行`updateState`通知`RouterProvider`的`subscribe`
+6. 执行`setState` 来重新渲染
+7. 重新渲染的时候通过`renderMatches` 把当前 `matches` 的组件渲染出来
+8. 初始化的时候会执行`history.listen`，进行一次`startNavigation`，并挂载这个 `listener`
+9. 使用前进后退按钮时，监听到 `popstate` 事件，再次执行`listener`
+
+[图解 history api 和 React Router 实现原理](https://juejin.cn/post/7265614642168037416?searchId=20240917160145417D96FFE2B980BD44E4)
+[这一次彻底弄懂 React Router 实现原理](https://juejin.cn/post/7340586221189677110?searchId=20240917160145417D96FFE2B980BD44E4)
+[知乎](https://zhuanlan.zhihu.com/p/609800112)
