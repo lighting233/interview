@@ -372,6 +372,35 @@ class Compilation {
         return module;
     }
 }
+
+function getSource(chunk){
+   return `
+   (() => {
+    var modules = {
+      ${
+          chunk.modules.map(module=>`
+          "${module.id}": (module,exports,require) => {
+            ${module._source}
+          }`).join(',')
+      }
+    };
+    var cache = {};
+    function require(moduleId) {
+      if (cache[moduleId]) {
+        return cache[moduleId].exports;
+      }
+      var module = (cache[moduleId] = {
+        exports: {},
+      });
+      modules[moduleId](module, module.exports, require);
+      return module.exports;
+    }
+    (() => {
+     ${chunk.entryModule._source}
+    })();
+  })();
+   `;
+}
 ```
 ---
 ## 8.在webpack的构建过程中，compiler和compilation的作用是什么?

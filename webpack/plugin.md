@@ -1,7 +1,7 @@
 # 插件（Plugin）
 插件是`Webpack`的核心功能扩展机制，可以用于解决很多构建过程中的复杂问题或实现特定的需求。插件可以用于优化打包结果、自动生成HTML文件、提取CSS文件等。
 
-## 常见的插件
+## 1.常见的插件
 内置插件
 1. **terser-webpack-plugin**
    1. 压缩代码：它使用 Terser 的压缩算法来混淆和缩小 JavaScript 代码的体积，从而减少文件大小。
@@ -28,3 +28,42 @@
 6. **manifestplugin**： 生成一个manifest资源清单文件
 7. **SpeedMeasureWebpackPlugin**： 分析打包速度
 8. **webpack-bundle-analyzer**：分析打包后的文件大小，并可视化展示，方便优化打包结果。
+9. **size-plugin**：监控资源体积变化，尽早发现问题
+
+## 2.手写 plugin
+```js
+class ConsoleLogStatsPlugin {
+  apply(compiler) {
+    // 全局计数器
+    let totalConsoleLogCount = 0;
+    //emit 阶段是在 Webpack 准备好最终输出文件之前
+    compiler.hooks.emit.tapAsync("ConsoleLogStatsPlugin", (compilation, callback) => {
+      // 遍历所有编译后的模块
+      compilation.modules.forEach((module) => {
+        // 检查模块是否有资源路径和源代码
+        if (module.resource && module._source) {
+          const source = module._source.source();
+          // 匹配 console.log 调用
+          const consoleLogMatches = source.match(/console\.log\(/g) || [];
+          const count = consoleLogMatches.length;
+
+          // 累加到全局计数器
+          totalConsoleLogCount += count;
+
+          if (count > 0) {
+            console.log(`模块 ${module.resource} 包含 ${count} 次 console.log 调用。`);
+          }
+        }
+      });
+
+      // 输出所有模块中的 console.log 总数
+      console.log(`所有模块中总共包含 ${totalConsoleLogCount} 次 console.log 调用.`);
+
+      // 完成插件处理
+      callback();
+    });
+  }
+}
+
+module.exports = ConsoleLogStatsPlugin;
+```
