@@ -13,9 +13,29 @@
  * @param {number} right
  * @return {ListNode}
  */
- var reverseBetween = function(head, left, right) {
+var reverseBetween = function (head, left, right) {
+    const dummy = new ListNode(0,head);
+    let p0 = dummy;
+    let needMove = left - 1;
+    while(needMove > 0) {
+        p0 = p0.next;
+        needMove--;
+    };
+    let prev = null, cur = p0.next;
+    needMove = right - left + 1;
+    while(needMove) {
+        const temp = cur.next;
+        cur.next = prev;
+        prev = cur;
+        cur = temp;
+        needMove--
+    };
 
- };
+    p0.next.next = cur;
+    p0.next = prev;
+
+    return dummy.next;
+};
 /**
  * Definition for singly-linked list.
  * function ListNode(val, next) {
@@ -29,6 +49,6 @@
  * @param {number} right
  * @return {ListNode}
  */
- var reverseBetween = function(head, left, right) {
+var reverseBetween = function (head, left, right) {
 
- };
+};

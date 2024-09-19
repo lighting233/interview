@@ -22,4 +22,4 @@
 - [ ] 22. common.js
 - [ ] 23. [WeakMap](https://juejin.cn/post/7271643757640073216)
 - [ ] 24. react keep-alive
-- [ ] 25. 正则
+- [ ] 25. 正则 

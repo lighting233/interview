@@ -12,9 +12,40 @@
  * @param {number} k
  * @return {ListNode}
  */
- var reverseKGroup = function(head, k) {
+var reverseKGroup = function (head, k) {
+    const dummy = new ListNode(0,head);
+    let n = 0;
+    let cur = head;
+    while(cur) {
+        cur = cur.next;
+        n++;
+    };
 
- };
+    let p0 = dummy;
+    let group = Math.floor(n / k);
+
+    while(group) {
+        let prev = null;
+        let cur = p0.next;
+        let move = k;
+
+        while(move) {
+            const temp = cur.next;
+            cur.next = prev;
+            prev = cur;
+            cur = temp;
+            move--;
+        };
+        const temp = p0.next;
+        p0.next.next = cur;
+        p0.next = prev;
+        p0 = temp;
+
+        group--;
+    };
+
+    return dummy.next;
+};
 /**
  * Definition for singly-linked list.
  * function ListNode(val, next) {
@@ -27,6 +58,6 @@
  * @param {number} k
  * @return {ListNode}
  */
- var reverseKGroup = function(head, k) {
+var reverseKGroup = function (head, k) {
 
- };
+};

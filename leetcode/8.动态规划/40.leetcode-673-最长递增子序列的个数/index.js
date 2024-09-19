@@ -45,5 +45,34 @@ var findNumberOfLIS = function (nums) {
  * @return {number}
  */
 var findNumberOfLIS = function (nums) {
+    let maxLen = 1;
+    const len = nums.length;
+    const count = Array(len).fill(1);
+    const dp = Array(len).fill(1);
 
+    for(let i = 1; i < len; i++) {
+        for(let j = 0; j < i; j++) {
+            if(nums[i] > nums[j]) {
+                if(dp[j] === dp[i]) {
+                    dp[i] = dp[j] + 1;
+                    //todo 找到一个新的长度， 此时 i 结尾的最长递增子序列的个数继承 j 的
+                    count[i] = count[j];
+                }else if(dp[j] + 1 === dp[i]) {
+                    //todo [1,3,5,7]的时候dp[4] = 4,[1,3,4]的时候 dp[j] === 3,加 1 等于dp[4],原本 i 的情况加上继承 j 的情况
+                    // count[i]++;
+                    count[i] = count[i] + count[j]
+                }
+            }
+        }
+        maxLen = Math.max(maxLen, dp[i])
+    };
+
+    let res = 0;
+    for(let i = 0; i < len; i++) {
+        if(maxLen === dp[i]) {
+            res+=count[i]
+        }
+    };
+
+    return res;
 };
