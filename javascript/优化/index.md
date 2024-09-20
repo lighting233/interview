@@ -22,3 +22,4 @@ event => {
  }, {passive: true});
 
 ```
+## 四、`tree shaking`，可以有效减小最后打包文件的体积

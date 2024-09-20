@@ -35,7 +35,7 @@ const errorArr4 = [322]
 
 
 //todo 第五周
-const arr5 = [392, 115, 583, 72, 647, 516, 739, 496, 503, 42, 84, 5, 132, 673]
+const arr5 = [392, 115, 583, 72, 647, 516, 739, 496, 503, 42, 84, 5, 132, 673, 234, 21, 25, 61, 92,  ]
 
 const result = shuffleArray(arr4)
 console.log(result)

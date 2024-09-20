@@ -19,7 +19,7 @@
 - [x] 19. 浮点数计算
 - [ ] 20. postMessage、MessageChannel的区别
 - [ ] 21. 小于 12px
-- [ ] 22. common.js
+- [x] 22. common.js
 - [ ] 23. [WeakMap](https://juejin.cn/post/7271643757640073216)
-- [ ] 24. react keep-alive
+- [x] 24. react keep-alive
 - [ ] 25. 正则 
