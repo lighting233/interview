@@ -50,4 +50,4 @@ function shuffleArray(array) {
 const sort = arr1.concat(arr2, arr3, arr4, arr5).sort((a, b) => a - b);
 console.log('%c 🍻 sort: ', 'font-size:20px;background-color: #6EC1C2;color:#fff;', sort);
 
-const todolist = [2, 3, 5, 6, 11, 14, 21, 22, 25, 26, 33, 34, 35, 41, 49, 54, 55, 58, 61, 71, 74, 76, 80, 82, 88, 92, 100]
+const todolist = [2, 3, 6, 11, 14, 22, 26, 33, 34, 35, 41, 49, 54, 55, 58, 71, 74, 76, 80, 82, 88, 100]

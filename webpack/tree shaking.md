@@ -15,7 +15,7 @@
 `statements-level` 级别，即 `tree shaking` 功能作用于模块内部的语句。如果模块内部定义的 `export` 没有被引用，或者**引用但未被使用**，那么该 export 将不会出现在最后的打包代码中。
 ### 开启步骤
 1. 首先，我们需要将 `optimization.usedExports` 的属性值设置为 `true`(production 模式下，默认为 true)；
-2. 其次，我们需要将 `optimization.minimize` 的属性值设置为 `true`(production 模式下，默认为 true)；
+2. 其次，我们需要将`optimization.minimize`的属性值设置为 `true`(production 模式下，默认为 true)；
 
 ## 3.为什么ES6-module 是静态的？
 一段 js 代码执行时，要经历如下步骤
