@@ -55,5 +55,31 @@ var rotateRight = function (head, k) {
  * @return {ListNode}
  */
 var rotateRight = function (head, k) {
+    if(head === null || head.next === null) return head;
+    let len = 0; 
+    let cur = head;
+    while(cur) {
+        cur = cur.next;
+        len++;
+    };
 
+    if(k % len === 0) return head;
+    k = k % len;
+
+    let step = len - k - 1;
+    cur = head;
+    while(step) {
+        cur = cur.next;
+        step--;
+    };
+
+    const first = cur.next;
+    const end = cur;
+    while(k) {
+        cur = cur.next;
+        k--;
+    };
+    cur.next = head;
+    end.next = null;
+    return first;
 };

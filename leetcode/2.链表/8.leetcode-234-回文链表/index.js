@@ -52,5 +52,28 @@ var isPalindrome = function (head) {
  * @return {boolean}
  */
 var isPalindrome = function (head) {
+    let fast = slow = head;
+    while(fast && fast.next) {
+        fast = fast.next.next;
+        slow = slow.next;
+    };
 
+    let prev = null, cur = slow;
+
+    while(cur) {
+        const temp = cur.next;
+        cur.next = prev;
+        prev = cur;
+        cur = temp;
+    };
+
+    let left = head, right = prev;
+
+    while(right) {
+        if(left.val !== right.val) return false;
+        left = left.next;
+        right = right.next;
+    };
+
+    return true;
 };

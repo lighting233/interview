@@ -59,5 +59,35 @@ var reverseKGroup = function (head, k) {
  * @return {ListNode}
  */
 var reverseKGroup = function (head, k) {
+    //todo 从0开始计数
+    let len = 0;
+    let cur = head;
+    while(cur !== null) {
+        cur = cur.next;
+        len++;
+    };
 
+    let group = Math.floor(len / k);
+    const dummy = new ListNode(0, head);
+    let p0 = dummy;
+
+    while(group) {
+        let step = k;
+        let prev = null, cur = p0.next;
+
+        while(step) {
+            const temp = cur.next;
+            cur.next = prev;
+            prev = cur;
+            cur = temp;
+            step--;
+        }
+        const temp = p0.next;
+        p0.next.next = cur;
+        p0.next = prev;
+        p0 = temp;
+        group--;
+    }
+
+    return dummy.next;
 };
