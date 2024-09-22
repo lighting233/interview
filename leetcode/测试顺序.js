@@ -43,6 +43,9 @@ const res5 = [
     115
 ]
 const errorArr4 = [516,115]
+
+//todo 第六周
+const arr6 = [82, 2, 3 ,6, 22, 26,]
 const result = shuffleArray(arr5)
 console.log(result)
 
@@ -56,4 +59,4 @@ function shuffleArray(array) {
 const sort = arr1.concat(arr2, arr3, arr4, arr5).sort((a, b) => a - b);
 
 
-const todolist = [2, 3, 6, 11, 14, 22, 26, 33, 34, 35, 41, 49, 54, 55, 58, 71, 74, 76, 80, 82, 88, 100]
+const todolist = [11, 14, 33, 34, 35, 41, 49, 54, 55, 58, 71, 74, 76, 80, 88, 100]
