@@ -14,7 +14,7 @@
 针对这两点，我们可以专门制定防护策略，如下：
 1. 阻止不明外域的访问
   - 同源检测 `origin`,`referer`: 当用户从一个 `HTTPS` 页面导航到一个 `HTTP` 页面时，浏览器通常不会发送 `Referer` 头以保护**用户隐私**。假设你从 `https://example.com` 发起一个请求，并被重定向到 `https://another.com`;`post`请求的`origin`会丢失
-  - `Samesite Cookie`
+  - **`Samesite Cookie`**
 2. 提交时要求附加本域才能获取的信息
   1. `CSRF Token`: 表单是三方网站伪造的,表单上的中的`CSRF Token`是用户自己访问网站才有的,三方网站没办法构造
   2. 双重 Cookie 验证
