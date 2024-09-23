@@ -39,5 +39,27 @@ var convert = function (s, numRows) {
  * @return {string}
  */
 var convert = function (s, numRows) {
+    //todo numRows === 1
+    if(s < numRows || numRows === 1) return s;
+    const row = [];
+    for(let i = 0; i < numRows; i++) {
+        row[i] = '';
+    };
 
+    let dir = -1;
+    let rowIdx = 0;
+    for(let i = 0; i < s.length; i++) {
+        row[rowIdx]+=s[i];
+        if(rowIdx === 0 || rowIdx === numRows - 1) {
+            dir = (-1)*dir;
+        };
+        rowIdx+=dir;
+    };
+
+    let res = '';
+    for(let item of row) {
+        res+=item;
+    };
+
+    return res;
 };

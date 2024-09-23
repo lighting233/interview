@@ -28,5 +28,15 @@ var removeDuplicates = function(nums) {
  * @return {number}
  */
 var removeDuplicates = function(nums) {
+    let left = 0, right = 0;
 
+    while(left < nums.length) {
+        while(nums[left] !== nums[right]) {
+            nums[right + 1] = nums[left];
+            right++;
+        }
+        left++;
+    };
+
+    return right + 1;
 };

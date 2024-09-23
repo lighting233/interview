@@ -27,5 +27,20 @@ var lengthOfLongestSubstring = function (s) {
  * @return {number}
  */
 var lengthOfLongestSubstring = function (s) {
+    const set = new Set();
+    let maxLen = 1;
+    let left = 0;
+    for(let right = 0; right < s.length; right++) {
+        while(set.has(s[right])) {
+            set.delete(s[left]);
+            left++;
+        };
+        //todo 先判断的s[right]重没重复,没有重复的元素才加入的,所以加入后才求新长度
+        set.add(s[right]);
+        //todo 
+        maxLen = Math.max(maxLen,set.size)
+        
+    };
 
+    return maxLen;
 };

@@ -29,5 +29,21 @@ var generateParenthesis = function(n) {
  * @return {string[]}
  */
 var generateParenthesis = function(n) {
+    let res = [];
+    const dfs = (lRemain, rRemain, str) => {
+      if(str.length === 2 * n ){
+        res.push(str);
+        return;
+      };
+      if(lRemain) {
+        dfs(lRemain - 1,rRemain,str + '(');
+      };
+      if(rRemain > lRemain) {
+        dfs(lRemain, rRemain - 1, str + ')');
+      }
+    };
 
+    dfs(n,n,'');
+
+    return res;
 };
