@@ -33,60 +33,48 @@
 </html> -->
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8"/>
-    <link href="https://cdn.bootcss.com/bootstrap/4.0.0-alpha.6/css/bootstrap.css" rel="stylesheet" />
+  <head>
+    <meta charset="UTF-8" />
+    <link
+      href="https://cdn.bootcss.com/bootstrap/4.0.0-alpha.6/css/bootstrap.css"
+      rel="stylesheet"
+    />
     <style>
-        .parent {
-            width: 200px;
-            /* height: 200px; */
-        }
-        .child {
-            width: 200px;
-            height: 200px;
-            margin-bottom: 100px;
-            background-color: red;
-        }
-        .child2 {
-            width: 200px;
-            height: 200px;
-            margin-top: 100px;
-            background-color: aqua;
-        }
+      .parent {
+        width: 200px;
+        /* height: 200px; */
+      }
+      .child {
+        width: 200px;
+        height: 200px;
+        margin-bottom: 100px;
+        background-color: red;
+      }
+      .child2 {
+        width: 200px;
+        height: 200px;
+        margin-top: 100px;
+        background-color: aqua;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <h1 class="has-success input-group-addon">我是 h1 标签</h1>
     <div class="parent">
-        <div class="child">123</div>
+      <div class="child">123</div>
     </div>
     <div class="child2">233</div>
     <script>
-
-/**
- * @param {string} text1
- * @param {string} text2
- * @return {number}
- */
- var longestCommonSubsequence = function(text1, text2) {
-    const [m,n] = [text1.length, text2.length];
-    const dp = Array(m + 1).fill(0).map(() => Array(n + 1).fill(0));
-
-    for(let i = 1; i <= m; i++) {
-        for(let j = 1; j <=n; j++) {
-            if(text1[i - 1] === text2[j - 1]) {
-                dp[i][j] = dp[i - 1][j - 1] + 1;
-            }else {
-                dp[i][j] = Math.max(dp[i - 1][j],dp[i][j - 1])
-            }
-        }
-    }
-
-    return dp[m][n]
-};
-longestCommonSubsequence("abcde", "ace")
+      var wm = new WeakMap();
+      function Foo() {
+        this.arr = new Array(5 * 1024 * 1024);
+      }
+      var f = new Foo();
+      wm.set(f, "data");
+      f = null;
+      
     </script>
-</body>
+  </body>
 </html>
 <!-- <!DOCTYPE html>
 <html lang="en">

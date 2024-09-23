@@ -277,5 +277,14 @@ function updateReducer(
 }
 
 
-
+function deepFreeze(obj) {
+    const keys = Object.getOwnPropertyNames(obj);
+    for(let key of keys) {
+        const val = obj[key];
+        if(val !== null && typeof val === 'object') {
+            deepFreeze(val);
+        }
+    }
+    return Object.freeze(obj);
+}
 
