@@ -120,9 +120,77 @@ function areHookInputsEqual(nextDeps: TEffectDeps, prevDeps: TEffectDeps) {
 			update: []
 		};
 ```
+#### compeleteWork阶段
+给 `fiber.flags` 合并上副作用标记之后，会在 `compeleteWork` 阶段将 flags 向上冒泡到 `HostRootFiber.subtreeFlags`
 
 #### commit阶段调度
+```ts {.line-numbers}
+function commitRootImpl() {
+    //rootWithPendingPassiveEffects不为null先执行一遍flushPassiveEffects
+    do {
+        flushPassiveEffects();
+    } while (rootWithPendingPassiveEffects !== null);
 
+    if (
+        (finishedWork.subtreeFlags & PassiveMask) !== NoFlags ||
+        (finishedWork.flags & PassiveMask) !== NoFlags
+    ) {
+        if (!rootDoesHavePassiveEffects) {
+            rootDoesHavePassiveEffects = true;
+            pendingPassiveEffectsRemainingLanes = remainingLanes;
+
+            pendingPassiveTransitions = transitions;
+            scheduleCallback(NormalSchedulerPriority, () => {
+                flushPassiveEffects();
+                return null;
+            });
+        }
+    }
+}
+
+function flushPassiveEffectsImpl() {
+    const prevExecutionContext = executionContext;
+    executionContext |= CommitContext;
+
+    commitPassiveUnmountEffects(root.current);
+    commitPassiveMountEffects(root, root.current, lanes, transitions);
+    executionContext = prevExecutionContext;
+
+    flushSyncCallbacks();
+}
+
+function commitPassiveUnmountEffects_begin() {
+    while (nextEffect !== null) {
+        const fiber = nextEffect;
+        const child = fiber.child;
+
+        //有ChildDeletion的先执行卸载的destroy函数
+        if ((nextEffect.flags & ChildDeletion) !== NoFlags) {
+            const deletions = fiber.deletions;
+            if (deletions !== null) {
+                for (let i = 0; i < deletions.length; i++) {
+                    const fiberToDelete = deletions[i];
+                    nextEffect = fiberToDelete;
+                    commitPassiveUnmountEffectsInsideOfDeletedTree_begin(
+                        fiberToDelete,
+                        fiber,
+                    );
+                }
+                nextEffect = fiber;
+            }
+        }
+
+        //有PassiveMask说明有删除或者有标记effect,执行对应的destroy函数
+        if ((fiber.subtreeFlags & PassiveMask) !== NoFlags && child !== null) {
+            child.return = fiber;
+            nextEffect = child;
+        } else {
+			//mountEffect时传入effect对象的destroy为null,所以在执行这个函数的时候里边不会执行destroy()
+            commitPassiveUnmountEffects_complete();
+        }
+    }
+}
+```
 1. 首先调度回调
 ```ts {.line-numbers}
 	if (
@@ -151,7 +219,7 @@ function areHookInputsEqual(nextDeps: TEffectDeps, prevDeps: TEffectDeps) {
 	}
 ```
 
-3. 执行副作用`flushPassiveEffects`
+3. ~~执行副作用`flushPassiveEffects`~~
 需要遍历两遍update，一遍收集 destroy 一遍收集 create
 ```ts
 function flushPassiveEffects(pendingPassiveEffects: PendingPassiveEffects) {
