@@ -2,7 +2,7 @@
  * @param {number[]} nums
  * @return {number}
  */
-var firstMissingPositive = function(nums) {
+var removeDuplicates = function(nums) {
 
 };
 
@@ -10,6 +10,6 @@ var firstMissingPositive = function(nums) {
  * @param {number[]} nums
  * @return {number}
  */
-var firstMissingPositive = function(nums) {
+var removeDuplicates = function(nums) {
 
 };

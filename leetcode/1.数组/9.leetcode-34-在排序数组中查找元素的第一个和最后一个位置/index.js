@@ -36,5 +36,27 @@ var searchRange = function(nums, target) {
  * @return {number[]}
  */
 var searchRange = function(nums, target) {
+    let left = 0, right = nums.length - 1;
 
+    while(left <= right) {
+        const mid = left + ((right - left) >> 1);
+
+        if(nums[mid] === target) {
+            left = mid;
+            while(left - 1 >= 0 && nums[left - 1] === target) {
+                left--;
+            };
+            right = mid;
+            while(right + 1 < nums.length && nums[right + 1] === target) {
+                right++;
+            };
+            return [left,right];
+        }else if(nums[mid] > target) {
+            right = mid - 1;
+        }else {
+            left = mid + 1;
+        }
+    };
+
+    return [-1,-1];
 };

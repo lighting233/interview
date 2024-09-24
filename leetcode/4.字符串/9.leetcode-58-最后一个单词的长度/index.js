@@ -5,7 +5,20 @@
  * @return {number}
  */
 var lengthOfLastWord = function(s) {
+    let count = 0;
+    let len = s.length;
 
+    for(let i = len - 1; i >=0; i--) {
+        if(s[i] === ' ') {
+            if(count) {
+                break;
+            }
+        }else {
+            count++;
+        }
+    };
+
+    return count;
 };
 
 /**
