@@ -56,23 +56,43 @@
         margin-top: 100px;
         background-color: aqua;
       }
+      .item {
+        background-color: blue;
+        width: 300px;
+        height: 50px;
+        margin-bottom: 20px;
+      }
     </style>
   </head>
   <body>
-    <h1 class="has-success input-group-addon">我是 h1 标签</h1>
     <div class="parent">
       <div class="child">123</div>
     </div>
     <div class="child2">233</div>
+    <button id="remove">remove</button>
+    <button id="log">log</button>
+    <button id="add">add</button>
+    <ul id="123">
+      我是 h1 标签
+    </ul>
     <script>
-      var wm = new WeakMap();
-      function Foo() {
-        this.arr = new Array(5 * 1024 * 1024);
+      function outer() {
+        
       }
-      var f = new Foo();
-      wm.set(f, "data");
-      f = null;
-      
+
+      let timer = setTimeout(() => {
+        outer();
+        // clearTimeout(timer);
+        // timer = null;
+      },5000)
+      function parent() {
+          let bac = new Array(1024 * 1024).fill(0);
+          return function () {
+            return bac;
+          };
+        }
+        const cb = parent();
+        const a = cb();
     </script>
   </body>
 </html>
