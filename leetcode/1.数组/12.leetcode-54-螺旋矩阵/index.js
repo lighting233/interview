@@ -46,5 +46,43 @@ var spiralOrder = function(matrix) {
  * @return {number[]}
  */
 var spiralOrder = function(matrix) {
+    const res = [];
+    const [m,n] = [matrix.length, matrix[0].length];
+    let left = 0, right = n - 1, top = 0, bottom = m - 1;
 
+    while(left < right && top < bottom) {
+
+        for(let j = left; j < right; j++) {
+            res.push(matrix[top][j]);
+        };
+        for(let i = top; i < bottom; i++) {
+            res.push(matrix[i][right]);
+        };
+        for(let j = right; j > left; j--) {
+            res.push(matrix[bottom][j]);
+        };
+        for(let i = bottom; i > top; i--) {
+            res.push(matrix[i][left]);
+        };
+
+        left++;
+        right--;
+        top++;
+        bottom--;
+    };
+
+    //todo matrix = [[2,5],[8,4],[0,-1]]时,走了一圈后,left > right但是top === bottom,如果这样判断会多加一个值
+    // if(left < right) {
+    if(top === bottom){
+        for(let j = left; j <= right; j++) {
+            res.push(matrix[top][j]);
+        }
+    // }else {
+    }else if(left === right){
+        for(let i = top; i <= bottom; i++) {
+            res.push(matrix[i][left])
+        }
+    }
+
+    return res;
 };

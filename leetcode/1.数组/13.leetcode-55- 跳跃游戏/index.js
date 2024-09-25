@@ -19,5 +19,12 @@ var canJump = function(nums) {
  * @return {boolean}
  */
 var canJump = function(nums) {
+    const len = nums.length;
+    let maxPosition = 0;
+    for(let i = 0; i <= maxPosition; i++) {
+        maxPosition = Math.max(maxPosition, i + nums[i]);
+        if(maxPosition >= len - 1) return true;
+    };
 
+    return false;
 };

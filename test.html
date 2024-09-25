@@ -76,23 +76,29 @@
       我是 h1 标签
     </ul>
     <script>
-      function outer() {
-        
-      }
+      var merge = function(nums1, m, nums2, n) {
+    let p = m - 1, q = n - 1;
+    let cur = m + n - 1;
 
-      let timer = setTimeout(() => {
-        outer();
-        // clearTimeout(timer);
-        // timer = null;
-      },5000)
-      function parent() {
-          let bac = new Array(1024 * 1024).fill(0);
-          return function () {
-            return bac;
-          };
-        }
-        const cb = parent();
-        const a = cb();
+    // todo 修正条件为 p 和 q 大于等于 0,对于初始n === 0的情况可以直接过滤掉
+    while(p >=0 && q >= 0) {
+        if(nums1[p] > nums2[q]) {
+            nums1[cur] = nums1[p];
+            p--;
+        }else {
+            nums1[cur] = nums2[q];
+            q--
+        };
+        cur--;
+    };
+
+    if(q >= 0) {
+        nums1[cur] = nums2[q];
+        q--;
+        cur--;
+    }
+};
+      merge([1,2,3,0,0,0],3,[2,5,6],3)
     </script>
   </body>
 </html>
