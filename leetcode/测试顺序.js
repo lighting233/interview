@@ -46,7 +46,14 @@ const errorArr5 = [516, 115]
 
 //todo 第六周
 const arr6 = [82, 2, 3, 6, 22, 26, 11, 14, 33, 34, 35, 41, 49, 54, 55, 58, 71, 74, 76, 80, 88, 100]
-const result = shuffleArray(arr5)
+const res6 = [
+    71, 88, 35, 80, 33, 26, 76,
+    82, 3, 74, 100, 2, 49, 14,
+    41, 11, 55, 58, 34, 54, 6,
+    22
+]
+const errorArr5 = [26, 82, 3]
+const result = shuffleArray(arr6)
 console.log(result)
 
 function shuffleArray(array) {
