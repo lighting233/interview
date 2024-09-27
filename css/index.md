@@ -75,3 +75,10 @@ Chrome 中文版浏览器会默认设定页面的最小字号是 12PX，英文�
    1. `zoom`可以设置成80%.缺点是兼容性不好,火狐不支持
    2. `-webkit-transform:scale(0.8)`会有一点缩进,盒子也缩放
    3. ~~`-webkit-text-size-adjust:none`废弃了~~
+
+## 6. position定位问题
+1. `position: relative` 的元素不受 `filter` 影响，仍然相对于其原始位置定位。
+2. 当一个元素设置为 `position: absolute` 时，它会相对于最近的具有 `position` 属性的祖先元素进行定位。如果这个祖先元素是一个具有 `filter` 的元素，那么绝对定位的元素将相对于这个父元素进行定位。
+如果**没有**具有 `position` 属性的祖先元素，绝对定位的元素将相对于**视口**进行定位。
+3. `position: fixed`：通常是相对于**视口**进行定位，但在**新的层叠上下文中**，它会相对于最近的具有 `position` 属性（如 `relative、absolute、fixed`）的祖先元素进行定位。
+这意味着如果父元素有 `filter`，子元素的 `fixed` 定位会被“限制”在**父元素的可视区域内**。
