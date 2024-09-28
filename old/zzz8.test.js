@@ -289,9 +289,12 @@ const Foo = (function () {
 // 第三次是a+2b毫秒，
 // 第N次执行是a+Nb毫秒后
 
-// 要求：
-// 1、白板手撕
-// 2、myTimer要有返回值，并且返回值是一个函数，调用该函数，可以让myTimer停掉
+/**
+ * 要求：
+ 1、白板手撕
+ 2、myTimer要有返回值，并且返回值是一个函数，调用该函数，可以让myTimer停掉
+ */
+
 
 function myTimer(fn, a, b) {
     let timer;
