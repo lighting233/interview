@@ -1,5 +1,57 @@
 //todo 1.手写apply,call,bind
-
+Function.prototype.myApply = function (ctx, args = []) {
+    ctx = (ctx === null || ctx === undefined) ? globalThis : Object(ctx);
+    const key = Symbol('temp');
+    Object.defineProperty(ctx, key, {
+        enumerable: false,
+        value: this,
+        configurable: true;
+    });
+    const res = ctx[key](...args);
+    delete ctx[key];
+    return res;
+}
+Function.prototype.myCall = function (ctx, ...args) {
+    ctx = (ctx === null || ctx === undefined) ? globalThis : Object(ctx);
+    const key = Symbol('temp');
+    Object.defineProperty(ctx, key, {
+        enumerable: false,
+        value: this,
+        configurable: true;
+    });
+    const res = ctx[key](...args);
+    delete ctx[key];
+    return res;
+}
+Function.prototype.myBind = function (ctx, ...args) {
+    const _this = this;
+    return function (...restArgs) {
+        if (new.target) {
+            return new _this(...args, ...restArgs);
+        } else {
+            return _this.apply(ctx, [...args, ...restArgs])
+        }
+    }
+}
+Function.prototype.myBind2 = function (ctx, ...args) {
+    const _this = this;
+    ctx = (ctx === null || ctx === undefined) ? globalThis : Object(ctx);
+    const key = Symbol('temp');
+    Object.defineProperty(ctx, key, {
+        enumerable: false,
+        value: this,
+        configurable: true;
+    })
+    return function (...restArgs) {
+        if (new.target) {
+            return new _this(...args, ...restArgs);
+        } else {
+            const res = ctx[key](...args, ...restArgs);
+            delete ctx[key];
+            return res;
+        }
+    }
+}
 
 //todo 2.考察proxy
 /**

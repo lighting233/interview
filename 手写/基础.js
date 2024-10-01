@@ -70,7 +70,7 @@ Function.prototype.myBind = function (ctx, ...args) {
         //4.如果method有返回值,bindres有值
         //5.new.target:如果通过new来调用这个函数,new.target指向这个函数,否则为undefined
         if (new.target) {
-            return new method(...args, ...restArgs);
+            return new _outerThis(...args, ...restArgs);
         }
         return _outerThis.apply(ctx, [...args, ...restArgs]);
     }
@@ -84,12 +84,14 @@ Function.prototype.myBind2 = function (ctx, ...args) {
         value: this,
         configurable: true
     });
-
+    //todo
+    const _outerThis = this;
     return function (...restArgs) {
         if (new.target) {
-            return new method(...args, ...restArgs);
+            //todo
+            return new _outerThis(...args, ...restArgs);
         }
-        const res = ctx[key](...args,...restArgs);
+        const res = ctx[key](...args, ...restArgs);
         delete ctx[key];
 
         return res;
@@ -105,9 +107,35 @@ console.log(new newFn(3))
  * const res = obj[1][2][3] + 4;
  */
 
-//todo 3.考察迭代器
+//todo 3.考察迭代器和生成器
 /**
  * 使之成立
  * var [a, b] = { a: 1, b: 2 }
  * console.log(a, b) // 输出1 2
  */
+
+//1.一个对象能够解构,要满足对象上有可迭代协议:即[Symbol.iterator]属性是一个没有参数的函数,并返回一个迭代器(这个函数意味着是一个生成器)
+//Generator 函数有多种理解角度。语法上，首先可以把它理解成，Generator 函数是一个状态机，封装了多个内部状态。
+//执行 Generator 函数会返回一个遍历器对象，也就是说，Generator 函数除了状态机，还是一个遍历器对象生成函数。返回的遍历器对象，可以依次遍历 Generator 函数内部的每一个状态。
+//2.迭代器(遍历器)是一个对象,并且有next()方法,调用一次next()返回一个对象{value:xxx,done: true/false}
+//3.相当于如下代码
+// const iterator = {a: 1, b: 2}[Symbol.iterator]();
+// const a = iterator.next().value;
+// const b = iterator.next().value;
+Object.prototype[Symbol.iterator] = function () {
+    return Object.values(this)[Symbol.iterator]();
+}
+
+//4.如果在 Generator 函数内部，调用另一个 Generator 函数。需要在前者的函数体内部，自己手动完成遍历。
+//5. ES6 提供了yield*表达式，作为解决办法.yield* 后面跟的是一个可迭代对象（在这个例子中是由 Object.values(this) 返回的数组）。
+//yield* 会依次将可迭代对象的每个值“委托”给调用者，允许生成器函数从其他可迭代对象中获取值并返回。
+Object.prototype[Symbol.iterator] = function* () {
+    yield* Object.values(this);
+}
+
+//todo 考察原型和call和apply
+console.log.call.call.call.call.apply((a) => a, [1, 2]);
+//1. a.b.c.d()的调用,最后调用的是d方法
+//2. console.log是一个函数;console.log.call也是一个函数,即到console.log的Function上去找call;所以最终落脚点是call.apply(xxxx)
+//3. 所以等于((a) => a).call(1,2)
+//4. call绑定上下文1,执行(2) => 2
