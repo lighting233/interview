@@ -133,7 +133,7 @@ Object.prototype[Symbol.iterator] = function* () {
     yield* Object.values(this);
 }
 
-//todo 考察原型和call和apply
+//todo 4.考察原型和call和apply
 console.log.call.call.call.call.apply((a) => a, [1, 2]);
 //1. a.b.c.d()的调用,最后调用的是d方法
 //2. console.log是一个函数;console.log.call也是一个函数,即到console.log的Function上去找call;所以最终落脚点是call.apply(xxxx)

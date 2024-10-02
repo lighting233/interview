@@ -65,3 +65,14 @@ Function.prototype.myBind2 = function (ctx, ...args) {
  * var [a, b] = { a: 1, b: 2 }
  * console.log(a, b) // 输出1 2
  */
+
+Function.prototype[Symbol.iterator] = function() {
+    return Object.values(this)[Symbol.iterator]();
+};
+Function.prototype[Symbol.iterator] = function* () {
+    yield* Object.values(this);
+};
+
+//todo 4.考察原型和call和apply
+console.log.call.call.call.call.apply((a) => a, [1, 2]);
+//((a) => a).call(1,2)

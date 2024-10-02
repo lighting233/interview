@@ -14,7 +14,7 @@ const promise2 = new Promise((resolve, reject) => {
 
 })
 promise2.then((data) => {
-
+    
 })
 
 function resolvePromise(promise2, x, resolve, reject) {
