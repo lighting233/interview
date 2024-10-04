@@ -104,8 +104,32 @@ console.log(new newFn(3))
 //todo 2.考察proxy
 /**
  * 请你实现一下这个 obj 对象,使得最后的输出结果为 10 (1+2+3+4)
- * const res = obj[1][2][3] + 4;
  */
+const res = obj[1][2][3] + 4;
+//obj执行get后递归返回一个对象
+//需要一个闭包来实现key的记录累加
+//隐式转化
+/**
+ * 对象的Symbol.toPrimitive属性，指向一个方法。该对象被转为原始类型的值时，会调用这个方法，返回该对象对应的原始类型值。
+ */
+const createObj = (sum = 0) => {
+    return new Proxy({}, {
+        get(target, key) {
+            if (key === Symbol.toPrimitive) {
+                // return (hint) => {
+                //     switch (hint) {
+                //         case 'default':
+                //             return sum;
+                //     }
+                // };
+                return () => sum;
+            };
+            return createObj(sum + Number(key))
+        }
+    })
+};
+const obj = createObj();
+
 
 //todo 3.考察迭代器和生成器
 /**
@@ -139,3 +163,19 @@ console.log.call.call.call.call.apply((a) => a, [1, 2]);
 //2. console.log是一个函数;console.log.call也是一个函数,即到console.log的Function上去找call;所以最终落脚点是call.apply(xxxx)
 //3. 所以等于((a) => a).call(1,2)
 //4. call绑定上下文1,执行(2) => 2
+
+//todo 5.手写map
+Array.prototype.myMap = fucntion(callback,context) {
+    
+
+}
+
+Array.prototype.myMap2 = fucntion(callback,context) {
+    
+
+};
+
+//todo 6.手写filter
+Array.prototype.filter = fucntion(callback,context) {
+   
+}

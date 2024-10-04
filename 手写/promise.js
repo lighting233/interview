@@ -193,7 +193,7 @@ class Promise {
         });
     };
 
-    //返回第一个改变状态的
+    //返回第一个改变状态的, 不论成功还是失败
     static race(promises) {
         const len = promises.length;
         return new Promise((resolve, reject) => {

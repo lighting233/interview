@@ -76,3 +76,19 @@ Function.prototype[Symbol.iterator] = function* () {
 //todo 4.考察原型和call和apply
 console.log.call.call.call.call.apply((a) => a, [1, 2]);
 //((a) => a).call(1,2)
+
+//todo 5.手写map
+Array.prototype.myMap = fucntion(callback,context) {
+    
+
+}
+
+Array.prototype.myMap2 = fucntion(callback,context) {
+    
+
+};
+
+//todo 6.手写filter
+Array.prototype.filter = fucntion(callback,context) {
+   
+}
