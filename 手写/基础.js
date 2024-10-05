@@ -165,17 +165,40 @@ console.log.call.call.call.call.apply((a) => a, [1, 2]);
 //4. call绑定上下文1,执行(2) => 2
 
 //todo 5.手写map
-Array.prototype.myMap = fucntion(callback,context) {
-    
-
+Array.prototype.myMap = fucntion(callback, context) {
+    if (typeof callback !== 'function') {
+        throw new Error('');
+    }
+    context = context || globalThis;
+    const res = [];
+    for (let i = 0; i < this.length; i++) {
+        res[i] = callback.call(context, this[i], i, this);
+    };
+    return res;
 }
 
-Array.prototype.myMap2 = fucntion(callback,context) {
-    
-
+Array.prototype.myMap2 = fucntion(callback, context) {
+    if (typeof callback !== 'function') {
+        throw new Error('');
+    }
+    context = context || globalThis;
+    return this.reduce((prev, cur, index, arr) => {
+        return prev.concat(callback.call(context, cur, index, arr))
+    }, []);
 };
 
 //todo 6.手写filter
-Array.prototype.filter = fucntion(callback,context) {
-   
+Array.prototype.filter = fucntion(callback, context) {
+    if (typeof callback !== 'function') {
+        throw new Error('');
+    }
+    context = context || globalThis;
+    const res = [];
+    for (let i = 0; i < this.length; i++) {
+        const isTrue = callback.call(context, this[i], i, this);
+        if(isTrue) {
+            res.push(this[i]);
+        }
+    };
+    return res;
 }

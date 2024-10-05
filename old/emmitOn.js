@@ -60,7 +60,8 @@ class EventBus {
 
     publish(eventName, ...args) {
         if (this.events[eventName]) {
-            //`const subscribers = this.events[eventName].slice();` 这句代码的作用是创建 `eventName` 事件的订阅者的副本。这是为了确保在迭代订阅者并触发它们的回调函数时，不会受到后续订阅和取消订阅的影响。
+            //`const subscribers = this.events[eventName].slice();` 这句代码的作用是创建 `eventName` 事件的订阅者的副本。
+            //这是为了确保在迭代订阅者并触发它们的回调函数时，不会受到后续订阅和取消订阅的影响。
             //具体来说，它执行了以下操作：
             //1. `this.events[eventName]` 返回事件 `eventName` 的订阅者数组。
             //2. `slice()` 方法创建了一个浅拷贝，生成了一个新数组，包含了原数组中的所有元素。

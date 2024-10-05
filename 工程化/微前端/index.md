@@ -2,7 +2,10 @@
 
 ## 遇到的坑
 1. 子应用定义的生命周期函数有可能会被tree-shrking掉
-
+2. 微前端公共路径
+   1. vite:base
+   2. webpack:public-path
+![部署路径](../../img/微前端/16部署路径.png)
 ## 为什么不使用iframe?
 
 ## 不同的微前端框架
