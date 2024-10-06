@@ -487,7 +487,7 @@ function debounce(fn, delay, immediate) {
 }
 
 function throttle(fn, delay, options = {}) [
-    const { leading = false, trailing = true } = options;
+    const { leading = true, trailing = true } = options;
     let timer;
     let prevTime = 0;
 

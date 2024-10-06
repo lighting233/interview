@@ -34,7 +34,8 @@ Vue3 源码采用monorepo 方式进行管理，将模块拆分到 package 目录
 1. 根目录下执行安装依赖`pnpm install vue -w`
 2. pnpm的--filter是什么意思?
 在 `pnpm` 中，`--filter` 选项用于选择特定的包或模块，以便在执行命令时只对这些包进行操作。这在处理大型 monorepo 项目时特别有用，可以帮助你更高效地管理依赖和执行任务。
-
+3. `pnpm install @vue/shared@workspace --filter @vue/runtime-dom`等价于`pnpm install @vue/shared -w --filter @vue/runtime-dom`
+主目录下执行这个命令在`packages/runtime-dom`目录下安装我们**本地的**`shared`模块
 ### 主要功能
 
 1. **选择特定包**：使用 `--filter` 可以指定要操作的包。例如，你可以只安装、更新或运行某个特定包的脚本，而不影响其他包。

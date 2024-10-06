@@ -5,7 +5,7 @@ function debounce(fn, delay, immediate) {
 };
 
 //todo 2.截流 throttle 技能冷却
-function throttle(fn, delay, options = {}) {
+function throttle(fn, delay) {
 
 };
 
@@ -21,8 +21,14 @@ const obj = {
 const cityName = customGet(obj, 'user.address.city', 'Unknown');
 console.log(cityName); // 输出：New York
 
-function customGet(obj, path, defaultVal) {
-
+/** 
+ * * @param {object} source 
+ * * @param {string | string[]} path 
+ * * @param {any} [defaultValue] 
+ * * @return {any} 
+ * */
+function customGet(source, path, defaultVal) {
+    
 };
 
 //todo 4.实现去重
@@ -64,3 +70,10 @@ function flatArray(arr) {
 function flatArray(arr) {
    
 };
+
+//todo 7.实现数组分组
+fn([1, 2, 3, 4, 5], 2); //结果为[[1,2],[3,4],[5]]
+
+function fn(arr, size) {
+    
+}
