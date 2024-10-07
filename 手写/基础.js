@@ -165,3 +165,13 @@ console.log.call.call.call.call.apply((a) => a, [1, 2]);
 //4. call绑定上下文1,执行(2) => 2
 
 
+//todo 5.统计字符串出现的频率
+
+const str ='adasaasdxcxcaadfffgggfs';
+
+function times(str) {
+    return str.split('').reduce((prev,cur) => {
+        //括号运算符:一次计算每个表达式,最后返回最后一个逗号后的项
+        return (prev[cur]++ || (prev[cur] = 1),prev)
+    }, {})
+};
