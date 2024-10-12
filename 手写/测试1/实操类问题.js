@@ -25,7 +25,7 @@ parse(data, str);
 */
 
 function myTimer(fn, a, b) {
-    
+
 };
 
 //todo 3.设计一个sum函数，使其满足以下要求
@@ -39,4 +39,61 @@ sum(1, 2)(3, 4)(5).sumOf() // 返回 15
 
 function sum(...args) {
 
+}
+
+//todo 4.比较版本号
+/**
+* 题目
+* Semantic Versioning 是一个前端通用的版本定义规范。
+* 格式为“{MAJOR}.{MINOR}.{PATCH}-{alpha|beta|rc}.{number}”，
+* 要求实现 compare(a, b) 方法，比较 a, b 两个版本大小。
+* 
+* 描述
+* •当 a > b 是返回 1；
+* •当 a = b 是返回 0；
+* •当 a < b 是返回 -1；
+* •其中，rc > beta > alpha，major > minor > patch；
+* 
+* 例子
+* 1.2.3 < 1.2.4 < 1.3.0.alpha.1 < 1.3.0.alpha.2 < 1.3.0.beta.1 < 1.3.0.rc.1 < 1.3.0
+*/
+
+function compareVersion(str1, str2) {
+    const map = { rc: 3, beta: 2, alpha: 1 };
+    str1 = str1.replace(/(rc|beta|alpha)/g, (match) => map[match]);
+    str2 = str2.replace(/(rc|beta|alpha)/g, (match) => map[match]);
+
+    function walk* (str) {
+        const marks = ['.', '-'];
+        let part = '';
+        for (let i = 0; i < str.length; i++) {
+            if (marks.includes(str[i])) {
+                yield part;
+                part = '';
+            } else {
+                part += str[i];
+            }
+        }
+        if (part) {
+            yield part;
+        }
+    };
+
+    const walk1 = walk(str1);
+    const walk2 = walk(str2);
+
+    while (true) {
+        const iterator1 = walk1.next();
+        const iterator2 = walk2.next();
+
+        if (iterator1.done && iterator2, done) break;
+
+        const val1 = iterator1.done ? Infinity : parseInt(iterator1.value || 0, 10);
+        const val2 = iterator2.done ? Infinity : parseInt(iterator2.value || 0, 10);
+
+        if (val1 > val2) return 1;
+        if (val1 < val2) return -1;
+    };
+
+    return 0;
 }

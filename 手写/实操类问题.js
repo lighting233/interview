@@ -8,11 +8,11 @@ const data = {
 const str = '我们是好朋友，是吧{{name}}, 是十几单{{date.year}}'
 
 function parse(data, str) {
-    return str.replace(/\{\{(\w+(.\w+)*)\}\}/g,(match,p1) => {
+    return str.replace(/\{\{(\w+(.\w+)*)\}\}/g, (match, p1) => {
         const arr = p1.split('.');
-        return arr.reduce((prev,cur) => {
+        return arr.reduce((prev, cur) => {
             return (prev || {})[cur];
-        },data)
+        }, data)
     })
 };
 parse(data, str);
@@ -41,7 +41,7 @@ function myTimer(fn, a, b) {
             run();
         }, delay);
     }
-    
+
     run();
 
     return () => {
@@ -57,7 +57,7 @@ function myTimer(fn, a, b) {
         fn(); // 执行传入的函数
         count++; // 增加计数
         // 计算下次执行的延迟时间
-        const nextDelay =  count * b; // 计算下次执行的时间
+        const nextDelay = count * b; // 计算下次执行的时间
         timerId = setTimeout(execute, nextDelay); // 设置下次执行
     };
 
@@ -83,8 +83,119 @@ function sum(...args) {
     function fn(...restArgs) {
         return sum(...args, ...restArgs)
     };
-    fn.sumOf = function() {
-        return args.reduce((prev,cur) => prev + cur);
+    fn.sumOf = function () {
+        return args.reduce((prev, cur) => prev + cur);
     };
     return fn;
 }
+
+//todo 4.比较版本号
+/**
+ * 12.2.1
+ * 5.7.8
+ * 1.5.6-alpha.1
+ * 7.2.3-beta
+ */
+
+function compareVersion(str1, str2) {
+    const map = { rc: 3, beta: 2, alpha: 1 };
+
+    // 将版本号拆解为数组
+    function parseVersion(str) {
+        // 拆分主版本、次版本、修订版本和预发布版本
+        const [main, preRelease] = str.split('-');
+        const mainParts = main.split('.').map(Number);  // 解析主版本部分为数字数组
+        const preParts = preRelease
+            ? preRelease.split('.').map(part => (map[part] ? map[part] : Number(part))) // 预发布版本转为数字
+            : [Infinity];  // 如果没有预发布版本，设置为 Infinity，表示优先级最大
+        return [...mainParts, ...preParts];
+    }
+
+    const version1 = parseVersion(str1);
+    const version2 = parseVersion(str2);
+
+    // 逐一比较每一部分
+    for (let i = 0; i < Math.max(version1.length, version2.length); i++) {
+        const num1 = version1[i] || 0;  // 如果一方的长度不够，补充 0
+        const num2 = version2[i] || 0;
+
+        if (num1 > num2) return 1;
+        if (num1 < num2) return -1;
+    }
+
+    return 0;  // 如果所有部分都相等，返回 0
+}
+
+// 测试
+let str1 = "1.2.3";
+let str2 = "1.3.0-alpha.1";
+let str3 = "1.3.0";
+let str4 = "1.3.0-beta.1";
+let str5 = "1.3.0-rc.1";
+
+console.log(compareVersion(str1, str2)); // -1
+console.log(compareVersion(str2, str4)); // -1
+console.log(compareVersion(str4, str5)); // -1
+console.log(compareVersion(str5, str3)); // -1
+console.log(compareVersion(str3, str1)); // 1
+
+
+/**
+* 题目
+* Semantic Versioning 是一个前端通用的版本定义规范。
+* 格式为“{MAJOR}.{MINOR}.{PATCH}-{alpha|beta|rc}.{number}”，
+* 要求实现 compare(a, b) 方法，比较 a, b 两个版本大小。
+* 
+* 描述
+* •当 a > b 是返回 1；
+* •当 a = b 是返回 0；
+* •当 a < b 是返回 -1；
+* •其中，rc > beta > alpha，major > minor > patch；
+* 
+* 例子
+* 1.2.3 < 1.2.4 < 1.3.0.alpha.1 < 1.3.0.alpha.2 < 1.3.0.beta.1 < 1.3.0.rc.1 < 1.3.0
+*/
+
+function compareVersion(str1, str2) {
+    // 创建 rc, beta, alpha 权重, 替换为数值
+    let map = { rc: 3, beta: 2, alpha: 1 };
+    str1 = str1.replace(/(rc|beta|alpha)/g, match => map[match]);
+    str2 = str2.replace(/(rc|beta|alpha)/g, match => map[match]);
+
+    // 生成器获取每一项的字符
+    function* walk(str) {
+        let step = ''
+        const terminals = ['.', '-']
+        for (let i = 0; i < str.length; i++) {
+            if (terminals.includes(str[i])) {
+                yield step;
+                step = ''
+            } else {
+                step += str[i]
+            }
+        }
+        if (step) yield step
+    }
+    // 迭代比较
+    const gen1 = walk(str1);
+    const gen2 = walk(str2);
+
+    while (true) {
+        const iter1 = gen1.next();
+        const iter2 = gen2.next();
+
+        if (iter1.done && iter2.done) break;
+        // 将字符串转换为数字进行比较，没有值时补充 0
+        let num1 = iter1.done ? Infinity : parseInt(iter1.value || 0, 10);
+        let num2 = iter2.done ? Infinity : parseInt(iter2.value || 0, 10);
+
+        if (num1 > num2) return 1
+        if (num1 < num2) return -1
+    }
+    return 0
+}
+
+// 测试
+let str1 = "3.3.0-alpha.1";
+let str2 = "3.3.0-rc.1";
+console.log(compareVersion(str1, str2)); // -1

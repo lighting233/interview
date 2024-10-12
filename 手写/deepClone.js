@@ -5,6 +5,14 @@ function getType(obj) {
 
 const canTraverseList = ['[Object Array]', '[Object Object]', '[Object Map]', '[Object Set]', '[Object Arguments]',];
 
+/**
+ * 
+ * let a = Symbol();
+ * let b = Object(a);
+ * console.log(b) //[Symbol: Symbol()]
+ * console.log(Object.prototype.toString.call(b)) //[object Symbol]
+ * console.log(b.valueOf()) //Symbol()
+ */
 function cloneOthers(obj, type) {
     switch (type) {
         case '[Object Number]':

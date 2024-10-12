@@ -175,3 +175,19 @@ function times(str) {
         return (prev[cur]++ || (prev[cur] = 1),prev)
     }, {})
 };
+
+//todo 6.?位置写什么才能输出true
+let a = '?';
+
+console.log(
+    a == 1 &&
+    a == 2 &&
+    a == 3
+)
+
+a = {
+    n: 1,
+    valueOf: function() {
+        return this.n++;
+    }
+}
