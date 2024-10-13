@@ -167,16 +167,16 @@ console.log.call.call.call.call.apply((a) => a, [1, 2]);
 
 //todo 5.统计字符串出现的频率
 
-const str ='adasaasdxcxcaadfffgggfs';
+const str = 'adasaasdxcxcaadfffgggfs';
 
 function times(str) {
-    return str.split('').reduce((prev,cur) => {
+    return str.split('').reduce((prev, cur) => {
         //括号运算符:一次计算每个表达式,最后返回最后一个逗号后的项
-        return (prev[cur]++ || (prev[cur] = 1),prev)
+        return (prev[cur]++ || (prev[cur] = 1), prev)
     }, {})
 };
 
-//todo 6.?位置写什么才能输出true
+//todo 6.?位置写什么才能输出true(考察隐式转换)
 let a = '?';
 
 console.log(
@@ -187,7 +187,42 @@ console.log(
 
 a = {
     n: 1,
-    valueOf: function() {
+    valueOf: function () {
         return this.n++;
     }
+};
+
+//todo 7.下面的代码输出结果是什么?(考察对象属性和顺序)
+const obj = {
+    a: 0
+};
+//对象的属性只能是string喝symbol,数组也不例外
+obj['1'] = 0;
+//1. 计算++obj.a 2. obj[1]等待赋值 3. 把1赋值给左侧 4. obj.a再自增
+obj[++obj.a] = obj.a++;
+//当对象的属性是字符串数字时,属性按升序排列,并且都排在字符串属性前边(v8引擎element,property的优化检索速度);字符串属性的顺序按照给对象赋值的顺序
+const values = Object.values(obj);
+obj[values[1]] = obj.a;
+console.log(obj);//{'1':1, '2': 2, 'a':2}
+
+//todo 8.下面的代码输出结果是什么?(考察连续赋值);
+var a = { n: 1 };
+var b = a;
+//右边表达式a = {n:2}的运算结果,也叫返回结果赋值给左边a.x的这个内存空间  
+//a = { n: 2 }虽然是个赋值,赋值也是表达式,任何的操作符连接一个操作树就是一个表达式,任何表达式都有返回结果
+//赋值的过程要先进行定位,所以先确定a.x的内存空间,再进行右边的表达式计算赋值
+//a = { n: 2 }这个表达式的计算结果就是返回a的存储空间的地址,所以把这个地址付给{n:1,x: {n:2}的地址(与目前a存储的内存地址一致) }
+a.x = a = { n: 2 };
+console.log(a.x);
+console.log(b.x);
+
+//undefined
+//{n:2}
+
+//todo 9.判断传入的函数是否标记了async
+function isAsyncFunction(func) {
+    //async函数经过babel转换后就不是这样了,而且Symbol.toStringTag属性可以修改
+    // return func[Symbol.toStringTag] === 'AsyncFunction'
+    return func instanceof (async () => {}).constructor
+
 }

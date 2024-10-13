@@ -82,3 +82,56 @@ function fetchWithTimeout(url, timeout = 300000) {
 class LazyLog {
     
 }
+
+//todo 6. 下面代码输出什么?
+async function asy1() {
+    console.log(1);
+    await asy2();
+    console.log(2);
+};
+asy2 = async () => {
+    await setTimeout(() => {
+        Promise.resolve().then(() => {
+            console.log(3);
+        });
+        console.log(4);
+    }, 0);
+
+};
+
+asy3 = async () => {
+    Promise.resolve().then(() => {
+        console.log(6)
+    })
+};
+
+asy1();
+console.log(7);
+asy3();
+
+
+
+async function asy1() {
+    console.log(1);
+    await asy2();
+    console.log(2);
+};
+asy2 = async () => {
+    await Promise.resolve().then(() => {
+        Promise.resolve().then(() => {
+            console.log(3);
+        });
+        console.log(4);
+    });
+    console.log(5);
+};
+
+asy3 = async () => {
+    Promise.resolve().then(() => {
+        console.log(6)
+    })
+};
+
+asy1();
+console.log(7);
+asy3();

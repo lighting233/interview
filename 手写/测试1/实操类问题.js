@@ -59,41 +59,5 @@ function sum(...args) {
 */
 
 function compareVersion(str1, str2) {
-    const map = { rc: 3, beta: 2, alpha: 1 };
-    str1 = str1.replace(/(rc|beta|alpha)/g, (match) => map[match]);
-    str2 = str2.replace(/(rc|beta|alpha)/g, (match) => map[match]);
-
-    function walk* (str) {
-        const marks = ['.', '-'];
-        let part = '';
-        for (let i = 0; i < str.length; i++) {
-            if (marks.includes(str[i])) {
-                yield part;
-                part = '';
-            } else {
-                part += str[i];
-            }
-        }
-        if (part) {
-            yield part;
-        }
-    };
-
-    const walk1 = walk(str1);
-    const walk2 = walk(str2);
-
-    while (true) {
-        const iterator1 = walk1.next();
-        const iterator2 = walk2.next();
-
-        if (iterator1.done && iterator2, done) break;
-
-        const val1 = iterator1.done ? Infinity : parseInt(iterator1.value || 0, 10);
-        const val2 = iterator2.done ? Infinity : parseInt(iterator2.value || 0, 10);
-
-        if (val1 > val2) return 1;
-        if (val1 < val2) return -1;
-    };
-
-    return 0;
+    
 }
