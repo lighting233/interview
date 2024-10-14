@@ -50,3 +50,69 @@ JS是一⻔单线程的语言，这是因为它运行在浏览器的渲染主线
 - 浏览器必须准备好一个微队列，**微队列**中的任务优先所有其他任务执行
 - 任务队列按照注册时的顺序取消息队列取任务执行
 - 不是每种类型的任务都有一个单独的消息队列，而是根据不同的优先级区间加入不同的消息队列
+
+
+## **postMessage 和 MessageChannel的区别**
+### 1. **`postMessage`**:
+`postMessage` 是一种用于不同浏览器上下文之间通信的简单、直接的方式。例如，你可以使用 `postMessage` 来让一个 `iframe` 和其父页面进行通信，或者让两个不同的窗口进行通信。
+
+#### 特点：
+- **上下文范围**：`postMessage` 可以在不同的浏览器上下文之间传递数据，如：
+  - 主页面和 `iframe` 之间。
+  - 父窗口和子窗口之间（通过 `window.open()` 打开的）。
+  - 主页面和 `Web Workers` 之间。
+
+- **跨域通信**：`postMessage` 允许跨域通信（例如，一个页面可以通过 `postMessage` 向不同域的 `iframe` 发送消息），但消息的接收方可以通过验证消息的来源和数据来确保安全性。
+
+- **单向通信**：`postMessage` 是一次性的，发消息的一方需要等待接收方处理消息并可能再通过另一个 `postMessage` 回复。
+
+#### 使用示例：
+```javascript
+// 父页面向 iframe 发送消息
+const iframe = document.getElementById('myIframe');
+iframe.contentWindow.postMessage('Hello from parent', 'https://example.com');
+
+// 在 iframe 中监听消息
+window.addEventListener('message', (event) => {
+  if (event.origin !== 'https://example.com') return;  // 安全检查
+  console.log(event.data);  // 'Hello from parent'
+});
+```
+
+### 2. **`MessageChannel`**:
+`MessageChannel` 提供了一种双向、全双工通信的方式，可以创建两个端点（`port1` 和 `port2`）来进行消息传递。它通常用于在相同的上下文中创建独立的通信通道，比如主页面和 `Web Worker` 之间的双向通信。
+
+#### 特点：
+- **双向通信**：`MessageChannel` 提供了两个端点 `port1` 和 `port2`，双方可以互相发送和接收消息，实现双向通信。
+- **适用于更复杂的通信**：相比 `postMessage`，`MessageChannel` 更适合用于复杂的通信场景，比如同时进行多条消息的传递，不用每次等待回复。
+- **独立通道**：`MessageChannel` 的通信通道是独立的，不受全局事件的干扰，可以更容易管理和维护消息流。
+
+#### 使用示例：
+```javascript
+// 创建 MessageChannel
+const channel = new MessageChannel();
+
+// 通过 port1 发送消息
+channel.port1.postMessage('Message from port1');
+
+// 监听 port2 的消息
+channel.port2.onmessage = (event) => {
+  console.log(event.data);  // 'Message from port1'
+};
+
+// 发送消息给 Web Worker 或 iframe
+worker.postMessage('Init communication', [channel.port2]);
+```
+
+### 区别总结：
+
+| 特性                          | `postMessage`                                      | `MessageChannel`                                 |
+|-------------------------------|----------------------------------------------------|-------------------------------------------------|
+| **通信模型**                  | 单向，简单的消息传递                               | 双向，全双工通信                                |
+| **适用范围**                  | 不同浏览器上下文（窗口、iframe、Web Worker）之间通信 | 相同上下文（主页面与 Worker）之间通信           |
+| **跨域支持**                  | 支持跨域通信                                       | 不适用于跨域，但可用于跨线程通信                |
+| **消息通道管理**              | 无法管理多个独立的消息流                           | 提供独立的通信通道，通过 `port1` 和 `port2` 传递 |
+| **常见用例**                  | 跨域窗口通信、`iframe` 与主页面通信、Worker通信     | 更复杂的 Web Worker 通信，或内部的双向通信场景   |
+
+- **`postMessage`** 更适用于简单的跨窗口或跨域通信。
+- **`MessageChannel`** 适用于需要复杂双向通信的情况，比如 Web Workers 或同一上下文内的组件通信。

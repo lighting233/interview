@@ -17,7 +17,7 @@
 - [x] 17. createPortal和 fluhSync，use
 - [ ] 18. css filter
 - [x] 19. 浮点数计算
-- [ ] 20. postMessage、MessageChannel的区别
+- [x] 20. postMessage、MessageChannel的区别
 - [x] 21. 小于 12px
 - [x] 22. common.js
 - [x] 23. [WeakMap](https://juejin.cn/post/7271643757640073216)
@@ -29,4 +29,4 @@
 - [x] 29. git
 - [ ] 30. 小程序和taro
 - [ ] 31. 五种observer
-- [ ] 32. package.json的版本号*,~,^
+- [x] 32. package.json的版本号*,~,^
