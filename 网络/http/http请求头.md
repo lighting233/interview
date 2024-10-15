@@ -316,6 +316,10 @@ fetch('https://another.com/resource', {
    ```http
    Referrer-Policy: no-referrer
    ```
+   - 如果你使用 `rel="noreferrer"`，不仅会阻止新窗口访问 `window.opener`，还会阻止浏览器在请求中发送 HTTP 引荐来源（referer）信息。
+   ```html
+   <a href="https://example.com" target="_blank" rel="noreferrer noopener">Open Example</a>
+   ```
 
 4. **跨域请求**:
    - 某些跨域请求可能不会包含 `Referer` 头，特别是在使用 `no-referrer` 或 `same-origin` 策略时。

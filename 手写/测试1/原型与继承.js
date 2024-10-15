@@ -36,3 +36,18 @@ function extends (subType, superType) {
 // 2、直接调用Foo()也会返回实例化的对象
 // 3、实例化的对象必须是Foo的实例
 
+let Foo = (function() {
+    //todo 
+    // this.n = 0;
+    let times = 0;
+    return function Foo() {
+        if(!new.target) {
+            //if(!this instanceof Foo)
+            return new Foo();
+        };
+        //todo 
+        // this.n++;
+        times++;
+        this.id = times;
+    }
+}())

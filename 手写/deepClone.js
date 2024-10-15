@@ -73,6 +73,17 @@ function deepClone(obj, weekMap = new WeekMap()) {
             clonedObj[key] = deepClone(obj[key], weekMap);
         };
     };
+    //todo 
+    Object.getOwnPropertyNames(obj).forEach((key) => {
+        if(Object.getOwnPropertyDescriptor(obj, key).enumerable === false) {
+            Object.defineProperty(clonedObj, key, {
+                value: deepClone(obj[value], weekMap),
+                enumerable: false // 设置为不可枚举
+            });
+        }else {
+            clonedObj[value] = deepClone(obj[key], weekMap);
+        }
+    })
 
     return clonedObj;
 };

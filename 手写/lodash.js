@@ -51,13 +51,16 @@ console.log(cityName); // 输出：New York
  * * @return {any} 
  * */
 function customGet(source, path, defaultVal) {
+    if(typeof path !== 'string' || !Array.isArray(path)) {
+        throw new TypeError('xxx');
+    };
     if (Array.isArray(path) && path.length === 0) {
         return defaultVal;
     };
     if (typeof path === 'string' && path.trim().length === 0) {
         return defaultVal;
     };
-    const arr = Array.isArray(path) ? path : path.split('.');
+    const arr = Array.isArray(path) ? path : path.trim().split('.');
     const res = arr.reduce((prev, cur) => {
         return (prev || {})[cur];
     }, source);

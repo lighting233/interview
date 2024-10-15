@@ -1,11 +1,11 @@
 - [x] 1. mono-repor项目和单项目结构的仓库相比有什么好处？
 - [x] 2. 什么是幽灵依赖？
-- [ ] 3. 子域名父域名间的通信
+- [x] 3. 子域名父域名间的通信
 - [x] 4. 需要知道dns解析是很耗时的，因此如果解析域名过多，会让首屏加载变得过慢，可以考虑dns-prefetch优化
 - [x] 5. 离屏 dom 整体插入 dom 树的操作
 - [x] 6. Object.freeze
-- [ ] 7. LocalStorage能跨域吗？
-- [ ] 8. 一些跨域的其他方式，比如postMessage，当然WebSocket也是一种方式
+- [x] 7. LocalStorage能跨域吗？
+- [x] 8. 一些跨域的其他方式，比如postMessage，当然WebSocket也是一种方式
 - [x] 9. baiout 和 eigerstate 优化
 - [x] 10. useDeferedValue
 - [ ] 11. Bom 对象 https://juejin.cn/post/7116113618550292516
@@ -28,5 +28,5 @@
 - [ ] 28. 大文件上传
 - [x] 29. git
 - [ ] 30. 小程序和taro
-- [ ] 31. 五种observer
+- [x] 31. 五种observer
 - [x] 32. package.json的版本号*,~,^
