@@ -76,29 +76,14 @@
       我是 h1 标签
     </ul>
     <script>
-      var merge = function(nums1, m, nums2, n) {
-    let p = m - 1, q = n - 1;
-    let cur = m + n - 1;
-
-    // todo 修正条件为 p 和 q 大于等于 0,对于初始n === 0的情况可以直接过滤掉
-    while(p >=0 && q >= 0) {
-        if(nums1[p] > nums2[q]) {
-            nums1[cur] = nums1[p];
-            p--;
-        }else {
-            nums1[cur] = nums2[q];
-            q--
-        };
-        cur--;
-    };
-
-    if(q >= 0) {
-        nums1[cur] = nums2[q];
-        q--;
-        cur--;
-    }
-};
-      merge([1,2,3,0,0,0],3,[2,5,6],3)
+      function getFontSize() {
+        const width = Math.min(document.body.clientWidth, 750); //设计稿750px
+        //即设备宽度(分辨率)和750ox设计稿的比,再乘100(位移100是因为,移动端最小的fontSize为8px,如果设备为375分辨率,则出现0.5px的根fontSize,所以乘100,此时假如设计稿的div宽为75px则应写作0.75rem,因为1rem等于100px)
+        const fontSize = width / 7.5; 
+        document.body.style.fontSize = fontSize + 'px';
+      };
+      getFontSize();
+      document.addEventListener('resize', getFontSize);
     </script>
   </body>
 </html>
