@@ -33,7 +33,7 @@ function myTimer(fn, a, b) {
     let timer;
     let times = 0;
 
-    function fn() {
+    function run() {
         let delay = a + times * b;
         timer = setTimeout(() => {
             fn();
@@ -159,8 +159,17 @@ console.log(compareVersion(str3, str1)); // 1
 function compareVersion(str1, str2) {
     // 创建 rc, beta, alpha 权重, 替换为数值
     let map = { rc: 3, beta: 2, alpha: 1 };
-    str1 = str1.replace(/(rc|beta|alpha)/g, match => map[match]);
-    str2 = str2.replace(/(rc|beta|alpha)/g, match => map[match]);
+    if (/(rc|beta|alpha)/.test(str1)) {
+        str1 = str1.replace(/(rc|beta|alpha)/g, match => map[match]);
+    } else {
+        str1 += '.Infinity'
+    };
+
+    if (/(rc|beta|alpha)/.test(str2)) {
+        str2 = str2.replace(/(rc|beta|alpha)/g, match => map[match]);
+    } else {
+        str2 += '.Infinity'
+    };
 
     // 生成器获取每一项的字符
     function* walk(str) {
@@ -186,8 +195,8 @@ function compareVersion(str1, str2) {
 
         if (iter1.done && iter2.done) break;
         // 将字符串转换为数字进行比较，没有值时补充 0
-        let num1 = iter1.done ? Infinity : parseInt(iter1.value || 0, 10);
-        let num2 = iter2.done ? Infinity : parseInt(iter2.value || 0, 10);
+        let num1 = iter1.value !== Infinity ? parseInt(iter1.value || 0, 10) : iter1.value;
+        let num2 = iter2.value !== Infinity ? parseInt(iter2.value || 0, 10) : iter2.value;
 
         if (num1 > num2) return 1
         if (num1 < num2) return -1

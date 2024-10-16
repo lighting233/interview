@@ -7,8 +7,18 @@ const data = {
 }
 const str = '我们是好朋友，是吧{{name}}, 是十几单{{date.year}}'
 
-function parse(date, str) {
-
+function parse(data, str) {
+    function getVal(obj, path) {
+        return path.split('.').reduce((prev,cur) => {
+            //todo
+            // return prev[cur] || {}
+            return (prev || {})[cur]
+        },data)
+    };
+    //todo /\{\{(\w+(.\w+)*)\}\}/g
+    return str.replace(/\{\{(\w)\}\}/g, (match, p1) => {
+        return getVal(data, p1)
+    })
 };
 parse(data, str);
 
@@ -25,7 +35,19 @@ parse(data, str);
 */
 
 function myTimer(fn, a, b) {
-
+    let timer;
+    let times = 0;
+    function run() {
+        timer = setTimeout(() => {
+            fn.apply(this);
+            times++;
+            run();
+        }, a + times * b)
+    }
+    run();
+    return () => {
+        timer && clearTimeout(timer);
+    }
 };
 
 //todo 3.设计一个sum函数，使其满足以下要求
@@ -38,7 +60,15 @@ sum(1)(2, 3, 4).sumOf() // 返回 10
 sum(1, 2)(3, 4)(5).sumOf() // 返回 15
 
 function sum(...args) {
-
+    function fn(...restArgs) {
+        //todo
+        // return sum(...[...args, ...restArgs])
+        return sum(..args, ...restArgs)
+    };
+    fn.sumOf = function() {
+        return args.reduce((prev, cur) => prev + cur)
+    };
+    return fn;
 }
 
 //todo 4.比较版本号
@@ -59,5 +89,71 @@ function sum(...args) {
 */
 
 function compareVersion(str1, str2) {
-    
+    const map = {
+        'alpha': 1,
+        'beta': 2,
+        'rc': 3
+    };
+    function parseVersion(str) {
+        const [mainParts, versionParts] = str.split('-');
+        const mainList = mainParts.split('.').map(Number);
+        const versionList = versionParts ? versionParts.split('.').map((item) => map[item] ? map[item] : Number(item)) : [Infinity];
+
+        return [...mainList, ...versionList];
+    };
+
+    const numlist1 = parseVersion(str1);
+    const numlist2 = parseVersion(str2);
+
+    for(let i = 0; i < Math.max(numlist1.length, numlist2.length); i++) {
+        const val1 = numlist1[i] || 0;
+        const val2 = numlist2[i] || 0;
+
+        if(val1 > val2) {
+            return 1;
+        }else if( val1 < val2) {
+            return -1;
+        }
+    };
+
+    return 0;
+};
+
+function compareVersion(str1, str2) {
+    const map = {
+        'alpha': 1,
+        'beta': 2,
+        'rc': 3
+    };
+    str1 = str1.replace(/(alpha|beta|rc)/g, match => map[match]);
+    str2 = str2.replace(/(alpha|beta|rc)/g, match => map[match]);
+
+    function* walk(str) {
+        let version;
+        const terminals = ['.','-'];
+        for(let i = 0; i < str.length; i++) {
+            if(terminals.includes(str[i])) {
+                yield version;
+                version = '';
+            }else {
+                version+=str[i];
+            }
+        };
+        if(version) {
+            yield version;
+        }
+    };
+
+    const genrator1 = walk(str1);
+    const genrator2 = walk(str2);
+
+    while(true) {
+        const iterator1 = genrator1.next();
+        const iterator2 = genrator2.next();
+
+        if(iterator1.done && iterator2.done) break;
+        const val1 = next1.done ? next1.value
+    };
+
+    return 0;
 }

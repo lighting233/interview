@@ -12,7 +12,7 @@
 - [x] 12. BFC
 - [x] 13. css 权重
 - [x] 14. 不可变数据
-- [ ] 15. offsetTop
+- [x] 15. offsetTop
 - [x] 16. 垃圾回收
 - [x] 17. createPortal和 fluhSync，use
 - [ ] 18. css filter
