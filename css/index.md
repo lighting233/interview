@@ -76,7 +76,30 @@ Chrome 中文版浏览器会默认设定页面的最小字号是 12PX，英文�
    2. `-webkit-transform:scale(0.8)`会有一点缩进,盒子也缩放
    3. ~~`-webkit-text-size-adjust:none`废弃了~~
 
-## 6. position定位问题
+## **6.1px问题**
+[移动端1px问题及解决方法](https://www.bilibili.com/video/BV1R64y1i78m/?spm_id_from=333.337.search-card.all.click&vd_source=78435c3cefd4783245d9d16d09d19859)
+`css` 的1px**逻辑像素**理论上在任何设备上都是**一样粗**的，之所以存在1px问题，是因为设计稿上要求移动端的`1px`边框其实是**物理像素**的`1px`,逻辑像素1px转化为对应物理像素需要乘上对应的设备像素比dpr，比如`dpr=2`,那么1px 对应的物理像素为2px,这就让ui设计师觉得边框变粗了。
+- `px`不等于物理单位,只是pc端屏幕的像素密度让我们觉得`px`等于物理像素
+- iphone4开始的reTina屏幕,屏幕大小没有和iphone3发生变化,但是分辨率大了一倍,此时1个css像素是等于2个物理像素的
+- 用户进行屏幕缩放,屏幕放大一倍,也会导致css中的1px对应的物理像素增加1倍
+- `window.devicePixelRatio`即`dpr`: 该设备上1个css像素代表多少个物理像素
+
+## **7.如何画0.5px的线**
+问题出现的原因是有些浏览器会把`0.5`px四舍五入为1
+使用缩放属性默认会从中心开始向两端缩放,如果不调整origin缩放原点属性,那么一条线就会从这个线的中心向上缩`0.25px`,向下缩`0.25px`导致上下都有一点空白
+```css
+.line {
+    height: 1px;
+    transform: scaleY(0.5);
+    /** x轴50%, y轴100% */
+    tansform-origin: 50% 100%;
+}
+```
+![CSS高频面试题之0.5px边框](https://www.bilibili.com/video/BV13v411b7RV/?spm_id_from=333.337.search-card.all.click&vd_source=78435c3cefd4783245d9d16d09d19859)
+![01渐变色](../img/0.5px/01渐变色.png)
+![02伪元素](../img/0.5px/02伪元素.png)
+![03缩放](../img/0.5px/03缩放.png)
+## **7. position定位问题**
 1. `position: relative` 的元素不受 `filter` 影响，仍然相对于其原始位置定位。
 2. 当一个元素设置为 `position: absolute` 时，它会相对于最近的具有 `position` 属性的祖先元素进行定位。如果这个祖先元素是一个具有 `filter` 的元素，那么绝对定位的元素将相对于这个父元素进行定位。
 如果**没有**具有 `position` 属性的祖先元素，绝对定位的元素将相对于**视口**进行定位。
