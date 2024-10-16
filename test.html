@@ -1,105 +1,37 @@
-<!-- <html lang="en">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <style>
-        .float-box{
-            float: left;
-            background-color: brown;
-        }
-        .div-box {
-            background-color: blue;
-            height: 50px;
-            /* opacity: 0.9; */
-            transform:translateX(10px)
-        }
-        .div-box2 {
-            margin-top: -25px;
-            height: 50px;
-            background-color: blueviolet;
-
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    #a {
+      width: 500px;
+      height: 300px;
+      overflow: scroll;
+      /* border: 10px salmon solid; */
+      background-color: aqua;
+      margin-left: 200px;
+      margin-top: 300px;
+      /* padding: 20px; */
+    }
+    #b {
+      /* margin-top: 10px; */
+      width: 300px;
+      height: 500px;
+      border: 10px slateblue solid;
+      padding: 15px;
+      background-color: brown;
+    }
+  </style>
 </head>
 <body>
-    <body>
-        <div class="float-box">float box</div> 
-        <div class="div-box">div box</div>
-        <div class="div-box2">111231231</div>
-    </body>
+  <div id="a">
+    <div id="b"></div>
+  </div>
+  <script>
+    const b = document.getElementById('b');
+    const a = document.getElementById('a');
+    console.log(a.scrollTop)
+  </script>
 </body>
-</html> -->
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link
-      href="https://cdn.bootcss.com/bootstrap/4.0.0-alpha.6/css/bootstrap.css"
-      rel="stylesheet"
-    />
-    <style>
-      .parent {
-        width: 200px;
-        /* height: 200px; */
-      }
-      .child {
-        width: 200px;
-        height: 200px;
-        margin-bottom: 100px;
-        background-color: red;
-      }
-      .child2 {
-        width: 200px;
-        height: 200px;
-        margin-top: 100px;
-        background-color: aqua;
-      }
-      .item {
-        background-color: blue;
-        width: 300px;
-        height: 50px;
-        margin-bottom: 20px;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="parent">
-      <div class="child">123</div>
-    </div>
-    <div class="child2">233</div>
-    <button id="remove">remove</button>
-    <button id="log">log</button>
-    <button id="add">add</button>
-    <ul id="123">
-      我是 h1 标签
-    </ul>
-    <script>
-      function getFontSize() {
-        const width = Math.min(document.body.clientWidth, 750); //设计稿750px
-        //即设备宽度(分辨率)和750ox设计稿的比,再乘100(位移100是因为,移动端最小的fontSize为8px,如果设备为375分辨率,则出现0.5px的根fontSize,所以乘100,此时假如设计稿的div宽为75px则应写作0.75rem,因为1rem等于100px)
-        const fontSize = width / 7.5; 
-        document.body.style.fontSize = fontSize + 'px';
-      };
-      getFontSize();
-      document.addEventListener('resize', getFontSize);
-    </script>
-  </body>
 </html>
-<!-- <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8"/>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-        console.log('DOMContentLoaded')
-    })
-    </script>
-    <link href="https://cdn.bootcss.com/bootstrap/4.0.0-alpha.6/css/bootstrap.css" rel="stylesheet"/>
-    <script></script>
-</head>
-<body>
-    <h1>我是 h1 标签</h1>
-</body>
-</html> -->

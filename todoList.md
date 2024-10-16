@@ -23,7 +23,7 @@
 - [x] 23. [WeakMap](https://juejin.cn/post/7271643757640073216)
 - [x] 24. react keep-alive
 - [ ] 25. 正则 
-- [ ] 26. em/rem
+- [x] 26. em/rem
 - [ ] 27. 虚拟列表
 - [ ] 28. 大文件上传
 - [x] 29. git

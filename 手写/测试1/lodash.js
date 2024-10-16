@@ -140,21 +140,59 @@ const flatArray = [
 ];
 
 function arrToTree(arr, parentId) {
-    
+    const res = [];
+    arr.forEach((item) => {
+        if(item.parentId) {
+            const children = arrToTree(arr, item.id);
+            if(children.length) {
+                item.children = children;
+            }
+            res.push(item);
+        }
+    })
+    return res;
 };
 function arrayToTree(arr) {
-    
+    const map = {};
+    const res = [];
+    for(let item of arr) {
+       map[item.id] = item;
+    };
+    for(let item of arr) {
+        if(map[item.parentId]) {
+            if(!map[item.parentId].children) {
+                map[item.parentId].children = []
+            };
+            map[item.parentId].children.push(item);
+        }else {
+            res.push(item);
+        }
+    };
+
+    return res;
 };
 
 //todo 6.数组扁平化
 let nestedArray = [1, 2, [3, 4], [5, [6, 7]]];
 
 function flatArray(arr) {
-   
+   const res = [];
+   const stack = [...nestedArray];
+   while(stack.length) {
+    const item = stack.pop();
+    if(Array.isArray(item)) {
+        stack.push(...item);
+    }else {
+        res.unshift(item);
+    }
+   };
+   return res;
 };
 
 function flatArray(arr) {
-   
+   return arr.reduce((prev,cur) => {
+    return prev.concat(Array.isArray(cur) ? flatArray(cur) : cur)
+   }, [])
 };
 
 
