@@ -29,9 +29,19 @@
     <div id="b"></div>
   </div>
   <script>
-    const b = document.getElementById('b');
-    const a = document.getElementById('a');
-    console.log(a.scrollTop)
+let a = {
+    n: 0,
+    vauleOf: function() {
+        this.n++;
+        return this.n
+    }
+};
+
+console.log(
+    a == 1 && 
+    a == 2 &&
+    a == 3
+)
   </script>
 </body>
 </html>

@@ -55,5 +55,14 @@ console.log(add5(3)); // 输出: 8
 console.log(subtract3(5)); // 输出: 2
 
 //todo 1. curry
-
-//todo 2. curry
+function curry(func) {
+    return function curried(...args) {
+        if(args.length >= func.length) {
+            return func(...args);
+        }else {
+            return function(...restArgs) {
+                return curried(...args, ...restArgs)
+            }
+        }
+    }
+}

@@ -82,7 +82,10 @@ console.log.call.call.call.call.apply((a) => a, [1, 2]);
 const str = 'adasaasdxcxcaadfffgggfs';
 
 function times(str) {
-   
+   return str.split('').reduce((prev,cur) => {
+    //todo
+    return (prev[cur]++ || (prev[cur] = 1), prev)
+   },{})
 };
 
 //todo 6.?位置写什么才能输出true(考察隐式转换)
@@ -94,7 +97,12 @@ console.log(
     a == 3
 )
 
-a = 
+a = {
+    n: 1,
+    valueOf: function() {
+        return this.n++;
+    }
+}
 
 //todo 7.下面的代码输出结果是什么?(考察对象属性和顺序)
 const obj = {
@@ -104,19 +112,20 @@ obj['1'] = 0;
 obj[++obj.a] = obj.a++;
 const values = Object.values(obj);
 obj[values[1]] = obj.a;
-console.log(obj);
+console.log(obj);//{1:1,2:2,a:2}
 
 //todo 8.下面的代码输出结果是什么?(考察连续赋值);
 var a = { n: 1 };
 var b = a;
 a.x = a = { n: 2 };
-console.log(a.x);
-console.log(b.x);
+console.log(a.x); //undefined
+console.log(b.x); //{n:2}
 
 
 
 //todo 9.判断传入的函数是否标记了async
 function isAsyncFunction(func) {
-    
-
+    //todo
+    // return func[Symbol.toStringTag] === 'AsyncFunction';
+    return func instanceof (async () => {}).constructor
 }

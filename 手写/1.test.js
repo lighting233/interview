@@ -1,19 +1,15 @@
-let Foo = (function() {
-    //todo 
-    // this.n = 0;
-    let times = 0;
-    return function() {
-        if(!new.target) {
-            //if(!this instanceof Foo)
-            return new Foo();
-        };
-        //todo 
-        // this.n++;
-        times++;
-        this.id = times;
+
+
+let a = {
+    n: 0,
+    valueOf: function() {
+        this.n++
+        return this.n
     }
-}());
-const a = Foo();
-console.log("%c Line:17 🥚 a", "color:#ed9ec7", a);
-const b = new Foo();
-console.log("%c Line:19 🌮 b", "color:#7f2b82", b);
+};
+
+console.log(
+    a == 1 && 
+    a == 2 &&
+    a == 3
+)

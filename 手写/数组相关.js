@@ -38,11 +38,22 @@ Array.prototype.filter = fucntion(callback, context) {
 };
 
 //todo 3.reduce
-Array.prototype.myReduce = function (fn, initVal) {
-    const arr = this;
-    let res = initVal || arr[0];
-    arr.forEach((item, index) => {
-        res = fn.apply(arr, [res, item, index, arr])
-    })
-    return res
+Array.prototype.myReduce = function (fn, initialVal) {
+    if (typeof callback !== 'function') {
+        throw new TypeError('xxx');
+    };
+    let startIndex = 0;
+    let sum = initialVal
+    if(sum === undefined) {
+        if(this.length === 0) {
+            throw new TypeError('Reduce of empty array with no initial value');
+        };
+        sum = this[0];
+        startIndex = 1;
+    }
+    for (let i = startIndex; i < this.length; i++) {
+        sum = callback.call(sum, this[i], i, this);
+
+    };
+    return sum;
 }

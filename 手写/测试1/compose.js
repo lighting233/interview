@@ -18,8 +18,15 @@ console.log("%c Line:24 🍞 a", "color:#ea7e5c", a);
 
 console.log(a(1));
 
-function compose() {
-   
+function compose(...func) {
+    //todo
+    if (func.length === 0) return (...args) => args;
+    if (func.length === 1) return func[0];
+    return func.reduce((prev, cur) => {
+        return (..args) => {
+            return prev(cur(...args))
+        }
+    })
 };
 
 //todo 2.koa
@@ -39,14 +46,29 @@ class App {
     }
 
     compose(ctx) {
-        
+
     }
 
     handleRequest(req, res) {
         const ctx = this.createContext(req, res)
 
         this.compose(ctx).then(() => {
-
+            let index = -1;
+            const dispatch = (i) => {
+                if(i <= index) {
+                    //todo
+                    // thorw new Error('xxx');
+                    return Promise.reject();
+                };
+                index = i;
+                if(i === this.middlewares.length) {
+                    return Promise.resolve();
+                };
+                //todo
+                // return Promise.resolve(this.middlewares[i](() => dispatch(++i)))
+                return Promise.resolve(this.middlewares[i](ctx, () => dispatch(i + 1)))
+            };
+            dispatch(0);
         })
     }
 

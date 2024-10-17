@@ -76,24 +76,42 @@ Function.prototype.myBind = function (ctx, ...args) {
     }
 };
 
-Function.prototype.myBind2 = function (ctx, ...args) {
-    ctx = (ctx === null || ctx === undefined) ? globalThis : Object(ctx);
-    const key = Symbol('temp');
-    Object.defineProperty(ctx, key, {
-        enumerable: false,
-        value: this,
-        configurable: true
-    });
-    //todo
-    const _outerThis = this;
-    return function (...restArgs) {
-        if (new.target) {
-            //todo
-            return new _outerThis(...args, ...restArgs);
-        }
+// Function.prototype.myBind2 = function (ctx, ...args) {
+//     ctx = (ctx === null || ctx === undefined) ? globalThis : Object(ctx);
+//     const key = Symbol('temp');
+//     Object.defineProperty(ctx, key, {
+//         enumerable: false,
+//         value: this,
+//         configurable: true
+//     });
+//     //todo
+//     const _outerThis = this;
+//     return function (...restArgs) {
+//         if (new.target) {
+//             //todo
+//             return new _outerThis(...args, ...restArgs);
+//         }
+//         const res = ctx[key](...args, ...restArgs);
+//         delete ctx[key];
+
+//         return res;
+//     }
+// };
+Function.prototype.bind = function(ctx, ...args) {
+    const _this = this;
+    return function(...restArgs) {
+        if(new.target) {
+            return new _this(...args, ...restArgs);
+        };
+        ctx = (ctx === null || ctx === undefined) ? globalThis : Object(ctx);
+        const key = Symbol();
+        Object.defineProperty(ctx, key, {
+            value: _this,
+            enumerable: false,
+            configurable: true
+        });
         const res = ctx[key](...args, ...restArgs);
         delete ctx[key];
-
         return res;
     }
 }

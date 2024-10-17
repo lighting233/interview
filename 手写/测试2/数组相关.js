@@ -12,4 +12,9 @@ Array.prototype.myMap2 = fucntion(callback,context) {
 //todo 2.手写filter
 Array.prototype.filter = fucntion(callback,context) {
    
+};
+
+//todo 3.reduce
+Array.prototype.myReduce = function (fn, initVal) {
+    
 }
