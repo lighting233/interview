@@ -229,7 +229,7 @@ class Promise {
                     p.then((value) => {
                         resolve(value);
                     }, (reason) => {
-                        processSucess(i, reason);
+                        processError(i, reason);
                     })
                 } else {
                     resolve(p);
