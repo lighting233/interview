@@ -14,10 +14,10 @@
  */
 var rotateRight = function (head, k) {
     if (head === null || k === 0) return head;
-    //统计长度
-    let len = 1;
     //尾节点
     let cur = head;
+    //统计长度
+    let len = 1;
     while (cur.next) {
         cur = cur.next;
         len++;
@@ -29,18 +29,22 @@ var rotateRight = function (head, k) {
 
     //找到新的尾节点
     let endPosition = len - move;
-    let end = head;
+    //形成环状链表
+    cur.next = head;
+    //重置指针到头节点
+    cur = head;
+    //指针从头节点移动到尾节点需要的步数
     move = endPosition - 1;
     while (move) {
-        end = end.next;
+        cur = cur.next;
         move--;
     };
 
-    let start = end.next;
-    end.next = null;
-    cur.next = head;
+    let newHead = cur.next;
+    //环状链表断开环
+    cur.next = null;
 
-    return start;
+    return newHead;
 };
 /**
  * Definition for singly-linked list.

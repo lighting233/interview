@@ -30,3 +30,4 @@
 - [ ] 30. 小程序和taro
 - [x] 31. 五种observer
 - [x] 32. package.json的版本号*,~,^
+- [ ] 33. 快排

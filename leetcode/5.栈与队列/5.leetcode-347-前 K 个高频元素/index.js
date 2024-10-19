@@ -18,6 +18,7 @@ var topKFrequent = function (nums, k) {
   for(let [key, value] of map) {
     heap.enqueue({key,value});
     if(heap.size() > k) {
+      //堆中pop都是从堆顶pop,所以使用小顶堆
       heap.dequeue();
     }
   };
