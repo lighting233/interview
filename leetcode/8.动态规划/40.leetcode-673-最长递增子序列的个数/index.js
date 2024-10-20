@@ -21,7 +21,7 @@ var findNumberOfLIS = function (nums) {
                     //当前下标最长子序列的个数继承 j
                     count[i] = count[j]
                 } else if (dp[i] === dp[j] + 1) {
-                    //说明多了一种下标不同，但是长度相同的情况
+                    //说明多了一种下标不同，但是长度相同的情况[1,-3,3,-2,5]
                     //[1,3,5,7]的时候dp[4] = 4,[1,3,4]的时候 dp[j] === 3,加 1 等于dp[4]
                     count[i] = count[i] + count[j]
                 }

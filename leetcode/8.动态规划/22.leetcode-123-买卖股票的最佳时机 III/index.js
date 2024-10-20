@@ -38,6 +38,7 @@ var maxProfit = function (prices) {
         dp[i][3] = Math.max(dp[i - 1][3], dp[i - 1][2] + prices[i]);
     };
 
-    //todo 如果第一次卖出已经是最大值了，那么我们可以在当天立刻买入再立刻卖出。所以dp[4][4]已经包含了dp[4][2]的情况。也就是说第二次卖出手里所剩的钱一定是最多的。
-    return Math.max(dp[len - 1][1],dp[len - 1][3])
+    //todo 如果第一次卖出已经是最大值了，那么我们可以在当天立刻买入再立刻卖出。所以dp[4][3]已经包含了dp[4][1]的情况。也就是说第二次卖出手里所剩的钱一定是最多的。
+    // return Math.max(dp[len - 1][1],dp[len - 1][3])
+    return dp[len - 1][3]
 };
