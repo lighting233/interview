@@ -10,8 +10,11 @@
 5. 简单的状态共享：不需要复杂的上下文或提供者，状态可以跨组件和文件轻松共享。
 6. 中间件和增强功能：支持中间件，使得开发者可以轻松添加日志记录、持久化存储等增强功能。
 7. 适应现代 React 功能：考虑到了 React 的新特性，如 Concurrent Mode 和 Suspense，从而确保在现代 React 特性下的稳定性。
+8. Zustand 的整个代码库非常小巧，gzip 压缩后仅有 1KB，对项目性能影响极小。
+9. Zustand 可以轻松地与其他 React 库（如 Redux、MobX 等）共存，方便逐步迁移项目状态管理。
 [Zustand 解决了 Redux 的哪些问题](https://juejin.cn/post/7399985328708878362?searchId=2024091814525748783D59F0CAFE4C3159)
 [jotai and zustand](https://juejin.cn/post/7356813407373328418?searchId=2024091814525748783D59F0CAFE4C3159)
+[Zustand 状态库：轻便、简洁、强大的 React 状态管理工具](https://juejin.cn/post/7321049446443384870)
 
 ### 重新渲染？
 Zustand 库使用了选择器 (selectors) 函数和引用相等性 (reference equality) 检查来帮助避免无效渲染。当你在组件中使用 Zustand 的 useStore 钩子时，你可以提供一个选择器函数来订阅特定的状态片段。Zustand 会使用严格相等性检查 (===) 来比较选择器返回的状态片段是否真的发生了变化，如果状态片段的值没有变化，组件不会重新渲染。

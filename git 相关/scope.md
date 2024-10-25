@@ -1,3 +1,4 @@
+## scope
 - `feat`: 新功能、新特性
 - `fix`: 修改 bug
 - `perf`: 更改代码，以提高性能（在不影响代码内部行为的前提下，对程序性能进行优化）
@@ -11,3 +12,11 @@
 - `chore`: 其他修改（不在上述类型中的修改）
 - `release`: 发布新版本
 - `workflow`: 工作流相关文件修改
+
+## Git Flow
+- master
+- hotfixes: 热部署分支,进行主干分支的补丁操作 `hotfix/issue-name`
+- release: 预部署分支,测试工程师的调用分支 `release/version-number`
+- develop
+- feature
+- prev

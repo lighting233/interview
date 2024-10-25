@@ -208,3 +208,30 @@ function compareVersion(str1, str2) {
 let str1 = "3.3.0-alpha.1";
 let str2 = "3.3.0-rc.1";
 console.log(compareVersion(str1, str2)); // -1
+
+//todo 5.快排
+/**
+ * - **时间复杂度**：最坏情况 $O(n^2)$，平均情况 $O(n \log n)$。
+ * - **空间复杂度**：$O(n)$，由于额外的数组和递归调用栈。
+ */
+function quickSort(arr = []) {
+    if(arr.length < 2) return arr;
+    const idx = Math.floor(arr.length / 2);
+    const point = arr[idx];
+
+    const left = [];
+    const right = [];
+
+    for(let i = 0; i < arr.length; i++) {
+        const item = arr[i];
+        if(item < point) {
+            left.push(item);
+        }else if(item > point) {
+            right.push(item);
+        };
+    };
+
+    return quickSort(left).concat([point], quickSort(right));
+}
+
+

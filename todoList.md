@@ -31,3 +31,17 @@
 - [x] 31. 五种observer
 - [x] 32. package.json的版本号*,~,^
 - [ ] 33. 快排
+- [x] 34. 国际化i18n
+- [ ] 35. 命中cdn
+- [ ] 36. BFF Backed for frontend 为移动端和web端提供分层
+- [ ] 37. 拖拽api
+
+## 面试准备的问题
+- [ ] 1. 手写loader, plugin
+- [x] 2. taro存储
+- [ ] 3. docker,CI/CD
+- [ ] 4. Nginx
+- [x] 5. 命中cdn
+- [x] 6. 全局主题切换
+- [x] 7. 快排
+- [ ] 8. oem,odm
