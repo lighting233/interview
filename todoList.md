@@ -44,4 +44,6 @@
 - [x] 5. 命中cdn
 - [x] 6. 全局主题切换
 - [x] 7. 快排
-- [ ] 8. oem,odm
+- [x] 8. oem,odm
+- [ ] 9. react生命周期
+- [ ] 10. flex, grid
