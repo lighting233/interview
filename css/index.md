@@ -105,3 +105,12 @@ Chrome 中文版浏览器会默认设定页面的最小字号是 12PX，英文�
 如果**没有**具有 `position` 属性的祖先元素，绝对定位的元素将相对于**视口**进行定位。
 3. `position: fixed`：通常是相对于**视口**进行定位，但在**新的层叠上下文中**，它会相对于最近的具有 `position` 属性（如 `relative、absolute、fixed`）的祖先元素进行定位。
 这意味着如果父元素有 `filter`，子元素的 `fixed` 定位会被“限制”在**父元素的可视区域内**。
+
+## **8.伪类和伪元素的区别**
+[css伪类和伪元素 一分钟完全掌握](https://www.bilibili.com/video/BV14X4y1t7xo/?spm_id_from=333.337.search-card.all.click&vd_source=78435c3cefd4783245d9d16d09d19859)
+[CSS伪类和伪元素的区别](https://www.bilibili.com/video/BV1h7411P7Pz/?spm_id_from=333.788.recommend_more_video.10&vd_source=78435c3cefd4783245d9d16d09d19859)
+![使用场景](../img/伪类伪元素使用场景.png)
+![伪类伪元素区别](../img/伪类伪元素区别.png)
+
+## **9.flex**
+[25分钟彻底弄懂CSS Flex基础布局 / CSS Flex 入门教程](https://www.bilibili.com/video/BV1A44y1Z7Bp/?spm_id_from=333.337.search-card.all.click&vd_source=78435c3cefd4783245d9d16d09d19859)

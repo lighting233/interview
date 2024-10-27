@@ -15,7 +15,7 @@
 - [x] 15. offsetTop
 - [x] 16. 垃圾回收
 - [x] 17. createPortal和 fluhSync，use
-- [ ] 18. css filter
+- [x] 18. css filter
 - [x] 19. 浮点数计算
 - [x] 20. postMessage、MessageChannel的区别
 - [x] 21. 小于 12px
@@ -27,10 +27,10 @@
 - [ ] 27. 虚拟列表
 - [ ] 28. 大文件上传
 - [x] 29. git
-- [ ] 30. 小程序和taro
+- [x] 30. 小程序和taro
 - [x] 31. 五种observer
 - [x] 32. package.json的版本号*,~,^
-- [ ] 33. 快排
+- [x] 33. 快排
 - [x] 34. 国际化i18n
 - [ ] 35. 命中cdn
 - [ ] 36. BFF Backed for frontend 为移动端和web端提供分层
