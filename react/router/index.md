@@ -12,6 +12,7 @@
   - `baidu.com`默认返回 `baidu.com/index.html`
   - 和`baidu.com/app`资源路径不是一样的
   - 做单页应用的时候，不管访问哪个 `path`，服务器只返回 `index.html`(服务端做两种服务，一种接口服务`baidu.com/api/getuser`,另一种不带api 的都返回 index.html)
+  - (Nginx 配置rewrite,使不同路径都访问index.heml,状态码也是200,非重定向,重定向是 return 307 + 路径)
 
 ```js
 function Dashboard() {

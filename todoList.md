@@ -39,11 +39,11 @@
 ## 面试准备的问题
 - [ ] 1. 手写loader, plugin
 - [x] 2. taro存储
-- [ ] 3. docker,CI/CD
-- [ ] 4. Nginx
+- [x] 3. docker,CI/CD
+- [x] 4. Nginx
 - [x] 5. 命中cdn
 - [x] 6. 全局主题切换
 - [x] 7. 快排
 - [x] 8. oem,odm
 - [ ] 9. react生命周期
-- [ ] 10. flex, grid
+- [x] 10. flex, grid
