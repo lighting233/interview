@@ -37,7 +37,7 @@
 - [ ] 37. 拖拽api
 
 ## 面试准备的问题
-- [ ] 1. 手写loader, plugin
+- [x] 1. 手写loader, plugin
 - [x] 2. taro存储
 - [x] 3. docker,CI/CD
 - [x] 4. Nginx
@@ -45,5 +45,8 @@
 - [x] 6. 全局主题切换
 - [x] 7. 快排
 - [x] 8. oem,odm
-- [ ] 9. react生命周期
+- [x] 9. react生命周期
 - [x] 10. flex, grid
+
+## react问题
+- [x] 1. 如何处理移动节点

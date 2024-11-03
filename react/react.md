@@ -102,7 +102,7 @@ export class FiberNode {
 
 		// 调度
 		this.lanes = NoLane;
-		// this.childLanes = NoLanes;
+		this.childLanes = NoLanes;
 
 		this.alternate = null;
 	}
@@ -134,7 +134,7 @@ export class FiberNode {
 - mount/reconcile只负责 Placement(插入)/Placement(移动)/ChildDeletion(删除)
 - 标记Placement的依据，fiber.alternate === null
 - ？？更新（文本节点内容更新、属性更新）在completeWork中，对应Update flag
-- mount 阶段只有hostfoot.fiber.child被标记了 placement
+- mount 阶段只有hostRootFiber.child被标记了 placement
 - update 阶段其他需要新增的节点也会标记placement
 
 #### `beginWork`性能优化策略
@@ -177,8 +177,6 @@ function renderRoot(
 	const prevExecutionContext = executionContext;
 	executionContext |= RenderContext;
 
-	// 初始化操作
-	 (root, lanes);
 
 	// render阶段具体操作
 	do {
@@ -209,6 +207,10 @@ function renderRoot(
 #### 删除过程
 
 ```ts {.line-numbers}
+function deleteChild(returnFiber: FiberNode, childToDelete: FiberNode) {
+		if (!shouldTrackEffects) {
+			return;
+		}
 		const deletions = returnFiber.deletions;
 		if (deletions === null) {
 			returnFiber.deletions = [childToDelete];
@@ -216,6 +218,7 @@ function renderRoot(
 		} else {
 			deletions.push(childToDelete);
 		}
+}
 ```
 删除节点时，除了第一个需要标记 deletion，剩下的都加入parentfiber.deletions数组中   
    - 删除节点时需要递归子树，如果子树是 functioncomponent需要执行 effect 的回调，对于 hostcomponent 需要解绑 ref，对于子组件需要找他子节点对应的 dom
@@ -311,7 +314,7 @@ export type UpdateQueue<State> = {|
 #### 为什么首屏能一次性插入整体的 dom，而不是一个一个 placement？
 在Mutation阶段,当节点有subtreeFlags时，则继续向下遍历，直到节点只有自身的 flags，然后向上遍历，此时虽然执行commitMutationEffectsOnFiber方法里会插入 dom 节点，但首屏时这些节点还没有挂在到页面上，直到遍历到根，一次性挂载
 
-```ts {.line-numbers highlight=[15-15]}
+```ts {.line-numbers highlight=15}
 export const commitMutationEffects = (
 	finishedWork: FiberNode,
 	root: FiberRootNode

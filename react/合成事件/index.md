@@ -54,6 +54,9 @@ const collectPaths = (
 - 性能提升：通过事件代理技术提高事件处理效率。
 - 跨平台支持：在不同环境中提供一致的事件对象接口。
 
+## 真正的事件模型
+[真正的事件模型](https://juejin.cn/post/7313911431073022004)
+
 ### dom关联 fiber
 ```js
 const randomKey = Math.random()
@@ -81,8 +84,7 @@ function createInstance(type, props, internalInstanceHandle) {
 }
 
 ```
-## 真正的事件模型
-[真正的事件模型](https://juejin.cn/post/7313911431073022004)
+
 ### 收集队列
 - `accumulateSinglePhaseListener` 接收四个参数，返回一个事件函数队列
 - 这个函数的主要作用是从事件源对应的 Fiber 开始，向上遍历所有的父 Fiber(Fiber.return)，收集所有遍历到的节点中的事件函数，然后将事件函数保存到事件函数的队列中

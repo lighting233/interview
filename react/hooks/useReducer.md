@@ -34,17 +34,13 @@ function updateReducer(
     init?,
 ) {
     const hook = updateWorkInProgressHook();
-    const queue = hook.queue;
+    const baseQueue = hook.queue;
 
-    const current: currentHook;
-
-    // The last rebase update that is NOT part of the base state.
-    let baseQueue = current.baseQueue;
 
     if (baseQueue !== null) {
         // We have a queue to process.
         const first = baseQueue.next;
-        let newState = current.baseState;
+        let newState = hook.baseState;
 
         let newBaseState = null;
         let update = first;
@@ -55,7 +51,7 @@ function updateReducer(
         hook.baseState = newBaseState;
     }
 
-    const dispatch = queue.dispatch;
+    const dispatch = baseQueue.dispatch;
     return [hook.memoizedState, dispatch];
 }
 ```

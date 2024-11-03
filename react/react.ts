@@ -27,22 +27,6 @@ export function updateContainer(
 	return element;
 }
 
-export function createRoot(container: Container) {
-	let root = containerToRoot.get(container);
-	if (!root) {
-		root = createContainer(container);
-		containerToRoot.set(container, root);
-	} 
-	return {
-		render(element: ReactElement) {
-			return updateContainer(element, root);
-		},
-		unmount() {
-			containerToRoot.delete(container);
-			return updateContainer(null, root);
-		}
-	};
-}
 
 export function createRoot(container: Container) {
 	let root = containerToRoot.get(container);

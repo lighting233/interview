@@ -6,7 +6,8 @@
 3. use
 4. Offscreen​ 组件
 
-![结构示意图](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/81fa8a0a9cf84bf3adce0d90671b3072~tplv-k3u1fbpfcp-jj-mark:3024:0:0:0:q75.awebp#?w=1690&h=1017&s=107594&e=png&b=ffffff)
+[结构示意图](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/81fa8a0a9cf84bf3adce0d90671b3072~tplv-k3u1fbpfcp-jj-mark:3024:0:0:0:q75.awebp#?w=1690&h=1017&s=107594&e=png&b=ffffff)
+
 ```js {.line-numbers}
 function updateSuspenseComponent(workInProgress) {
 	// 获取current树对应节点
@@ -96,7 +97,7 @@ function mountSuspenseFallbackChildren(
 但是问题是，目前beginWork​函数创建fiber​节点已经进行到了正常流程下面的子树，按照我们之前实现的挂起流程的逻辑，是将挂起流程的子树节点放在Suspense​节点的直接子级。
 例如下图中在`<Cpn />​`组件中定义的use​函数发生状态变更，需要创建挂起流程的fiber​节点，所以需要先从`<Cpn />​`这个函数节点开始向上寻找，找到最近的父级Suspense​节点，然后创建挂起流程的fiber​节点。这个过程是render​阶段的一个新流程 —— `unwind​`流程。
 下图为状态变更时（visible​ --> hidden​），beginWork​执行流向。
-![向上寻找父节点](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8b8b5bb5da7843588b4c55a5e3e16684~tplv-k3u1fbpfcp-jj-mark:3024:0:0:0:q75.awebp#?w=1666&h=906&s=108738&e=png&b=121212)
+[向上寻找父节点](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8b8b5bb5da7843588b4c55a5e3e16684~tplv-k3u1fbpfcp-jj-mark:3024:0:0:0:q75.awebp#?w=1666&h=906&s=108738&e=png&b=121212)
 
 ```js
 function renderRoot(root, lane, shouldTimeSlice) {
