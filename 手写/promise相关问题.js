@@ -31,6 +31,7 @@ function promiseAllWithLimit(promises, limit) {
                 } else {
                     res[_idx] = p;
                     running--;
+                    run();
                 }
             }
         };
@@ -244,6 +245,10 @@ asy2 = async () => {
         });
         console.log(4);
     });
+    //为什么 console.log(5); 要等到前面的代码执行完？
+    //1. await 暂停了 async 函数的执行，直到 Promise 完成（这里 await 等待的是 Promise.resolve().then(...) 整个链条完成）。await 语句等待第一个 Promise 链完全完成。
+    //2. 微任务优先于 await 后的代码执行：微任务队列中的任务会在当前同步任务执行完后立刻执行，而 await 后面的代码也被作为一个微任务，但它会排在所有已有微任务之后。
+    //当所有同步代码和微任务都完成后，await 后面的代码 console.log(5); 才会执行，输出 5。
     console.log(5);
 };
 

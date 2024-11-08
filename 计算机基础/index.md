@@ -1,4 +1,4 @@
-## 什么是 bit，kb，字节，MB
+## **1.什么是 bit，kb，字节，MB**
 
 在前端开发中，经常会遇到数据存储和传输的大小单位，这些单位表示的是数据的大小或传输速率。了解这些单位对优化网络请求、图像大小、文件传输等非常重要。以下是常见的数据单位及其关系：
 
@@ -62,7 +62,9 @@
 
 理解这些单位的差异及其转换关系，对于前端开发中的资源优化和性能调优非常重要。
 
-## 前端中字节，字符的关系
+---
+
+## **2.前端中字节，字符的关系**
 在前端开发中，字节（Byte）和字符（Character）是两个非常重要的概念，它们之间有密切的关系，但并不完全相同。理解它们的关系对于处理文本、编码、网络传输等任务非常重要。
 
 ### 1. **字符（Character）**
@@ -92,7 +94,9 @@
 - 一个字符可能由一个或多个字节表示，具体取决于所使用的字符集和编码方式。
 - 在前端开发中，理解字符与字节之间的关系对于处理文本、编码和数据传输至关重要，尤其是在涉及多语言支持、数据压缩和优化时。
 
-## 什么是UTF-8，UTF-16,html中要标明什么
+---
+
+## **3.什么是UTF-8，UTF-16,html中要标明什么**
 
 UTF-8 和 UTF-16 是两种常见的字符编码方式，它们用于将字符（如字母、数字、符号、汉字等）转换为计算机能够存储和处理的字节序列。这些编码方式都是基于 Unicode 字符集的，但在编码规则和存储效率上有所不同。
 
@@ -143,7 +147,9 @@ UTF-8 和 UTF-16 是两种常见的字符编码方式，它们用于将字符（
    - **UTF-16**: 适合处理多语言字符较多的文本，但在实际应用中不如 UTF-8 普及。
    - **在 HTML 中指定编码**: 确保在 HTML 文档中指定字符编码，通常使用 `<meta charset="UTF-8">` 以确保内容正确显示。
 
-## ASCII 和 Unicode 是两种不同的字符编码系统，各自有不同的特点和用途。
+---
+
+## **4.ASCII 和 Unicode 是两种不同的字符编码系统，各自有不同的特点和用途。**
 
 ### ASCII（美国标准信息交换码）
 
@@ -166,3 +172,84 @@ UTF-8 和 UTF-16 是两种常见的字符编码方式，它们用于将字符（
 3. **广泛支持**：UTF-8 是一种标准化的编码方式，被大多数现代操作系统、编程语言和网络协议支持。使用 UTF-8 可以确保各种应用程序和服务在处理文本时的一致性和互操作性。
 
 因此，UTF-8 的灵活性和兼容性使得它成为互联网文本传输和存储的首选编码方案。
+
+## **5.Blob和ArrayBuffer的区别**
+`Blob` 和 `ArrayBuffer` 都是 JavaScript 中用于处理二进制数据的对象，但它们的用途和特性有所不同。以下是它们的主要区别和应用场景：
+
+### 1. 数据结构和特性
+
+- **Blob**（Binary Large Object）：
+  - 表示一个不可变的、原始数据的类文件对象。
+  - **不直接提供对数据内容的访问**，适合处理文件数据（如图片、视频等）的大块内容。
+  - 可以通过指定 MIME 类型（如 `"image/png"`、`"text/plain"` 等）来标识数据类型，便于上传文件或在浏览器中显示。
+  - `Blob` 常用于创建文件对象、进行文件下载或用于 AJAX 文件上传。
+  - **异步操作**：读取 `Blob` 内容（如通过 `FileReader` 读取）通常是异步的。
+
+- **ArrayBuffer**：
+  - 表示一个可变的、固定长度的原始二进制数据缓冲区，类似于一个字节数组。
+  - 提供对数据内容的直接访问，但只包含数据本身，没有其他信息（如 MIME 类型）。
+  - 通常与 **TypedArray**（如 `Uint8Array`、`Float32Array`）配合使用，以更细粒度地操作内容中的字节。
+  - `ArrayBuffer` 更适合用于需要对数据逐字节进行处理的应用场景，比如解码图像、音频数据处理等。
+  - **同步操作**：数据访问是同步的，操作起来比 `Blob` 更灵活。
+
+### 2. 常见用途和使用场景
+
+- **Blob**：
+  - 用于表示文件或需要作为文件上传的数据。
+  - 适合处理大文件或非结构化数据，例如图片、视频、音频等。
+  - 作为 `URL.createObjectURL(blob)` 的参数生成可用于 `<img>` 或下载的 URL。
+  - 创建 `Blob` 示例：
+
+    ```javascript
+    const text = "Hello, Blob!";
+    const blob = new Blob([text], { type: "text/plain" });
+    ```
+
+- **ArrayBuffer**：
+  - 用于在内存中处理二进制数据，适合在需要频繁读取、修改的二进制内容场景中使用。
+  - 适用于 WebGL 中的图像处理、加密或 WebSocket 二进制通信等。
+  - 与 `TypedArray` 结合可逐字节访问或修改内容，便于低层次的数据操作。
+  - 创建 `ArrayBuffer` 示例：
+
+    ```javascript
+    const buffer = new ArrayBuffer(8); // 创建一个 8 字节的缓冲区
+    const view = new Uint8Array(buffer);
+    view[0] = 72; // 直接操作字节
+    ```
+
+### 3. 常用方法和操作
+
+- **Blob**：
+  - `Blob.slice(start, end, contentType)`：可以将 `Blob` 分割成一个新的 `Blob`，便于处理大文件。
+  - `URL.createObjectURL(blob)`：生成一个可用于显示 `Blob` 内容的 URL（如显示图像）。
+  - `FileReader.readAsText(blob)`、`FileReader.readAsArrayBuffer(blob)` 等：用于异步读取 `Blob` 内容。
+
+- **ArrayBuffer**：
+  - `ArrayBuffer.byteLength`：获取缓冲区的字节长度。
+  - `TypedArray`（如 `Uint8Array`, `Int16Array`）：用于创建视图并操作 `ArrayBuffer` 数据。
+  - `DataView`：一种更通用的视图，可以以不同的字节序和数据类型访问 `ArrayBuffer`。
+
+### 示例对比
+
+假设我们想将一个字符串编码成二进制数据：
+
+1. **Blob**：
+
+    ```javascript
+    const blob = new Blob(["Hello, Blob!"], { type: "text/plain" });
+    const reader = new FileReader();
+    reader.onload = () => console.log(reader.result); // 读取为文本或其他格式
+    reader.readAsText(blob);
+    ```
+
+2. **ArrayBuffer**：
+
+    ```javascript
+    const encoder = new TextEncoder();
+    const buffer = encoder.encode("Hello, ArrayBuffer!"); // 转换为 Uint8Array
+    console.log(buffer); // Uint8Array 数据
+    ```
+
+### 总结
+- `Blob` 更适合处理**文件数据**或大块内容的**不可变数据块**，如图片、视频。
+- `ArrayBuffer` 更适合**内存操作**和**逐字节处理**，尤其在需要更精细的数据操作场景中，如图像和音频处理。

@@ -168,16 +168,16 @@ class Promise {
     //当所有的输入promise实例的状态都改变为fulfilled状态，新的promise实例才是fulfilled状态，返回所有输入promise实例的resolve value数组；
     //如果有一个promise实例的状态是rejected，则新的promise实例的状态就是rejected，返回第一个promise reject的reason
     static all(promises) {
-        const res = [];
-        let times = 0;
-        const len = promises.length;
-        const processSucess = (idx, value) => {
-            res[idx] = value;
-            if (++times === len) {
-                resolve(res);
-            }
-        }
         return new Promise((resolve, reject) => {
+            const res = [];
+            let times = 0;
+            const len = promises.length;
+            const processSucess = (idx, value) => {
+                res[idx] = value;
+                if (++times === len) {
+                    resolve(res);
+                }
+            }
             for (let i = 0; i < len; i++) {
                 const p = promises[i]
                 if (p && typeof p.then === 'function') {
@@ -200,7 +200,7 @@ class Promise {
             for (let i = 0; i < len; i++) {
                 const p = promises[i]
                 if (p && typeof p.then === 'function') {
-                    p.then(resolve,reject)
+                    p.then(resolve, reject)
                 } else {
                     resolve(p);
                 };
@@ -210,19 +210,20 @@ class Promise {
 
     //返回promise数组中最先变成fulfilled实例的value，如果，所有输入的promise实例的状态都是rejected， 返回all promise were rejected
     static any(promises) {
-        const res = [];
-        let times = 0;
-        const len = promises.length;
-        if (len === 0) {
-            reject('xxx')
-        }
-        const processError = (idx, reason) => {
-            res[idx] = reason;
-            if (++times === len) {
-                resolve(res);
-            }
-        }
         return new Promise((resolve, reject) => {
+            const res = [];
+            let times = 0;
+            const len = promises.length;
+            if (len === 0) {
+                reject('xxx')
+            }
+            const processError = (idx, reason) => {
+                res[idx] = reason;
+                if (++times === len) {
+                    resolve(res);
+                }
+            }
+
             for (let i = 0; i < len; i++) {
                 const p = promises[i]
                 if (p && typeof p.then === 'function') {
@@ -240,19 +241,20 @@ class Promise {
 
     //无论成功还是失败,等到所有状态都处理完后返回
     static allSettled(promises) {
-        const res = [];
-        let times = 0;
-        const len = promises.length;
-        const processSucessOrError = (idx, value, status) => {
-            res[idx] = {
-                status,
-                [status === 'fulfilled' ? 'value' : 'reason']: value
-            };
-            if (++times === len) {
-                resolve(res);
-            }
-        }
         return new Promise((resolve, reject) => {
+            const res = [];
+            let times = 0;
+            const len = promises.length;
+            const processSucessOrError = (idx, value, status) => {
+                res[idx] = {
+                    status,
+                    [status === 'fulfilled' ? 'value' : 'reason']: value
+                };
+                if (++times === len) {
+                    resolve(res);
+                }
+            }
+
             for (let i = 0; i < len; i++) {
                 const p = promises[i]
                 if (p && typeof p.then === 'function') {

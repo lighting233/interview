@@ -49,7 +49,7 @@ function deepClone(obj, weekMap = new WeekMap()) {
 
     let clonedObj;
     if (canTraverseList.includes(objType)) {
-        clonedObj = new obj.constructor();
+        clonedObj = obj.constructor ? new obj.constructor() : Object.create(null);
         weekMap.set(obj, clonedObj);
     } else {
         return cloneOthers(obj, objType);
@@ -68,20 +68,21 @@ function deepClone(obj, weekMap = new WeekMap()) {
         return clonedObj;
     };
 
-    for (let key in obj) {
-        if (obj.hasOwnProperty(key)) {
-            clonedObj[key] = deepClone(obj[key], weekMap);
-        };
-    };
+    // for (let key in obj) {
+    //     //todo
+    //     if (Object.hasOwnProperty.call(obj, key)) {
+    //         clonedObj[key] = deepClone(obj[key], weekMap);
+    //     };
+    // };
     //todo 
     Object.getOwnPropertyNames(obj).forEach((key) => {
-        if(Object.getOwnPropertyDescriptor(obj, key).enumerable === false) {
+        if (Object.getOwnPropertyDescriptor(obj, key).enumerable === false) {
             Object.defineProperty(clonedObj, key, {
                 value: deepClone(obj[value], weekMap),
                 enumerable: false // 设置为不可枚举
             });
-        }else {
-            clonedObj[value] = deepClone(obj[key], weekMap);
+        } else {
+            clonedObj[key] = deepClone(obj[key], weekMap);
         }
     })
 

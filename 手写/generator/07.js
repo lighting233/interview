@@ -43,9 +43,9 @@ go().then((data) => {
  * async + await就是promise + generator + yield + co 的语法糖
  * 
  */
-function myCo(generatorFn) {
+function myCo(generatorFn, ...args) {
     //1. 先生成迭代器
-    const iterator = generatorFn();
+    const iterator = generatorFn(...args);
 
     //2. 迭代器可以递归调用
     return new Promise((resolve, reject) => {
@@ -62,14 +62,14 @@ function myCo(generatorFn) {
     });
 };
 
-function read() {
-    return myCo(function* () {
+function read(param1, param2) {
+    return myCo(function* (file1, file2) {
         const data1 = yield readFile('./data/1.txt');
         const data2 = yield readFile('./data/2.txt');
         const data3 = yield readFile('./data/3.txt');
         return data1 + data2 + data3
-    });
+    }, param1, param2);
 };
-read().then((data) => {
+read('./data/1.txt', './data/2.txt').then((data) => {
     console.log(data)//123
 });

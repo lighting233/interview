@@ -1,1 +1,2 @@
-console.log(null && undefined)
+const obj = Object.create(null);
+console.log(obj.constructor)
