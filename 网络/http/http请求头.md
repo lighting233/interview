@@ -188,7 +188,7 @@ Content-Type: text/html; charset=utf-8
 // 接收端
 Accept-Charset: charset=utf-8
 ```
-![两端对应情况](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/3/22/170ffd6bb6d09c2d~tplv-t2oaga2asx-jj-mark:3024:0:0:0:q75.awebp)
+[两端对应情况](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/3/22/170ffd6bb6d09c2d~tplv-t2oaga2asx-jj-mark:3024:0:0:0:q75.awebp)
 ### 示例
 以下是一些设置 `Content-Type` 的示例：
 

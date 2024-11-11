@@ -1,4 +1,19 @@
 ## http3.0 2018年 quic 更名为 http3
+[http3.0](https://zhuanlan.zhihu.com/p/330300133)
+![http1.0](https://pica.zhimg.com/v2-55b205a99a18fe414cf5f93860f36bb0_1440w.jpg)
+http1.0
+![HTTP/1.1 vs HTTP/2 响应](https://pic3.zhimg.com/v2-7df511c33a71380a891107aecc978cf8_1440w.jpg)
+HTTP/1.1 vs HTTP/2 响应
+![HTTP/2 多路复用响应](https://pica.zhimg.com/v2-1664a32635c93f2dc1bd30331fc51796_1440w.jpg)
+HTTP/2 多路复用响应
+![HTTP/2 和 TCP 在透视图上的差异](https://pic1.zhimg.com/v2-1e46e710eabe4ffc824c715c17c245a6_1440w.jpg)
+HTTP/2 和 TCP 在透视图上的差异
+![HTTP/1.1 vs HTTP/2 vs HTTP/3](https://pic1.zhimg.com/v2-3821228fd28f7e7b5f007b91a963a746_1440w.jpg)
+HTTP/1.1 vs HTTP/2 vs HTTP/3
+![TCP 和 QUIC 在透视图上的差异](https://pic4.zhimg.com/v2-86bbaaa921547967e243e9d46ca22a31_1440w.jpg)
+TCP 和 QUIC 在透视图上的差异
+
+
 - UDP上的 QUIC协议，相当于整合了TCP和 TLS
 - http3 的应用层上没有所谓的帧的概念，把数据帧移到了传输层里，数据帧再封装成数据包
 - 数据包在帧上又加了些信息，**connection ID**，网络发生变化，即使 ip 发生改变，但是客户端和服务端协商好了连接 ID，可以识别为同一个连接，避免再次握手

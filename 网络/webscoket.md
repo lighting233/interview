@@ -165,7 +165,7 @@ if (ws.readyState === WebSocket.OPEN) {
 
 ## 3.websocket存在跨域问题吗?
 WebSocket 本身不会像传统的 HTTP 请求那样受到同源策略（SOP）的约束，因此不会在浏览器端直接触发跨域限制。然而，WebSocket 在一些情况下可能涉及到类似跨域的问题，这些问题主要与服务器端的配置和安全性有关：
-
+在 WebSocket 握手请求中，浏览器会自动包含 Origin 头字段，指明请求的来源（页面所在的域）。服务器可以根据 Origin 头来决定是否接受该 WebSocket 连接。这类似于 CORS 的用途，但实现方式不同。
 ### 1. **浏览器端：**
 - 浏览器在建立 WebSocket 连接时，不会因为协议、端口或域名的不同而阻止连接。因此，`WebSocket` 是不受传统同源策略约束的，浏览器可以向不同源的 WebSocket 服务器发起连接。
 - **示例**：
