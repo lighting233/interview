@@ -39,8 +39,8 @@ JS是一⻔单线程的语言，这是因为它运行在浏览器的渲染主线
 - 强制布局（Forced Synchronous Layout 或 Forced Reflow）是Web性能优化领域的一个术语，它指的是浏览器在能够继续处理后续操作之前，必须完成当前的布局计算。
 - 当强制执行布局时，浏览器会**暂停JS主线程**，尽管调用栈不是空的。
 - 出发强制布局就会刷新渲染队列
-![出发强制布局的 api](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c2b00dfda40f432ea5a8e8fbef4ab281~tplv-k3u1fbpfcp-jj-mark:3024:0:0:0:q75.awebp#?w=813&h=812&s=90976&e=png&b=0e1216)
-![事件环](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0e2024e9521a4aafa779e6014c976b17~tplv-k3u1fbpfcp-jj-mark:3024:0:0:0:q75.awebp#?w=870&h=545&s=116493&e=png&b=fefefe)
+[出发强制布局的 api](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c2b00dfda40f432ea5a8e8fbef4ab281~tplv-k3u1fbpfcp-jj-mark:3024:0:0:0:q75.awebp#?w=813&h=812&s=90976&e=png&b=0e1216)
+[事件环](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0e2024e9521a4aafa779e6014c976b17~tplv-k3u1fbpfcp-jj-mark:3024:0:0:0:q75.awebp#?w=870&h=545&s=116493&e=png&b=fefefe)
 #### 7.requestIdleCallback
 如果在当前屏幕刷新过程中，主线程在处理完上述过程后还有剩余时间(<16.6ms)，此时主线程会主动触发requestIdleCallback。这是用于执行一些非必要的用户回调。
 
