@@ -190,8 +190,9 @@ function commitPassiveUnmountEffects_begin() {
         }
     }
 }
+---
 ```
-1. 首先调度回调
+~~1. 首先调度回调~~
 ```ts {.line-numbers}
 	if (
 		(finishedWork.flags & PassiveMask) !== NoFlags ||

@@ -1,6 +1,6 @@
 
 # EventLoop
-
+每个阶段会依次取出队列中的所有回调并执行，直到队列清空或达到系统限制为止。
 ## node中异步操作
 1. **定时器**：setTimeout、setInterval--timmer 队列
 2. **I/O操作**：文件读写、数据库操作、网络请求--poll 队列
