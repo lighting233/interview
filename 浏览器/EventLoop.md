@@ -116,3 +116,99 @@ worker.postMessage('Init communication', [channel.port2]);
 
 - **`postMessage`** 更适用于简单的跨窗口或跨域通信。
 - **`MessageChannel`** 适用于需要复杂双向通信的情况，比如 Web Workers 或同一上下文内的组件通信。
+
+### `worker.postMessage({ port: channel.port2 }, [channel.port2]);`这句中postMessage的参数是什么意思?
+`worker.postMessage({ port: channel.port2 }, [channel.port2]);` 是用于向 Web Worker 发送消息的一种高级用法，它不仅传递数据，还将 `MessagePort` 对象作为 "传输对象" 发送到 Worker。
+
+---
+
+### **`postMessage` 方法的参数详解**
+
+`postMessage` 的完整签名：
+```javascript
+postMessage(message, transferList)
+```
+
+#### **1. `message` 参数**
+- **类型：** 任意类型的 JavaScript 数据。
+- **作用：** 这是传递给 Worker 的数据，可以是简单值（如字符串、数字）或复杂的对象。
+
+在示例中：
+```javascript
+{ port: channel.port2 }
+```
+表示一个包含 `port2` 的对象，它将被传递到 Worker 中，Worker 可以通过事件处理程序接收。
+
+---
+
+#### **2. `transferList` 参数**
+- **类型：** 可选数组。
+- **作用：** 指定需要“转移”的对象列表。传输的对象将从发送方“移交”到接收方，避免复制开销。
+
+   - **传输 vs 复制：**
+     - **复制：** 默认情况下，`postMessage` 会复制传递的数据。
+     - **传输：** 如果在 `transferList` 中包含可转移对象（如 `ArrayBuffer` 或 `MessagePort`），这些对象的所有权会被“转移”到接收方，不再保留在发送方。
+   - 传输的优点是性能高，但被转移的对象在发送方将变为不可用。
+
+在示例中：
+```javascript
+[channel.port2]
+```
+表示将 `channel.port2`（即 `MessagePort`）的所有权转移给 Worker。
+
+---
+
+### **为何使用 `transferList` 传递 `MessagePort`**
+
+- `MessagePort` 是 `MessageChannel` 的一个端点，它本质上是一种独立的通信通道。
+- 如果不通过 `transferList` 转移 `MessagePort`，主线程和 Worker 都会尝试使用该端口，导致错误。
+- 转移后：
+  - **主线程：** 不能再使用 `channel.port2`。
+  - **Worker：** 成为 `channel.port2` 的唯一拥有者，可以自由使用它。
+
+---
+
+### **完整数据传输流程**
+
+#### **主线程代码**
+```javascript
+const worker = new Worker('worker.js');
+const channel = new MessageChannel();
+
+// 将 port2 发送到 Worker，并转移所有权
+worker.postMessage({ port: channel.port2 }, [channel.port2]);
+
+// 使用 port1 在主线程中通信
+channel.port1.onmessage = (event) => {
+  console.log('Message from Worker:', event.data);
+};
+
+// 向 Worker 发送初始消息
+channel.port1.postMessage('Hello from Main Thread');
+```
+
+#### **Worker 文件 (`worker.js`)**
+```javascript
+onmessage = (event) => {
+  const port = event.data.port; // 接收转移的 port2
+
+  // 监听 port 的消息
+  port.onmessage = (event) => {
+    console.log('Message from Main Thread:', event.data);
+
+    // 回复主线程
+    port.postMessage('Hello from Worker');
+  };
+};
+```
+
+---
+
+### **关键点总结**
+1. **`message` 是消息内容：** 可以是任意 JavaScript 数据类型。
+2. **`transferList` 是转移对象的列表：**
+   - 可转移对象包括 `MessagePort`、`ArrayBuffer`、`ImageBitmap` 等。
+   - 转移后，发送方无法再使用这些对象。
+3. **优化性能：** 使用 `transferList` 可以避免数据复制，提高性能，尤其是大对象或实时通信场景。
+
+通过 `MessageChannel` 和 `postMessage` 的结合，可以实现高效的双向通信，同时保持线程间的数据独立性和性能优势。

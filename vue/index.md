@@ -1,6 +1,6 @@
 # vue3
 Vue3 中使用 Proxy 来实现响应式数据变化。
-## 对比vue2有哪些升级？
+## **1.对比vue2有哪些升级？**
 1. 【性能的提升】
     - 打包大小减少41%。
     - 初次渲染快 55%，更新渲染快 133%。
@@ -25,7 +25,9 @@ Vue3 中使用 Proxy 来实现响应式数据变化。
 ## 什么是vue的路由守卫?
 Vue Router 的路由守卫是 Vue.js 应用程序中用于控制路由访问的功能。路由守卫可以在路由切换的不同阶段执行特定的逻辑，比如验证用户是否有权限访问某个路由、处理数据加载、记录页面访问等。它们可以帮助你在进入或离开路由时执行一些自定义逻辑。
 
-### 路由守卫的类型
+-------
+
+### **2.路由守卫的类型**
 
 1. **全局守卫**: 适用于所有路由的守卫。
    - `beforeEach`: 在路由切换前执行。
@@ -104,3 +106,196 @@ Vue Router 的路由守卫是 Vue.js 应用程序中用于控制路由访问的�
 ### 总结
 
 Vue Router 的路由守卫是一个强大的工具，可以帮助你在 Vue 应用程序中管理路由的访问和状态。通过使用路由守卫，你可以确保应用程序的安全性和用户体验。
+
+-------
+
+## **3.vue的:deep()是什么意思**
+### **`:deep()` 在 Less 中的含义**
+
+`:deep()` 是一种语法，用于处理组件库或框架（如 Vue 3）中的 **CSS 深层选择器** 问题，特别是当使用 Scoped CSS 时。
+
+它不是 Less 的原生特性，而是框架（如 Vue 3）扩展的功能，用于实现深层次的样式穿透。Scoped CSS 的特点是样式仅对当前组件生效，`:deep()` 则用来突破这个限制，允许样式作用于子组件或嵌套内容。
+
+---
+
+### **使用场景**
+
+在 Vue 或类似框架中，Scoped CSS 的作用范围通常限制在当前组件。例如：
+
+```html
+<template>
+  <div class="parent">
+    <ChildComponent />
+  </div>
+</template>
+
+<style scoped>
+.parent .child {
+  color: red; /* 不会生效在 ChildComponent 中的内容 */
+}
+</style>
+```
+
+上述代码中，`.child` 样式不会生效在 `ChildComponent` 内，因为 `ChildComponent` 的 DOM 样式作用域独立。此时需要用 `:deep()` 实现样式穿透：
+
+---
+
+### **`:deep()` 的语法**
+
+```html
+<style scoped>
+.parent :deep(.child) {
+  color: red;
+}
+</style>
+```
+
+- **`:deep()` 的作用：**
+  - 告诉编译器，此选择器应该作用于嵌套组件的内部结构，而不是限制在当前组件。
+  - 在编译后，`:deep()` 会被解析为允许跨组件作用的选择器。
+
+---
+
+### **实际编译后的结果**
+
+假设组件中使用了 Scoped CSS，编译后样式通常会带有一个独特的哈希标识符（如 `.parent[data-v-hash]`）。但 `:deep()` 会去掉对目标选择器的哈希限制，例如：
+
+```css
+/* 编译前 */
+.parent :deep(.child) {
+  color: red;
+}
+
+/* 编译后 */
+.parent[data-v-hash] .child {
+  color: red;
+}
+```
+
+---
+
+### **嵌套使用 `:deep()`**
+
+当样式写在 Less 文件中时，`::deep()` 可与 Less 的嵌套语法结合：
+
+```less
+.parent {
+  :deep(.child) {
+    color: red;
+  }
+}
+```
+
+或者：
+
+```less
+:deep(.parent .child) {
+  color: blue;
+}
+```
+
+---
+
+### **注意事项**
+
+1. **Scoped CSS 环境：**
+   - `:deep()` 通常在 Scoped CSS 场景下使用（如 Vue 3 的 `<style scoped>`）。
+   - 如果样式不是 Scoped 的，`:deep()` 不起作用。
+
+2. **不兼容纯 Less 项目：**
+   - 如果项目中不涉及 Vue 或类似框架的 Scoped CSS，`:deep()` 不会被 Less 直接识别或解析。
+
+3. **现代替代：**
+   - 在 Vue 3 中，`::v-deep()` 是 `:deep()` 的推荐替代写法，用于兼容更规范的命名方式。
+
+---
+
+### **总结**
+
+`:deep()` 是用于框架扩展场景下的一种选择器语法，用来突破 Scoped CSS 的样式限制。它通常用于 Vue 等框架，允许开发者直接为嵌套组件或深层 DOM 应用样式。
+
+如果你不是在 Vue 或其他支持 Scoped CSS 的框架中使用，`Less` 不会原生支持 `:deep()`。
+
+------------
+
+## **4.reactive重新分配一个新对象，会失去响应式（可以使用Object.assign去整体替换）。是什么意思?**
+在使用 Vue 的响应式系统（如 Vue 3 的 `reactive`）时，直接重新分配一个新的对象会导致响应式行为丢失。这是因为 Vue 的响应式系统依赖于对象的引用，而不是对象本身的内容。
+
+---
+
+### **背景知识**
+`reactive` 是 Vue 3 提供的用于创建响应式对象的 API。它通过代理（Proxy）实现对对象属性的监听，确保数据的变化能够触发视图更新。
+
+```javascript
+import { reactive } from 'vue';
+
+const state = reactive({ count: 0 });
+```
+
+在这个例子中，`state` 是一个代理对象。如果你修改 `state.count`，Vue 会自动检测到并更新相关的视图。
+
+---
+
+### **重新分配新对象的问题**
+
+如果你直接为 `reactive` 的对象重新分配一个新对象，响应式会丢失：
+
+```javascript
+state = { count: 1 }; // 直接重新分配对象
+```
+
+#### **为什么响应式会丢失？**
+- `reactive` 返回的是一个代理对象，而重新分配只是改变了变量的引用。
+- 原代理对象仍然保持响应式，但新分配的对象是普通对象，不再受 Vue 的响应式系统监控。
+
+---
+
+### **解决方法**
+
+#### **1. 使用 `Object.assign` 替换内容**
+通过 `Object.assign`，可以将新对象的属性合并到原来的响应式对象中，而不会破坏响应式。
+
+```javascript
+Object.assign(state, { count: 1, otherProp: 'new' });
+// 原来的 state 对象保持响应式，且内容已更新。
+```
+
+#### **2. 修改原有属性**
+直接修改原有对象的属性，而不是重新赋值整个对象。
+
+```javascript
+state.count = 1; // 响应式更新生效
+```
+
+#### **3. 使用 `ref` 包裹对象**
+如果你需要更换整个对象的引用，可以考虑使用 `ref`，因为它允许对值重新分配而保持响应式。
+
+```javascript
+import { ref } from 'vue';
+
+const state = ref({ count: 0 });
+
+// 替换整个对象
+state.value = { count: 1 };
+```
+
+---
+
+### **什么时候使用 `Object.assign`？**
+`Object.assign` 是在需要整体更新对象的属性，但仍希望保留响应式的情况下非常有用。例如：
+
+```javascript
+function updateState(newState) {
+  Object.assign(state, newState); // 合并新属性
+}
+
+updateState({ count: 10, message: 'Hello' });
+```
+
+---
+
+### **总结**
+- **直接重新分配新对象**：会失去响应式，因为它改变了引用，响应式系统监控的是原对象。
+- **使用 `Object.assign`**：更新对象内容但保留引用，从而保持响应式。
+- **使用 `ref` 包裹对象**：如果确实需要替换整个对象，`ref` 是更合适的选择。
+---------------------

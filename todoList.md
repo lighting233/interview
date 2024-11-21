@@ -35,6 +35,7 @@
 - [ ] 35. 命中cdn
 - [ ] 36. BFF Backed for frontend 为移动端和web端提供分层
 - [ ] 37. 拖拽api
+- [ ] 38. apifox
 
 ## 面试准备的问题
 - [x] 1. 手写loader, plugin
