@@ -299,3 +299,136 @@ updateState({ count: 10, message: 'Hello' });
 - **使用 `Object.assign`**：更新对象内容但保留引用，从而保持响应式。
 - **使用 `ref` 包裹对象**：如果确实需要替换整个对象，`ref` 是更合适的选择。
 ---------------------
+
+## **5.pinia提供的storeToRefs只会将数据做转换，而Vue的toRefs会转换store中数据。是什么意思?**
+### **`storeToRefs` 和 `toRefs` 的区别**
+
+在 Vue 和 Pinia 的生态中，`toRefs` 和 `storeToRefs` 都是用于将响应式对象的属性转换为单独的 **响应式引用（`ref`）**，但它们的工作机制和适用场景有所不同。
+
+---
+
+### **1. `toRefs`**
+
+`toRefs` 是 Vue 提供的工具，用于将响应式对象的属性拆分为独立的 `ref`，使得这些属性可以单独被解构且保持响应式。
+
+#### **行为**
+- 对于普通的响应式对象（如通过 `reactive` 创建的对象），`toRefs` 会对其每个属性进行转换，使每个属性成为独立的 `ref`。
+- 它直接操作传入的对象，因此可以作用于 Pinia 的 `state`。
+
+#### **示例**
+
+```javascript
+import { reactive, toRefs } from 'vue';
+
+const state = reactive({
+  count: 0,
+  name: '张三',
+});
+
+const refs = toRefs(state);
+
+// 解构后，仍然保持响应式
+console.log(refs.count.value); // 0
+refs.count.value++; // 修改 refs.count，state.count 同步更新
+console.log(state.count); // 1
+```
+
+#### **应用于 Pinia**
+
+```javascript
+import { defineStore } from 'pinia';
+import { toRefs } from 'vue';
+
+const useStore = defineStore('main', {
+  state: () => ({
+    count: 0,
+    name: '张三',
+  }),
+});
+
+const store = useStore();
+const refs = toRefs(store.$state); // 对 state 进行转换
+console.log(refs.count.value); // 0
+refs.count.value++; // 同步更新 store.$state.count
+```
+
+---
+
+### **2. `storeToRefs`**
+
+`storeToRefs` 是 Pinia 提供的工具，专门用于将 Pinia `store` 中的 **`state` 和 `getters`** 的属性拆分为 `ref`，同时保持响应式。它不需要手动访问 `store.$state`。
+
+#### **行为**
+- 自动处理 Pinia `state` 和 `getters`。
+- 不会转换 `store` 中的 `actions`（因为 `actions` 是方法，不需要响应式处理）。
+- **不会修改 `store` 本身的数据结构**，仅对数据进行引用的转换。
+
+#### **示例**
+
+```javascript
+import { defineStore, storeToRefs } from 'pinia';
+
+const useStore = defineStore('main', {
+  state: () => ({
+    count: 0,
+    name: '张三',
+  }),
+  getters: {
+    doubleCount: (state) => state.count * 2,
+  },
+});
+
+const store = useStore();
+const { count, name, doubleCount } = storeToRefs(store);
+
+// 解构后，仍然保持响应式
+console.log(count.value); // 0
+count.value++; // 修改 count，store.count 同步更新
+console.log(store.count); // 1
+
+console.log(doubleCount.value); // 2 （getter 也响应式）
+```
+
+---
+
+### **区别对比**
+
+| 特性                          | `toRefs`                               | `storeToRefs`                            |
+|-------------------------------|----------------------------------------|------------------------------------------|
+| **来源**                      | Vue                                    | Pinia                                   |
+| **作用对象**                  | 普通响应式对象或 `store.$state`        | 整个 Pinia `store`                       |
+| **处理范围**                  | 只处理对象的属性                      | 处理 `state` 和 `getters`（忽略 `actions`） |
+| **是否需要操作 `$state`**     | 是                                     | 否                                       |
+| **对原数据的影响**            | 转换 `state` 时，直接使用 `$state`     | 不修改 `store`，仅返回引用               |
+
+---
+
+### **总结**
+
+#### **`storeToRefs`**
+- **Pinia 专用工具**。
+- 自动处理 `store` 的 `state` 和 `getters`，无需手动操作 `store.$state`。
+- 更便捷，推荐在 Pinia 中使用。
+
+#### **`toRefs`**
+- **通用工具**，适用于所有响应式对象。
+- 如果仅需要将 `store.$state` 的数据转换为 `ref`，可以使用 `toRefs`。
+  
+当处理 Pinia 的 `store` 时，`storeToRefs` 是更直接且语义明确的选择。
+
+-------
+
+## **6.Vue3-中模板编译优化**
+1. 收集动态节点
+   - 全量diff也是要从根节点向下递归遍历
+   - 收集动态节点,静态节点不需要比对
+   - **patchFlag**标记动态节点,用block收集
+   - blockTree收集,父节点除了会收集动态节点之外，也会收集子block。更新时因key值不同会进行删除重新创建
+2. 静态提升: 稳定的节点和不变的变量被提取出来,不用每次render生成
+3. 预字符串化: 静态提升的节点都是静态的，我们可以将提升出来的节点字符串化。当连续静态节点超过20个时，会将静态节点序列化为字符串。
+4. 开启函数缓存后，函数会被缓存起来，后续可以直接使用
+-----------
+
+## **7.Vue-项目中的错误如何处理的？**
+1. 父组件（errorCaptured）-》子组件（errorCaptured）-》孙子组件出错时，错误会一直向上抛。如果`errorCaptured` 中返回 `false` 则会阻断传播。全局就拿不到了
+2. 全局: app.config.errorHandler

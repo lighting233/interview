@@ -1,22 +1,6 @@
 //todo 1.手写apply,call,bind
 Function.prototype.apply = function (ctx, args = []) {//todo args要有默认值
-    ctx = (ctx === undefined || ctx === null) ? globalThis : Object(ctx);
-    const key = Symbol('temp');
-    //todo
-    // Object.defineProperty(ctx, {
-    //     key,
-    //     value: this,
-    //     emmable: false,
-    //     configable: true
-    // });
-    Object.defineProperty(ctx, key, {
-        value: this,
-        enumerable: false,
-        configurable: true
-    })
-    const res = ctx[key](...args);
-    delete ctx[key];
-    return res;
+
 };
 
 Function.prototype.call = function (ctx, ...args) {
@@ -28,22 +12,7 @@ Function.prototype.bind = function (ctx, ...args) {
 };
 
 Function.prototype.bind = function (ctx, ...args) {
-    const funcThis = this;
-    return function (...restArgs) {
-        if (new.target) {
-            return new funcThis(...args, ...restArgs);
-        };
-        ctx = (ctx === undefined || ctx === null) ? globalThis : Object(ctx);
-        const key = Symbol('temp');
-        Object.defineProperty(ctx, key, {
-            value: funcThis,
-            enumerable: false,
-            configurable: true
-        })
-        const res = ctx[key](...args, ...restArgs);
-        delete ctx[key];
-        return res;
-    }
+
 }
 
 //todo 2.考察proxy

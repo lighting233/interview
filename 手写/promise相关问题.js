@@ -141,7 +141,7 @@ Promise.all(promises).then((res) => {
 
 //todo 4.实现一个带有时间限制的fetch请求,时间内可以正常resolve,超出时限直接reject
 // Example
-fetchWithTimeout('https://your.api/endpoint')
+fetchWithTimeout('https://your.api/endpoint', 3000)
     .then(response => console.log('Response:', response))
     .catch(error => console.error('Error:', error));
 

@@ -43,7 +43,7 @@ const res5 = [
     115
 ]
 const errorArr5 = [496, 516, 115]
-const forgetArr3 = [132]
+const forgetArr3 = [132, 392]
 //todo 第六周
 const arr6 = [82, 2, 3, 6, 22, 26, 11, 14, 33, 34, 35, 41, 49, 54, 55, 58, 71, 74, 76, 80, 88, 100]
 const res6 = [
