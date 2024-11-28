@@ -45,8 +45,17 @@
 
 ## **5.BFC**
 [css可视化模型](https://juejin.cn/post/6844903574535667719#heading-44)
-
-### 如何触发 BFC？
+[深入理解BFC【渡一教育】](https://www.bilibili.com/video/BV13H4y1X7bu/?spm_id_from=333.337.search-card.all.click&vd_source=78435c3cefd4783245d9d16d09d19859)
+常规流，块盒
+1. 水平方向上，撑满整个包含块宽度，垂直方向上，依次摆放
+2. 垂直方向上相邻的元素，margin会合并
+3. 父子关系的情况下，可能会产生margin塌陷
+4. 父子关系的情况下，父元素无视浮动元素会产生高度坍塌
+5. 兄弟关系的情况下，正常元素可能会被浮动元素覆盖（正常元素在浮动元素之后）
+普通文档流下的块元素的排布规则
+行元素: 内容的排布
+块元素: 排版的规则
+### 如何触发 BFC？(开启独立渲染区)
 1. 根元素
 2. float属性不为none
 3. position为absolute或fixed

@@ -1,0 +1,1 @@
+[redux实现原理](https://zhuanlan.zhihu.com/p/596500430)

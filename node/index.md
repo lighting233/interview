@@ -1,6 +1,7 @@
 # ndoe
 [面试题](https://www.bilibili.com/list/watchlater?oid=113389938410948&bvid=BV1vHStYKEWc&spm_id_from=333.1007.top_right_bar_window_view_later.content.click&p=22)
 [Node.js零基础到项目实战 Express+MySQL+Sequelize实作API](https://www.bilibili.com/video/BV1HE42157zV?spm_id_from=333.788.player.switch&vd_source=78435c3cefd4783245d9d16d09d19859&p=56)
+[node的模块查找策略](https://www.bilibili.com/video/BV1um421K7Ae/?spm_id_from=333.337.search-card.all.click&vd_source=78435c3cefd4783245d9d16d09d19859)
 ## **1.node的__dirname地址是什么?**
 在 Node.js 中，`__dirname` 是一个全局变量，它表示当前模块所在的目录的绝对路径。
 
@@ -257,3 +258,90 @@ try {
 ### **总结**
 - **`path.join`** 适合拼接路径片段，并规范化最终结果。
 - 在文件系统操作中，`path.join` 常用于生成相对路径或结合 `__dirname` 生成绝对路径。
+
+------------
+
+## **3.node的requier中相对路径(./a.js)和绝对路径(/a.js)的区别**
+在 Node.js 的 `require` 方法中，使用**相对路径** (`./a.js`) 和 **绝对路径** (`/a.js`) 的区别主要体现在路径解析的方式和作用范围上。
+
+---
+
+### **1. 相对路径 (`./a.js` 或 `../a.js`)**
+
+#### **特点**
+- **相对于当前文件所在的路径**进行解析。
+- 通常使用 `.` 和 `..` 表示当前目录或上一级目录。
+- 如果不提供 `.js`、`.json`、`.node` 扩展名，Node.js 会自动尝试补全这些扩展名。
+
+#### **解析方式**
+- 如果当前文件位于 `/project/src/index.js`：
+  - `require('./a.js')` 会尝试加载 `/project/src/a.js`。
+  - `require('../a.js')` 会尝试加载 `/project/a.js`。
+
+#### **适用场景**
+- 用于加载当前模块文件夹内的文件。
+- 常见于项目内模块之间的引用。
+
+---
+
+### **2. 绝对路径 (`/a.js`)**
+
+#### **特点**
+- **始终相对于系统根目录 `/`** 进行解析，而不是项目根目录。
+- 文件路径从系统的根文件夹开始。
+
+#### **解析方式**
+- 如果使用 `require('/a.js')`，Node.js 会尝试加载系统根目录下的 `/a.js` 文件。
+- 不考虑当前文件所在路径。
+
+#### **适用场景**
+- 很少直接使用绝对路径，除非明确知道目标文件位于系统根目录下。
+- 在实际项目中，使用绝对路径通常是错误的，因为它与项目目录结构无关。
+
+---
+
+### **3. 常见误解：`/a.js` 不是项目根目录的路径**
+
+许多开发者误以为 `/a.js` 是相对于项目根目录的路径，实际上它是指系统根目录。
+
+#### **举例**
+假设项目目录为 `/Users/username/myproject/`，有以下文件结构：
+```
+/Users/username/myproject/
+  |- src/
+     |- index.js
+     |- a.js
+```
+
+- 如果在 `index.js` 中：
+  ```javascript
+  require('./a.js'); // 加载 /Users/username/myproject/src/a.js
+  require('/a.js');  // 试图加载 /a.js（系统根目录下），通常会报错：MODULE_NOT_FOUND
+  ```
+
+---
+
+### **4. 项目根目录的绝对路径引用**
+
+如果需要从项目根目录引用文件，推荐使用 **基于项目根目录的路径**，而不是系统绝对路径。  
+可以结合 `path` 模块解决：
+
+#### **解决方案：基于项目根目录**
+```javascript
+const path = require('path');
+
+// 获取项目根目录的绝对路径
+const projectRoot = path.resolve(__dirname, '../');
+
+// 引用项目根目录中的文件
+const aModule = require(path.join(projectRoot, 'src/a.js'));
+```
+
+---
+
+### **总结**
+| **路径类型**     | **解析方式**                                    | **适用场景**                                  |
+|------------------|-----------------------------------------------|----------------------------------------------|
+| **相对路径** (`./a.js`) | 从当前文件所在目录开始解析                      | 常用于项目模块之间的相对引用                   |
+| **绝对路径** (`/a.js`) | 从系统根目录开始解析                           | 通常不推荐，除非明确加载系统根目录下的文件         |
+| **项目根路径引用**  | 使用 `path` 模块动态生成基于项目根目录的绝对路径 | 推荐在大型项目中引用文件时使用，避免路径混淆       |
