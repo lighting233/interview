@@ -22,7 +22,7 @@ console.warn("This is a warning!"); // 输出警告消息
 ```
 
 ### 4. `console.info()`
-用于输出一般的信息，类似于 `console.log()`，但语义上用于输出信息性内容。
+用于输出一般的信息，类似于 `console.log()`，但语义上用于输出信息性内容。safari下样式和log不同
 
 ```javascript
 console.info("Informational message."); // 输出信息性消息
@@ -43,7 +43,7 @@ console.assert(1 === 2, "This is an assertion failure!"); // 断言失败，输�
 ```
 
 ### 7. `console.table()`
-以表格形式输出对象或数组，方便对比和查看数据。
+==以表格形式输出对象或数组，方便对比和查看数据。==
 
 ```javascript
 const cars = [{ make: 'Toyota', model: 'Corolla' }, { make: 'Ford', model: 'Mustang' }];
@@ -51,7 +51,7 @@ console.table(cars); // 以表格形式输出数组
 ```
 
 ### 8. `console.time()` / `console.timeEnd()`
-用于计时。在 `console.time()` 之后运行的代码片段中，调用 `console.timeEnd()` 以显示从开始到结束之间的时间间隔（以毫秒为单位）。
+==用于计时。在 `console.time()` 之后运行的代码片段中，调用 `console.timeEnd()` 以显示从开始到结束之间的时间间隔（以毫秒为单位）。==
 
 ```javascript
 console.time("Timer"); // 开始计时
@@ -61,7 +61,7 @@ console.timeEnd("Timer"); // 结束计时并输出时间
 ```
 
 ### 9. `console.group()` / `console.groupEnd()`
-将日志分组，便于在复杂的日志中保持组织性。可以嵌套分组。
+==将日志分组，便于在复杂的日志中保持组织性。可以嵌套分组。==
 
 ```javascript
 console.group("Outer group");
@@ -82,7 +82,7 @@ console.groupEnd();
 ```
 
 ### 11. `console.count()`
-输出被调用的次数，每次调用时会增加计数。
+==输出被调用的次数，每次调用时会增加计数。==
 
 ```javascript
 console.count("Counter"); // Counter: 1
@@ -92,7 +92,7 @@ console.count("Counter"); // Counter: 1
 ```
 
 ### 12. `console.trace()`
-输出当前执行代码的调用栈信息，通常用于调试代码执行的上下文和来源。
+==输出当前执行代码的调用栈信息，通常用于调试代码执行的上下文和来源。==
 
 ```javascript
 function f1() {
@@ -114,7 +114,7 @@ console.clear(); // 清除控制台内容
 ```
 
 ### 14. `console.dir()`
-以一种可交互的列表形式输出对象的详细信息，展示对象的属性和方法。
+==以一种可交互的列表形式输出对象的详细信息，展示对象的属性和方法。打印dom时可以把dom用对象的形式展现出来==
 
 ```javascript
 const obj = { name: "John", age: 30 };

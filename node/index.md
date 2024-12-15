@@ -345,3 +345,75 @@ const aModule = require(path.join(projectRoot, 'src/a.js'));
 | **相对路径** (`./a.js`) | 从当前文件所在目录开始解析                      | 常用于项目模块之间的相对引用                   |
 | **绝对路径** (`/a.js`) | 从系统根目录开始解析                           | 通常不推荐，除非明确加载系统根目录下的文件         |
 | **项目根路径引用**  | 使用 `path` 模块动态生成基于项目根目录的绝对路径 | 推荐在大型项目中引用文件时使用，避免路径混淆       |
+
+
+--------
+
+## **4.import.meta.url,const __filename = fileURLToPath(import.meta.url); const __dirname = dirname(__filename);的区别**
+`import.meta.url` 和通过 `fileURLToPath(import.meta.url)` 与 `dirname` 组合获取的 `__filename` 和 `__dirname` 之间有一些明显的区别。这些区别主要体现在它们的用途和表示的数据上。
+
+---
+
+### 1. **概念**
+| 特性                     | `import.meta.url`                                       | `__filename` 和 `__dirname`                          |
+|--------------------------|--------------------------------------------------------|-----------------------------------------------------|
+| **定义**                 | 是一个模块的元数据，包含当前模块的 URL                 | 表示当前模块的文件名 (`__filename`) 和目录名 (`__dirname`) |
+| **表示内容**             | 当前模块的完整 URL，例如：`file:///path/to/module.js`   | 文件的绝对路径（`__filename`）和所在目录的路径（`__dirname`） |
+| **支持场景**             | 仅支持 ESM 模块                                         | 传统 CommonJS 和 ESM 模块都可以支持（通过转换）         |
+
+---
+
+### 2. **用法**
+#### **`import.meta.url`**
+- 适用于 ESM 模块，返回的是模块的完整 URL。
+- 直接使用可以获取当前模块的 `file:` 协议路径。
+  
+**示例：**
+```javascript
+console.log(import.meta.url);
+// 输出：file:///path/to/your/module.js
+```
+
+#### **`fileURLToPath(import.meta.url)` + `dirname`**
+- `fileURLToPath` 是一个 Node.js 提供的工具函数，用于将 URL 转换为文件系统路径。
+- `dirname` 是 Node.js 的 `path` 模块提供的一个函数，用于从路径中提取目录部分。
+- 结合使用可以得到与 CommonJS 的 `__filename` 和 `__dirname` 类似的效果。
+
+**示例：**
+```javascript
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+console.log(__filename); // 输出：/path/to/your/module.js
+console.log(__dirname);  // 输出：/path/to/your
+```
+
+---
+
+### 3. **使用场景**
+| 场景                         | 适用方案                            | 说明                                                                                   |
+|------------------------------|-------------------------------------|----------------------------------------------------------------------------------------|
+| **文件路径操作**              | `fileURLToPath(import.meta.url)`    | 如果需要以文件路径形式处理文件系统操作，必须使用 `fileURLToPath` 将 URL 转换为路径。         |
+| **与模块元数据相关的操作**    | `import.meta.url`                  | 如果需要直接处理模块元数据（如动态加载模块或其他元信息），可以直接使用 `import.meta.url`。   |
+| **兼容 CommonJS 语法的代码**  | `fileURLToPath` + `dirname`         | ESM 环境中重现 `__filename` 和 `__dirname` 的功能，适配旧代码。                           |
+
+---
+
+### 4. **主要区别**
+| 特性                   | `import.meta.url`                        | `__filename` 和 `__dirname`                      |
+|------------------------|-----------------------------------------|-------------------------------------------------|
+| **格式**               | 返回 URL 格式（如 `file:///path/to.js`） | 返回文件系统路径格式（如 `/path/to/file.js`）     |
+| **模块系统**           | 仅适用于 ESM                           | 传统 CommonJS 和 ESM 都支持（通过转换方式适配）  |
+| **直接可用性**         | 无需转换即可直接使用                   | 需要通过转换（`fileURLToPath` 和 `dirname`）实现 |
+| **用途**               | 适合处理模块级 URL 数据                | 适合与文件系统相关的路径操作                     |
+
+---
+
+### 5. **选择何时使用哪一个**
+- 如果你只需要模块的 URL 信息，直接使用 `import.meta.url`。
+- 如果你的代码需要兼容文件系统操作（例如，读取文件或处理目录路径），使用 `fileURLToPath(import.meta.url)` 和 `dirname` 来模拟 CommonJS 的 `__filename` 和 `__dirname`。
+
+两者结合使用可以满足现代 ESM 和传统 CommonJS 的需求。
