@@ -353,3 +353,24 @@ module.exports = {
 - **`browser` 字段**：用于指定浏览器环境中使用的模块文件，通常用来替换掉 Node.js 特有的代码（如 `fs`、`path` 等），并为浏览器环境提供优化的代码版本。
 
 即使浏览器本身支持 ESM，`browser` 字段仍然非常有用，因为它解决了跨环境的兼容性问题，并能优化浏览器中不适用的 Node.js 特性。
+
+------------
+
+## **npm 使用中的问题**
+
+### 1.npm install
+这个错误表示NPM在尝试通过HTTPS连接到一个资源时，遇到了一个证书过期的问题。NPM需要使用有效的SSL证书来保证通信安全，如果证书过期，NPM将无法建立安全连接。
+```shell
+npm ERR! code ETIMEDOUT
+npm ERR! errno ETIMEDOUT
+npm ERR! network request to https://registry.npmjs.org/type-fest failed, reason:
+npm ERR! network This is a problem related to network connectivity.
+npm ERR! network In most cases you are behind a proxy or have bad network settings.
+npm ERR! network
+npm ERR! network If you are behind a proxy, please make sure that the
+npm ERR! network 'proxy' config is set properly.  See: 'npm help config'
+```
+解决方法:临时http镜像源
+`npm config set registry http://registry.npm.taobao.org`永久
+`npm install --registry=http://registry.npm.taobao.org`临时
+
